@@ -6,31 +6,35 @@ author_profile: true
 ---
 
 {% if site.author.googlescholar %}
-  <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
+<div class="wordwrap">
+  You can also find my articles on
+  <a href="{{ site.author.googlescholar }}">my Google Scholar profile</a>.
+</div>
 {% endif %}
 
 {% include base_path %}
 
-<!-- New style rendering if publication categories are defined -->
-{% if site.publication_category %}
-  {% for category in site.publication_category  %}
-    {% assign title_shown = false %}
-    {% for post in site.publications reversed %}
-      {% if post.category != category[0] %}
-        {% continue %}
-      {% endif %}
-      {% unless title_shown %}
-        <h2>{{ category[1].title }}</h2><hr />
-        {% assign title_shown = true %}
-      {% endunless %}
-      {% include archive-single.html %}
-    {% endfor %}
-  {% endfor %}
-{% else %}
-  {% for post in site.publications reversed %}
-    {% include archive-single.html %}
-  {% endfor %}
+## Publications
+
+{% capture pubs_content %}
+{% include_relative publications.yml %}
+{% endcapture %}
+{% assign my_pubs = pubs_content | from_yaml %}
+
+### Journal Articles
+{% assign journal_pubs = my_pubs | where: "type", "journal" %}
+{% for pub in journal_pubs %}
+{{ forloop.index }}. **{{ pub.title }}**  
+{{ pub.authors }}  
+{{ pub.venue }} ({{ pub.year }})  
+{% if pub.link %}
+[link]({{ pub.link }})
 {% endif %}
+{% if pub.code %}
+&nbsp;[visualization code]({{ pub.code }})
+{% endif %}
+
+{% endfor %}
 
 
 
