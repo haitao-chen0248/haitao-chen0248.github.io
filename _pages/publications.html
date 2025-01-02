@@ -5,36 +5,42 @@ permalink: /publications/
 author_profile: true
 ---
 
-{% if site.author.googlescholar %}
-<div class="wordwrap">
-  You can also find my articles on
-  <a href="{{ site.author.googlescholar }}">my Google Scholar profile</a>.
-</div>
-{% endif %}
-
 {% include base_path %}
 
-## Publications
+{% assign categories = "Journal Articles, Preprints, Conference Papers" | split: ", " %}
 
-{% capture pubs_content %}
-{% include_relative publications.yml %}
-{% endcapture %}
-{% assign my_pubs = pubs_content | from_yaml %}
+{% for category in categories %}
+  {% assign category_pubs = site.data.publications | where: "category", category %}
+  {% if category_pubs.size > 0 %}
+    <h2><strong>{{ category }}</strong></h2>
+    <ol>
+      {% for pub in category_pubs %}
+        <li>
+          <strong>{{ pub.title }}</strong><br>
 
-### Journal Articles
-{% assign journal_pubs = my_pubs | where: "type", "journal" %}
-{% for pub in journal_pubs %}
-{{ forloop.index }}. **{{ pub.title }}**  
-{{ pub.authors }}  
-{{ pub.venue }} ({{ pub.year }})  
-{% if pub.link %}
-[link]({{ pub.link }})
-{% endif %}
-{% if pub.code %}
-&nbsp;[visualization code]({{ pub.code }})
-{% endif %}
+          {% assign authors_list = pub.authors | first | split: ", " %}
+          {% for author in authors_list %}
+            {% if author contains "Haitao Chen" %}
+              <u>{{ author }}</u>{% unless forloop.last %}, {% endunless %}
+            {% else %}
+              {{ author }}{% unless forloop.last %}, {% endunless %}
+            {% endif %}
+          {% endfor %}
+          <br>
 
+          <em>{{ pub.journal }}</em>, {{ pub.vol }}, {{ pub.year }}<br>
+
+          {% if pub.link %}
+            <a href="{{ pub.link }}" target="_blank">[link]</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
 {% endfor %}
 
-
-
+{% if site.author.googlescholar %}
+<div class="wordwrap">
+  You can also find my articles on <a href="{{ site.author.googlescholar }}">my Google Scholar profile</a>.
+</div>
+{% endif %}

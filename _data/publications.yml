@@ -1,14 +1,16 @@
 ---
 - title: "High-fidelity mesoscopic fluorescence molecular tomography based on SSB-Net"
-  authors: "Kaixian Liu, Yuxuan Jiang, Wensong Li, Haitao Chen, Qingming Luo, and Yong Deng"
-  venue: "Optics Letters 48(2)"
+  authors: ["Kaixian Liu, Yuxuan Jiang, Wensong Li, Haitao Chen, Qingming Luo, and Yong Deng"]
+  journal: "Optics Letters"
+  vol: "48(2)"
   year: "2023"
   link: "https://doi.org/10.1364/OL.475949"
-  type: "journal"
+  category: "Journal Articles"
 
 - title: "Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network"
-  authors: "Haitao Chen, Kaixian Liu, Yuxuan Jiang, Yafeng Liu, Yong Deng"
-  venue: "Biomedical Optics Express 14(4)"
+  authors: ["Haitao Chen, Kaixian Liu, Yuxuan Jiang, Yafeng Liu, Yong Deng"]
+  journal: "Biomedical Optics Express"
+  vol: "14(4)"
   year: "2023"
   link: "https://doi.org/10.1364/BOE.489079"
-  type: "journal"
+  category: "Journal Articles"
