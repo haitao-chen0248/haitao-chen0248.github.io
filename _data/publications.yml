@@ -1,6 +1,13 @@
 ---
 - title: "Multierror learning enhanced fluorescence diffusion tomography in reflection geometry"
-  authors: ["Haitao Chen", "Kaixian Liu", "Yuxuan Jiang", "Yuxiang Dou", "Yong Deng"]
+  authors:
+    - name: "Haitao Chen"
+      dag: true
+    - name: "Kaixian Liu"
+      dag: true
+    - name: "Yuxuan Jiang"
+    - name: "Yuxiang Dou"
+    - name: "Yong Deng"
   journal: "Optics Express"
   vol: "33(10)"
   year: "2025"
@@ -8,7 +15,12 @@
   category: "Journal Articles"
 
 - title: "Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network"
-  authors: ["Haitao Chen", "Kaixian Liu", "Yuxuan Jiang", "Yafeng Liu", "Yong Deng"]
+  authors:
+    - name: "Haitao Chen"
+    - name: "Kaixian Liu"
+    - name: "Yuxuan Jiang"
+    - name: "Yafeng Liu"
+    - name: "Yong Deng"
   journal: "Biomedical Optics Express"
   vol: "14(4)"
   year: "2023"
@@ -16,7 +28,13 @@
   category: "Journal Articles"
 
 - title: "High-fidelity mesoscopic fluorescence molecular tomography based on SSB-Net"
-  authors: ["Kaixian Liu", "Yuxuan Jiang", "Wensong Li", "Haitao Chen", "Qingming Luo", "Yong Deng"]
+  authors:
+    - name: "Kaixian Liu"
+    - name: "Yuxuan Jiang"
+    - name: "Wensong Li"
+    - name: "Haitao Chen"
+    - name: "Qingming Luo"
+    - name: "Yong Deng"
   journal: "Optics Letters"
   vol: "48(2)"
   year: "2023"
