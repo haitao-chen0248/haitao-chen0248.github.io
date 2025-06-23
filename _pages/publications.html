@@ -27,13 +27,14 @@ author_profile: true
           {% assign is_current_user = name == "Haitao Chen" %}
           {% assign is_dag = author.dag %}
 
-          {% assign formatted_name = name %}
-          {% if is_current_user %}
-            {% assign formatted_name = "<u>" | append: formatted_name | append: "</u>" %}
-          {% endif %}
-          {% if is_dag %}
-            {% assign formatted_name = formatted_name | append: "†" %}
-          {% endif %}
+          {%- capture formatted_name -%}
+            {% if is_current_user %}
+              <u>{{ name }}</u>
+            {% else %}
+              {{ name }}
+            {% endif %}
+            {% if is_dag %}†{% endif %}
+          {%- endcapture -%}
 
           {% if forloop.first %}
             {% assign authors_output = formatted_name %}
