@@ -1,4 +1,12 @@
 ---
+- title: "Multierror learning enhanced fluorescence diffusion tomography in reflection geometry"
+  authors: ["Haitao Chen", "Kaixian Liu", "Yuxuan Jiang", "Yuxiang Dou", "Yong Deng"]
+  journal: "Optics Express"
+  vol: "33(10)"
+  year: "2025"
+  link: "https://doi.org/10.1364/OE.560810"
+  category: "Journal Articles"
+
 - title: "Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network"
   authors: ["Haitao Chen", "Kaixian Liu", "Yuxuan Jiang", "Yafeng Liu", "Yong Deng"]
   journal: "Biomedical Optics Express"
