@@ -16,33 +16,10 @@ author_profile: true
       <li style="margin-bottom: 1em;">
         <strong>{{ pub.title }}</strong><br>
 
-        {%- assign authors_output = "" -%}
-        {% for author in pub.authors %}
-          {%- if author.name -%}
-            {% assign name = author.name %}
-          {%- else -%}
-            {% assign name = author %}
-          {%- endif -%}
-
-          {% assign is_current_user = name == "Haitao Chen" %}
-          {% assign is_dag = author.dag %}
-
-          {%- capture formatted_name -%}
-            {% if is_current_user %}
-              <u>{{ name }}</u>
-            {% else %}
-              {{ name }}
-            {% endif %}
-            {% if is_dag %}†{% endif %}
-          {%- endcapture -%}
-
-          {% if forloop.first %}
-            {% assign authors_output = formatted_name %}
-          {% else %}
-            {% assign authors_output = authors_output | append: ", " | append: formatted_name %}
-          {% endif %}
-        {% endfor %}
-        {{ authors_output }}<br>
+        {% assign authors_str = pub.authors | join: ", " %}
+        {% assign authors_str = authors_str | replace: "Haitao Chen", "<u>Haitao Chen</u>" %}
+        
+        {{ authors_str }}<br>
 
         <em>{{ pub.journal }}</em>{% if pub.vol %}, {{ pub.vol }}{% endif %}, {{ pub.year }}<br>
 
@@ -59,5 +36,3 @@ author_profile: true
   You can also find my articles on <a href="{{ site.author.googlescholar }}">my Google Scholar profile</a>.
 </div>
 {% endif %}
-
-<p style="font-size: 0.9em; margin-top: 1em;">†: These authors contributed equally.</p>
