@@ -8,7 +8,6 @@ author_profile: true
 {% include base_path %}
 
 {% assign grouped_pubs = site.data.publications | group_by: "category" %}
-
 {% for group in grouped_pubs %}
   <h2 style="margin-top: 1em; margin-bottom: 0.5em;"><strong>{{ group.name }}</strong></h2>
   <ol style="margin-top: 0em;">
@@ -16,6 +15,7 @@ author_profile: true
       <li style="margin-bottom: 1em;">
         <strong>{{ pub.title }}</strong><br>
 
+        {% assign has_star = false %}
         {% for author in pub.authors %}
           {% assign name = author.name %}
           {% if name == "Haitao Chen" %}
@@ -24,23 +24,27 @@ author_profile: true
             {{ name }}
           {% endif %}
           {% if author.dag %}
-            <sup>*</sup>
+            *{% assign has_star = true %}
           {% endif %}
           {% unless forloop.last %}, {% endunless %}
         {% endfor %}<br>
 
+        {% if has_star %}
+          *Equal contribution<br>
+        {% endif %}
+
         <em>{{ pub.journal }}</em>{% if pub.vol %}, {{ pub.vol }}{% endif %}, {{ pub.year }}<br>
 
-        {%- if pub.link -%}
+        {% if pub.link %}
           <a href="{{ pub.link }}" target="_blank">[link]</a>
-        {%- endif -%}
+        {% endif %}
       </li>
     {% endfor %}
   </ol>
 {% endfor %}
 
 {% if site.author.googlescholar %}
-<div class="wordwrap" style="margin-top: 0.5em;">
-  You can also find my articles on <a href="{{ site.author.googlescholar }}">my Google Scholar profile</a>.
-</div>
+  <div class="wordwrap" style="margin-top: 0.5em;">
+    You can also find my articles on <a href="{{ site.author.googlescholar }}">my Google Scholar profile</a>.
+  </div>
 {% endif %}
