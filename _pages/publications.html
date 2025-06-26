@@ -16,10 +16,18 @@ author_profile: true
       <li style="margin-bottom: 1em;">
         <strong>{{ pub.title }}</strong><br>
 
-        {% assign authors_str = pub.authors | join: ", " %}
-        {% assign authors_str = authors_str | replace: "Haitao Chen", "<u>Haitao Chen</u>" %}
-        
-        {{ authors_str }}<br>
+        {% for author in pub.authors %}
+          {% assign name = author.name %}
+          {% if name == "Haitao Chen" %}
+            <u>{{ name }}</u>
+          {% else %}
+            {{ name }}
+          {% endif %}
+          {% if author.dag %}
+            <sup>*</sup>
+          {% endif %}
+          {% unless forloop.last %}, {% endunless %}
+        {% endfor %}<br>
 
         <em>{{ pub.journal }}</em>{% if pub.vol %}, {{ pub.vol }}{% endif %}, {{ pub.year }}<br>
 
