@@ -29,7 +29,9 @@
 - title: "Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale"
   authors:
     - name: "Xi Yang"
+      dag: true
     - name: "Haitao Chen"
+      dag: true
     - name: "Lucas Kreiss"
     - name: "Clare B Cook"
     - name: "Genevieve Kuczewski"
