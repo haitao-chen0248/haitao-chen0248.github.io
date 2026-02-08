@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a first-year Ph.D. student in Biomedical Engineering at Duke University’s [Computational Optics Lab](https://horstmeyer.pratt.duke.edu/), advised by Prof. [Roarke Horstmeyer](https://bme.duke.edu/people/roarke-horstmeyer/). 
+I am a second-year Ph.D. student in Biomedical Engineering at Duke University’s [Computational Optics Lab](https://horstmeyer.pratt.duke.edu/), advised by Prof. [Roarke Horstmeyer](https://bme.duke.edu/people/roarke-horstmeyer/). 
 
 My research interests lie broadly in computational imaging, tomography reconstruction algorithms, inverse problems, and machine learning, with a focus on the development of high-throughput optical imaging systems. Beyond this, I am always open to exploring new ways of applying computational optimization and extending advanced imaging systems to other biomedical contexts.
 
