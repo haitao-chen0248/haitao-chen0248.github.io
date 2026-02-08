@@ -1,0 +1,8 @@
+---
+title: "News"
+layout: collection-archive  # 关键：使用集合归档布局
+permalink: /news/           # 访问路径
+collection: news            # 关键：告诉系统抓取 _news 文件夹的内容
+entries_layout: list        # 定义条目显示方式为列表
+author_profile: true        # 显示左侧个人信息栏
+---
