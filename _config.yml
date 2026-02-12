@@ -21,7 +21,7 @@ repository               : "haitao-chen0248/haitao-chen0248.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile_pic.jpg"
+  avatar           : "headshot.png"
   name             : "Haitao Chen"
   pronouns         : # example: "she/her"  
   bio              : "PhD Student @ Duke BME"
