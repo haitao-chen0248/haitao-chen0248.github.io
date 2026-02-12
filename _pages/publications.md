@@ -8,7 +8,7 @@ author_profile: true
 1. **High-throughput multi-camera array microscope platform for automated 3D behavioral analysis of swimming zebrafish larvae**
    <br><ins>Haitao Chen</ins>, Kevin Li, Lucas Kreiss, Paul Reamey, ..., Roarke Horstmeyer  
    *Communications Biology* 9 (2026)  
-   [[Paper (Nature)](https://doi.org/10.1038/s42003-025-09421-w)][[Paper (BioRxiv)](https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full)]
+   [[Paper (Nature)](https://doi.org/10.1038/s42003-025-09421-w)][[Paper (BioRxiv)](https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full)][[Code](https://github.com/haitao-chen0248/ZebraPheno3D)][[Video](https://www.youtube.com/watch?v=j5l38dja1R4)][[Talk](https://www.youtube.com/watch?v=IXfsqg_8Y6I&t=1s)]
 
 1. **Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale**
    <br>Xi Yang&dagger;, <ins>Haitao Chen</ins>&dagger;, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer  
