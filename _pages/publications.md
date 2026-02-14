@@ -16,7 +16,7 @@ author_profile: true
    [Talk](https://www.youtube.com/watch?v=IXfsqg_8Y6I&t=1s)
 
 1. **Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale**  
-   Xi Yang*, **<ins>Haitao Chen</ins>**\*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer  
+   Xi Yang\*, **<ins>Haitao Chen</ins>**\*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer  
    *Optics Letters*, 2025  
    [Journal](https://doi.org/10.1364/OL.572466) · 
    [Preprint](https://arxiv.org/abs/2507.09697)  
