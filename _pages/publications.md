@@ -20,7 +20,7 @@ author_profile: true
    *Optics Letters*, 2025  
    [Journal](https://doi.org/10.1364/OL.572466) · 
    [Preprint](https://arxiv.org/abs/2507.09697)  
-   *Featured in* [Optica](https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/), 
+   *Editors' Pick, Featured in* [Optica](https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/), 
    [Phys.org](https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html), 
    [Bioengineer](https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/)
 
