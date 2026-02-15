@@ -6,16 +6,29 @@ author_profile: true
 ---
 
 <style>
-  .pub-row {
+    .pub-row {
     display: flex;
     flex-wrap: nowrap;
-    margin-bottom: 2.5em;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 12px; 
+    border: 1px solid #f0f0f0;
     gap: 25px;
     align-items: flex-start;
+    transition: all 0.3s ease;
   }
+
+  .pub-row:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border-color: #e0e0e0;
+  }
+
   .pub-media {
     flex: 0 0 220px;
     max-width: 220px;
+    display: flex;
+    align-items: center;
   }
   .pub-media img {
     width: 100%;
