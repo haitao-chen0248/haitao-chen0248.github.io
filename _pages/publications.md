@@ -14,7 +14,7 @@ author_profile: true
     align-items: flex-start;
   }
   .pub-media {
-    flex: 0 0 240px; /* 固定左侧图片宽度 */
+    flex: 0 0 240px;
     max-width: 240px;
   }
   .pub-media img {
@@ -59,9 +59,7 @@ author_profile: true
 
 <div class="pub-row">
   <div class="pub-media">
-    <a href="https://www.youtube.com/watch?v=j5l38dja1R4" target="_blank">
-      <img src="https://img.youtube.com/vi/j5l38dja1R4/maxresdefault.jpg" alt="Zebrafish 3D Analysis">
-    </a>
+    <img src="/images/Sideview.jpg" alt="Zebrafish 3D Analysis" onerror="this.src='https://via.placeholder.com/240x135?text=Zebrafish+3D+Analysis'">
   </div>
   <div class="pub-content">
     <p class="pub-title">High-throughput multi-camera array microscope platform for automated 3D behavioral analysis of swimming zebrafish larvae</p>
@@ -79,16 +77,18 @@ author_profile: true
 
 <div class="pub-row">
   <div class="pub-media">
-    <img src="/images/gigapixel_microscopy_teaser.png" alt="Gigapixel Microscopy" onerror="this.src='https://via.placeholder.com/240x135?text=Gigapixel+Microscopy'">
+    <img src="/images/Reimaging.jpg" alt="Gigapixel Microscopy" onerror="this.src='https://via.placeholder.com/240x135?text=Gigapixel+Microscopy'">
   </div>
   <div class="pub-content">
     <p class="pub-title">Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale</p>
     <div class="pub-authors">Xi Yang*, <strong><u>Haitao Chen</u></strong>*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer</div>
-    <div class="pub-journal">Optics Letters, 2025 <span style="color: #d9534f; font-weight: bold; font-size: 0.8em; margin-left: 10px;">★ Editors' Pick</span></div>
+    <div class="pub-journal">Optics Letters, 2025 <span style='color:#d9534f; font-size: 0.9em;'>(Editors' Pick, Featured in News)</span></div>
     <div class="pub-badges">
       <a href="https://doi.org/10.1364/OL.572466" class="badge">Journal</a>
       <a href="https://arxiv.org/abs/2507.09697" class="badge">Preprint</a>
-      <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" class="badge">News Release</a>
+      <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" class="badge">Optica News</a>
+      <a href='https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html' class='badge'>Phys.org</a>
+      <a href='https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/' class='badge'>Bioengineer</a>
     </div>
   </div>
 </div>
