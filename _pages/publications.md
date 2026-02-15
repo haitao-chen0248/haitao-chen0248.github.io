@@ -30,12 +30,12 @@ author_profile: true
     flex: 1;
   }
   .pub-title {
-    font-size: 1.15em;
-    font-weight: bold;
-    margin: 0 0 8px 0 !important;
+    font-size: 1.1em;
+    font-weight: 700;
     line-height: 1.3;
+    margin: 0 0 6px 0 !important;
   }
-  .pub-authors { margin-bottom: 5px; font-size: 0.95em; }
+  .pub-authors { margin: 0 0 3px 0; font-size: 0.92em; line-height: 1.4; }
   .pub-journal { font-style: italic; color: #666; margin-bottom: 10px; }
   .pub-badges { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
   .badge {
