@@ -121,7 +121,7 @@ author_profile: true
   </div>
 </div>
 
-<div class="pub-container">
+<!-- <div class="pub-container">
   <div class="pub-media">
     <img src="/images/tomography_oe.jpg" alt="MEL-rFDT">
   </div>
@@ -167,4 +167,4 @@ author_profile: true
       <a href="https://doi.org/10.1364/OL.475949" class="pub-btn">Journal</a>
     </div>
   </div>
-</div>
+</div> -->
