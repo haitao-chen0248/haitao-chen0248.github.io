@@ -14,8 +14,8 @@ author_profile: true
     align-items: flex-start;
   }
   .pub-media {
-    flex: 0 0 240px;
-    max-width: 240px;
+    flex: 0 0 220px;
+    max-width: 220px;
   }
   .pub-media img {
     width: 100%;
@@ -30,14 +30,14 @@ author_profile: true
     flex: 1;
   }
   .pub-title {
-    font-size: 1.1em;
+    font-size: 1.05em;
     font-weight: 700;
     line-height: 1.3;
     margin: 0 0 6px 0 !important;
   }
-  .pub-authors { margin: 0 0 3px 0; font-size: 0.92em; line-height: 1.4; }
-  .pub-journal { font-style: italic; color: #666; margin-bottom: 10px; }
-  .pub-badges { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .pub-authors { margin: 0 0 3px 0; font-size: 0.95em; line-height: 1.4; }
+  .pub-journal { font-style: italic; color: #666; margin-top: 6px; font-size: 0.95em; line-height: 1.4; }
+  .pub-badges { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
   .badge {
     padding: 2px 10px;
     border: 1px solid #333;
@@ -82,7 +82,7 @@ author_profile: true
   <div class="pub-content">
     <p class="pub-title">Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale</p>
     <div class="pub-authors">Xi Yang*, <strong><u>Haitao Chen</u></strong>*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer</div>
-    <div class="pub-journal">Optics Letters, 2025 <span style='color:#d9534f; font-size: 0.9em;'>(Editors' Pick, Featured in News)</span></div>
+    <div class="pub-journal">Optics Letters, 2025 <span style='color:#d9534f; font-size: 0.95em;'>(Editors' Pick, Featured in News)</span></div>
     <div class="pub-badges">
       <a href="https://doi.org/10.1364/OL.572466" class="badge">Journal</a>
       <a href="https://arxiv.org/abs/2507.09697" class="badge">Preprint</a>
