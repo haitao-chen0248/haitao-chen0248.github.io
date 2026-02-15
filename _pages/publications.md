@@ -6,165 +6,103 @@ author_profile: true
 ---
 
 <style>
-  .pub-container {
+  .pub-row {
     display: flex;
+    flex-wrap: nowrap;
+    margin-bottom: 2.5em;
     gap: 25px;
-    margin-bottom: 45px;
-    align-items: stretch;
+    align-items: flex-start;
   }
-  
   .pub-media {
-    flex: 0 0 240px;
-    height: 150px;
-    background-color: #fcfcfc; 
-    border: 1px solid #efefef;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* overflow: hidden; */
+    flex: 0 0 240px; /* 固定左侧图片宽度 */
+    max-width: 240px;
   }
-  
   .pub-media img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    padding: 2px;
+    width: 100%;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
   }
-  
-  .pub-body {
+  .pub-media img:hover {
+    transform: scale(1.02);
+  }
+  .pub-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
   }
-  
   .pub-title {
-    font-size: 1.1em;
-    font-weight: 700;
+    font-size: 1.15em;
+    font-weight: bold;
+    margin: 0 0 8px 0 !important;
     line-height: 1.3;
-    margin: 0 0 6px 0 !important;
   }
-  
-  .pub-authors, .pub-venue {
-    margin: 0 0 3px 0;
-    font-size: 0.92em;
-    line-height: 1.4;
-  }
-
-  .pub-links {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-top: 5px;
-  }
-  
-  .pub-btn {
-    padding: 1px 10px;
-    border: 1px solid #555;
+  .pub-authors { margin-bottom: 5px; font-size: 0.95em; }
+  .pub-journal { font-style: italic; color: #666; margin-bottom: 10px; }
+  .pub-badges { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    padding: 2px 10px;
+    border: 1px solid #333;
     border-radius: 4px;
-    font-size: 0.82em;
-    color: #444 !important;
+    font-size: 0.85em;
     text-decoration: none !important;
+    color: #333 !important;
+    transition: all 0.2s;
   }
+  .badge:hover { background: #333; color: #fff !important; }
   
-  .pub-btn:hover {
-    background: #555;
-    color: #fff !important;
-  }
-
   @media (max-width: 768px) {
-    .pub-container { flex-direction: column; gap: 10px; }
-    .pub-media { flex: 0 0 auto; width: 100%; max-width: 300px; height: 180px; }
+    .pub-row { flex-direction: column; }
+    .pub-media { flex: 0 0 auto; max-width: 100%; }
   }
 </style>
 
 (You can also find my articles on my [Google Scholar](https://scholar.google.com/citations?user=bZp1Yi8AAAAJ) profile. *co-first author)
 
-<div class='pub-container'>
-  <div class='pub-media'>
-    <img src='/images/Sideview.jpg' alt='Zebrafish 3D Analysis'>
+<div class="pub-row">
+  <div class="pub-media">
+    <a href="https://www.youtube.com/watch?v=j5l38dja1R4" target="_blank">
+      <img src="https://img.youtube.com/vi/j5l38dja1R4/maxresdefault.jpg" alt="Zebrafish 3D Analysis">
+    </a>
   </div>
-  <div class='pub-body'>
-    <div>
-      <p class='pub-title'>High-throughput multi-camera array microscope platform for automated 3D behavioral analysis of swimming zebrafish larvae</p>
-      <p class='pub-authors'><strong><u>Haitao Chen</u></strong>, Kevin Li, Lucas Kreiss, Paul Reamey, ..., Roarke Horstmeyer</p>
-      <p class='pub-venue'><em>Communications Biology</em>, 2026</p>
-    </div>
-    <div class='pub-links'>
-      <a href='https://doi.org/10.1038/s42003-025-09421-w' class='pub-btn'>Journal</a>
-      <a href='https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full' class='pub-btn'>Preprint</a>
-      <a href='https://github.com/haitao-chen0248/ZebraPheno3D' class='pub-btn'>Code</a>
-      <a href='https://www.youtube.com/watch?v=j5l38dja1R4' class='pub-btn'>Video</a>
-      <a href='https://www.youtube.com/watch?v=IXfsqg_8Y6I' class='pub-btn'>Talk</a>
-    </div>
-  </div>
-</div>
-
-<div class='pub-container'>
-  <div class='pub-media'>
-    <img src='/images/Reimaging.jpg' alt='Reimaging'>
-  </div>
-  <div class='pub-body'>
-    <div>
-      <p class='pub-title'>Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale</p>
-      <p class='pub-authors'>Xi Yang*, <strong><u>Haitao Chen</u></strong>*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer</p>
-      <p class='pub-venue'><em>Optics Letters</em>, 2025 <span style='color:#d9534f; font-size: 0.9em;'>(Editors' Pick, Featured in News)</span></p>
-    </div>
-    <div class='pub-links'>
-      <a href='https://doi.org/10.1364/OL.572466' class='pub-btn'>Journal</a>
-      <a href='https://arxiv.org/abs/2507.09697' class='pub-btn'>Preprint</a>
-      <a href='https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/' class='pub-btn'>Optica News</a>
-      <a href='https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html' class='pub-btn'>Phys.org</a>
-      <a href='https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/' class='pub-btn'>Bioengineer</a>
+  <div class="pub-content">
+    <p class="pub-title">High-throughput multi-camera array microscope platform for automated 3D behavioral analysis of swimming zebrafish larvae</p>
+    <div class="pub-authors"><strong><u>Haitao Chen</u></strong>, Kevin Li, Lucas Kreiss, Paul Reamey, ..., Roarke Horstmeyer</div>
+    <div class="pub-journal">Communications Biology, 2026</div>
+    <div class="pub-badges">
+      <a href="https://doi.org/10.1038/s42003-025-09421-w" class="badge">Journal</a>
+      <a href="https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full" class="badge">Preprint</a>
+      <a href="https://github.com/haitao-chen0248/ZebraPheno3D" class="badge">Code</a>
+      <a href="https://www.youtube.com/watch?v=j5l38dja1R4" class="badge">Video</a>
+      <a href="https://www.youtube.com/watch?v=IXfsqg_8Y6I&t=1s" class="badge">Talk</a>
     </div>
   </div>
 </div>
 
-<!-- <div class='pub-container'>
-  <div class='pub-media'>
-    <img src='/images/tomography_oe.jpg' alt='MEL-rFDT'>
+<div class="pub-row">
+  <div class="pub-media">
+    <img src="/images/gigapixel_microscopy_teaser.png" alt="Gigapixel Microscopy" onerror="this.src='https://via.placeholder.com/240x135?text=Gigapixel+Microscopy'">
   </div>
-  <div class='pub-body'>
-    <div>
-      <p class='pub-title'>Multierror learning enhanced fluorescence diffusion tomography in reflection geometry</p>
-      <p class='pub-authors'><strong><u>Haitao Chen</u></strong>, Kaixian Liu, Yuxuan Jiang, Yuxiang Dou, Yong Deng</p>
-      <p class='pub-venue'><em>Optics Express</em>, 2025</p>
-    </div>
-    <div class='pub-links'>
-      <a href='https://doi.org/10.1364/OE.560810' class='pub-btn'>Journal</a>
-    </div>
-  </div>
-</div>
-
-<div class='pub-container'>
-  <div class='pub-media'>
-    <img src='/images/optical_properties_boe.jpg' alt='Optical Property'>
-  </div>
-  <div class='pub-body'>
-    <div>
-      <p class='pub-title'>Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network</p>
-      <p class='pub-authors'><strong><u>Haitao Chen</u></strong>, Kaixian Liu, Yuxuan Jiang, Yafeng Liu, Yong Deng</p>
-      <p class='pub-venue'><em>Biomedical Optics Express</em>, 2023</p>
-    </div>
-    <div class='pub-links'>
-      <a href='https://doi.org/10.1364/BOE.489079' class='pub-btn'>Journal</a>
+  <div class="pub-content">
+    <p class="pub-title">Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale</p>
+    <div class="pub-authors">Xi Yang*, <strong><u>Haitao Chen</u></strong>*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer</div>
+    <div class="pub-journal">Optics Letters, 2025 <span style="color: #d9534f; font-weight: bold; font-size: 0.8em; margin-left: 10px;">★ Editors' Pick</span></div>
+    <div class="pub-badges">
+      <a href="https://doi.org/10.1364/OL.572466" class="badge">Journal</a>
+      <a href="https://arxiv.org/abs/2507.09697" class="badge">Preprint</a>
+      <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" class="badge">News Release</a>
     </div>
   </div>
 </div>
 
-<div class='pub-container'>
-  <div class='pub-media'>
-    <img src='/images/ssb_net_ol.jpg' alt='SSB-Net'>
+<div class="pub-row">
+  <div class="pub-media">
+    <img src="/images/fluorescence_tomography.png" alt="Tomography" onerror="this.src='https://via.placeholder.com/240x135?text=Tomography+Research'">
   </div>
-  <div class='pub-body'>
-    <div>
-      <p class='pub-title'>High-fidelity mesoscopic fluorescence molecular tomography based on SSB-Net</p>
-      <p class='pub-authors'>Kaixian Liu, Yuxuan Jiang, Wensong Li, <strong><u>Haitao Chen</u></strong>, Qingming Luo, Yong Deng</p>
-      <p class='pub-venue'><em>Optics Letters</em>, 2023</p>
-    </div>
-    <div class='pub-links'>
-      <a href='https://doi.org/10.1364/OL.475949' class='pub-btn'>Journal</a>
+  <div class="pub-content">
+    <p class="pub-title">Multierror learning enhanced fluorescence diffusion tomography in reflection geometry</p>
+    <div class="pub-authors"><strong><u>Haitao Chen</u></strong>, Kaixian Liu, Yuxuan Jiang, Yuxiang Dou, Yong Deng</div>
+    <div class="pub-journal">Optics Express, 2025</div>
+    <div class="pub-badges">
+      <a href="https://doi.org/10.1364/OE.560810" class="badge">Journal</a>
     </div>
   </div>
-</div> -->
+</div>
