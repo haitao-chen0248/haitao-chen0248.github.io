@@ -8,22 +8,28 @@ author_profile: true
 <style>
   .pub-container {
     display: flex;
-    gap: 30px;
-    margin-bottom: 50px;
+    gap: 25px;
+    margin-bottom: 45px;
     align-items: stretch;
   }
   
   .pub-media {
-    flex: 0 0 180px;
+    flex: 0 0 240px;
+    height: 150px;
+    background-color: #fcfcfc; 
+    border: 1px solid #efefef;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
   }
   
   .pub-media img {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 2px;
   }
   
   .pub-body {
@@ -34,41 +40,42 @@ author_profile: true
   }
   
   .pub-title {
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: 700;
     line-height: 1.3;
-    margin: 0 0 10px 0 !important;
+    margin: 0 0 6px 0 !important;
   }
   
   .pub-authors, .pub-venue {
-    margin: 0 0 5px 0;
+    margin: 0 0 3px 0;
+    font-size: 0.92em;
     line-height: 1.4;
   }
-  
+
   .pub-links {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 15px;
+    gap: 10px;
+    padding-top: 5px;
   }
   
   .pub-btn {
-    padding: 3px 12px;
-    border: 1px solid #444;
+    padding: 1px 10px;
+    border: 1px solid #555;
     border-radius: 4px;
-    font-size: 0.9em;
+    font-size: 0.82em;
     color: #444 !important;
     text-decoration: none !important;
   }
   
   .pub-btn:hover {
-    background: #444;
+    background: #555;
     color: #fff !important;
   }
 
-  @media (max-width: 600px) {
-    .pub-container { flex-direction: column; }
-    .pub-media { flex: 0 0 auto; width: 150px; }
+  @media (max-width: 768px) {
+    .pub-container { flex-direction: column; gap: 10px; }
+    .pub-media { flex: 0 0 auto; width: 100%; max-width: 300px; height: 180px; }
   }
 </style>
 
@@ -76,7 +83,7 @@ author_profile: true
 
 <div class="pub-container">
   <div class="pub-media">
-    <img src="/images/zebrafish_3d.jpg" alt="Zebrafish 3D Analysis">
+    <img src="/images/Sideview.jpg" alt="Zebrafish 3D Analysis">
   </div>
   <div class="pub-body">
     <div>
@@ -86,33 +93,37 @@ author_profile: true
     </div>
     <div class="pub-links">
       <a href="https://doi.org/10.1038/s42003-025-09421-w" class="pub-btn">Journal</a>
+      <a href="https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full" class="pub-btn">Preprint</a>
       <a href="https://github.com/haitao-chen0248/ZebraPheno3D" class="pub-btn">Code</a>
       <a href="https://www.youtube.com/watch?v=j5l38dja1R4" class="pub-btn">Video</a>
-      <img src="https://scholar.google.com/favicon.ico" width="16" height="16">
+      <a href="https://www.youtube.com/watch?v=IXfsqg_8Y6I" class="pub-btn">Talk</a>
     </div>
   </div>
 </div>
 
 <div class="pub-container">
   <div class="pub-media">
-    <img src="/images/gigapixel_ol.jpg" alt="Gigapixel Microscopy">
+    <img src="/images/Reimaging.jpg" alt="Reimaging">
   </div>
   <div class="pub-body">
     <div>
       <p class="pub-title">Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale</p>
       <p class="pub-authors">Xi Yang*, <strong><u>Haitao Chen</u></strong>*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer</p>
-      <p class="pub-venue"><em>Optics Letters</em>, 2025 <span style="color:#d9534f; font-size: 0.9em;">(Editors' Pick)</span></p>
+      <p class="pub-venue"><em>Optics Letters</em>, 2025 <span style="color:#d9534f; font-size: 0.9em;">(Editors' Pick, Featured in News)</span></p>
     </div>
     <div class="pub-links">
       <a href="https://doi.org/10.1364/OL.572466" class="pub-btn">Journal</a>
       <a href="https://arxiv.org/abs/2507.09697" class="pub-btn">Preprint</a>
+      <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" class="pub-btn">Optica News</a>
+      <a href="https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html" class="pub-btn">Phys.org</a>
+      <a href="https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/" class="pub-btn">Bioengineer</a>
     </div>
   </div>
 </div>
 
 <div class="pub-container">
   <div class="pub-media">
-    <img src="/images/tomography_oe.jpg" alt="Tomography">
+    <img src="/images/tomography_oe.jpg" alt="MEL-rFDT">
   </div>
   <div class="pub-body">
     <div>
@@ -128,7 +139,7 @@ author_profile: true
 
 <div class="pub-container">
   <div class="pub-media">
-    <img src="/images/optical_properties_boe.jpg" alt="Neural Network">
+    <img src="/images/optical_properties_boe.jpg" alt="Optical Property">
   </div>
   <div class="pub-body">
     <div>
