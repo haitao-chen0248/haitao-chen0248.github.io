@@ -11,7 +11,7 @@ author_profile: true
     border: 1px solid #f0f0f0;
     border-radius: 12px;
     padding: 24px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     transition: all 0.3s ease;
     position: relative;
   }
