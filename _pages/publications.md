@@ -22,7 +22,7 @@ author_profile: true
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   
   .pub-media img {
