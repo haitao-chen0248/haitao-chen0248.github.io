@@ -95,7 +95,7 @@ author_profile: true
 
 <div class="pub-row">
   <div class="pub-media">
-    <img src="/images/fluorescence_tomography.png" alt="Tomography" onerror="this.src='https://via.placeholder.com/240x135?text=Tomography+Research'">
+    <img src="/images/MEL_rFDT.jpeg" alt="Tomography" onerror="this.src='https://via.placeholder.com/240x135?text=Tomography+Research'">
   </div>
   <div class="pub-content">
     <p class="pub-title">Multierror learning enhanced fluorescence diffusion tomography in reflection geometry</p>
@@ -103,6 +103,34 @@ author_profile: true
     <div class="pub-journal">Optics Express, 2025</div>
     <div class="pub-badges">
       <a href="https://doi.org/10.1364/OE.560810" class="badge">Journal</a>
+    </div>
+  </div>
+</div>
+
+<div class="pub-row">
+  <div class="pub-media">
+    <img src="/images/optical_properties_boe.jpg" alt="Optical Property" onerror="this.src='https://via.placeholder.com/240x135?text=Optical+Property'">
+  </div>
+  <div class="pub-content">
+    <p class="pub-title">Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network</p>
+    <div class="pub-authors"><strong><u>Haitao Chen</u></strong>, Kaixian Liu, Yuxuan Jiang, Yafeng Liu, Yong Deng</div>
+    <div class="pub-journal">Biomedical Optics Express, 2023</div>
+    <div class="pub-badges">
+      <a href="https://doi.org/10.1364/BOE.489079" class="badge">Journal</a>
+    </div>
+  </div>
+</div>
+
+<div class="pub-row">
+  <div class="pub-media">
+    <img src="/images/ssb_net_ol.jpg" alt="SSB-Net" onerror="this.src='https://via.placeholder.com/240x135?text=SSB+Net'">
+  </div>
+  <div class="pub-content">
+    <p class="pub-title">High-fidelity mesoscopic fluorescence molecular tomography based on SSB-Net</p>
+    <div class="pub-authors">Kaixian Liu, Yuxuan Jiang, Wensong Li, <strong><u>Haitao Chen</u></strong>, Qingming Luo, Yong Deng</div>
+    <div class="pub-journal">Optics Letters, 2023</div>
+    <div class="pub-badges">
+      <a href="https://doi.org/10.1364/OL.475949" class="badge">Journal</a>
     </div>
   </div>
 </div>
