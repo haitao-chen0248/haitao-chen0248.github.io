@@ -90,7 +90,7 @@ author_profile: true
   </div>
   
   <div class="talk-info">
-    <span class="talk-date-badge">Jan 2026</span>
+    <span class="talk-date-badge">January 2026</span>
     <h3 class="talk-title-text">Automated 3D behavioral profiling of zebrafish larvae at high throughput</h3>
     
     <div class="talk-venue">
