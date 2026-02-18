@@ -11,19 +11,19 @@ I am a Ph.D. student in Biomedical Engineering at **Duke University**, advised b
 
 I work at the [Computational Optics Lab](https://horstmeyer.pratt.duke.edu/), aiming to bridge the gap between optical physics and modern machine learning. My work focuses on developing high-throughput optical imaging systems that reveal biological dynamics previously invisible to standard microscopy.
 
-<div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 5px solid #003087; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+<div style="margin: 15px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 5px solid #003087; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
     <h4 style="margin-top: 0; margin-bottom: 12px; font-size: 1.1rem; color: #333; font-weight: 700;">🔬 Research Focus</h4>
     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
         <span style="background: #e3f2fd; color: #0d47a1; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: 600; border: 1px solid #bbdefb;">Computational Imaging</span>
-        <span style="background: #e8f5e9; color: #1b5e20; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: 600; border: 1px solid #c8e6c9;">Deep Learning</span>
+        <span style="background: #e8f5e9; color: #1b5e20; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: 600; border: 1px solid #c8e6c9;">Artificial Intelligence</span>
         <span style="background: #fff3e0; color: #e65100; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: 600; border: 1px solid #ffe0b2;">Tomography Reconstruction</span>
-        <span style="background: #f3e5f5; color: #4a148c; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: 600; border: 1px solid #e1bee7;">Gigapixel Microscopy</span>
+        <span style="background: #f3e5f5; color: #4a148c; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: 600; border: 1px solid #e1bee7;">Light Field Microscopy</span>
     </div>
 </div>
 
-<h3 style="margin-top: 35px; margin-bottom: 15px; border-bottom: 2px solid #eaeaea; padding-bottom: 15px; font-size: 1.25rem; font-weight: 700; color: #222; letter-spacing: -0.5px;">🎓 Education</h3>
+<h3 style="margin-top: 30px; margin-bottom: 8px; border-bottom: 2px solid #eaeaea; padding-bottom: 12px; font-size: 1.25rem; font-weight: 700; color: #222; letter-spacing: -0.5px;">🎓 Education & Experience</h3>
 
-<div style="display: flex; flex-direction: column; gap: 20px; margin-top: 15px;">
+<div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
 
     <div style="display: flex; flex-direction: column; gap: 3px;">
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
