@@ -76,6 +76,9 @@ author_profile: true
     border-color: #999;
     text-decoration: none;
 }
+.btn-outline i {
+    margin-right: 6px;
+}
 </style>
 
 <div class="teaching-card">
@@ -104,7 +107,7 @@ author_profile: true
     </div>
 
     <div>
-      <a href="https://deepimaging.github.io/" class="btn-outline"><i class="fas fa-globe"></i> Course Website</a>
+      <a href="https://deepimaging.github.io/" class="btn-outline"><i class="fas fa-globe"></i>Course Website</a>
     </div>
   </div>
 </div>
