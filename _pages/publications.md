@@ -83,7 +83,7 @@ author_profile: true
       <a href="https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full" class="badge">Preprint</a>
       <a href="https://github.com/haitao-chen0248/ZebraPheno3D" class="badge">Code</a>
       <a href="https://www.youtube.com/watch?v=j5l38dja1R4" class="badge">Video</a>
-      <a href="https://www.youtube.com/watch?v=IXfsqg_8Y6I&t=1s" class="badge">Talk</a>
+      <a href="https://www.youtube.com/watch?v=IXfsqg_8Y6I" class="badge">Talk</a>
     </div>
   </div>
 </div>
@@ -99,6 +99,7 @@ author_profile: true
     <div class="pub-badges">
       <a href="https://doi.org/10.1364/OL.572466" class="badge">Journal</a>
       <a href="https://arxiv.org/abs/2507.09697" class="badge">Preprint</a>
+      <a href="https://www.youtube.com/watch?v=WSLuhnqptSg" class="badge">Talk</a>
       <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" class="badge">Optica News</a>
       <a href='https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html' class='badge'>Phys.org</a>
       <a href='https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/' class='badge'>Bioengineer</a>
