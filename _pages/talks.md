@@ -9,8 +9,8 @@ author_profile: true
   .talk-item {
     display: flex;
     gap: 30px;
-    margin-bottom: 50px;
-    padding: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
     background: #ffffff;
     border-radius: 12px;
     border: 1px solid #f0f0f0;
@@ -22,8 +22,8 @@ author_profile: true
   }
 
   .talk-video {
-    flex: 0 0 350px;
-    max-width: 350px;
+    flex: 0 0 300px;
+    max-width: 300px;
   }
 
   .video-container {
@@ -62,7 +62,7 @@ author_profile: true
   }
 
   .talk-title-text {
-    font-size: 1.25em;
+    font-size: 1.15em;
     font-weight: 700;
     margin: 0 0 12px 0 !important;
     line-height: 1.4;
@@ -72,7 +72,7 @@ author_profile: true
   .talk-venue {
     font-size: 0.95em;
     color: #666;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
   }
 
   
