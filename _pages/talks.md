@@ -85,6 +85,26 @@ author_profile: true
 <div class="talk-item">
   <div class="talk-video">
     <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/WSLuhnqptSg" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+  
+  <div class="talk-info">
+    <span class="talk-date-badge">January 2026</span>
+    <h3 class="talk-title-text">Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale</h3>
+    
+    <div class="talk-venue">
+      <strong style="display: block; margin-bottom: 6px; color: #333;">SPIE Photonics West 2026</strong>
+      <span style="color: #888; font-size: 0.92em;">
+        <i class="fas fa-map-marker-alt"></i> San Francisco, CA
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="talk-item">
+  <div class="talk-video">
+    <div class="video-container">
       <iframe src="https://www.youtube.com/embed/IXfsqg_8Y6I" frameborder="0" allowfullscreen></iframe>
     </div>
   </div>
