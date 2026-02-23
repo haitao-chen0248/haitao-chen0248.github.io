@@ -195,6 +195,38 @@ author_profile: true
 <div class="news-card">
   <div class="news-row">
     <div class="news-media-side">
+      <div class="slider-container">
+        <input type="radio" name="slider-2024" id="slide1">
+        <input type="radio" name="slider-2024" id="slide2">
+        
+        <div class="slider-wrapper">
+          <img src='/images/HUST1.jpg' alt="Graduation Ceremony">
+          <img src='/images/HUST2.jpg' alt="Meeting Prof. Deng">
+        </div>
+
+        <div class="slider-nav">
+          <label for="slide1">❮</label>
+          <label for="slide2">❯</label>
+        </div>
+
+        <div class="slider-dots">
+          <label for="slide1" class="dot dot-auto"></label>
+          <label for="slide2" class="dot dot-auto"></label>
+        </div>
+      </div>
+    </div>
+    <div class="news-body-side">
+      <span class="news-date">June 2024</span>
+      <div class="news-content">
+         Closing a wonderful chapter at <strong>HUST</strong>🎓! Looking back on years of dedication and growth, I owe a huge debt of gratitude to my advisor, <strong>Prof. Yong Deng</strong>, for her invaluable mentorship. This journey has laid the foundation for my passion in optics and imaging. Excited to see where these next steps lead!
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="news-card">
+  <div class="news-row">
+    <div class="news-media-side">
       <img src='/images/BME2023.jpg' class="news-img-single" alt="BME 2023 Suzhou">
     </div>
     <div class="news-body-side">
