@@ -181,6 +181,25 @@ author_profile: true
 <div class="news-card">
   <div class="news-row">
     <div class="news-media-side">
+      <img src='/images/Reimaging_News.jpg' class="news-img-single" alt="Curvature-adaptive gigapixel microscopy">
+    </div>
+    <div class="news-body-side">
+      <span class="news-date">September 2025</span>
+      <div class="news-content">
+        Our new <strong>curvature-adaptive gigapixel microscopy</strong> has been published and featured as an <strong>Editors' Pick</strong>! This research is gaining some interest and press including 
+        <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" target="_blank">Optica</a>, 
+        <a href="https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html" target="_blank">Phys.org</a>, 
+        <a href="https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/" target="_blank">Bioengineer</a>, 
+        <a href="https://www.f4news.com/2025/10/06/billion-pixel-resolution-microscopy-of-curved-surfaces-2/" target="_blank">F4 News</a>, and 
+        <a href="https://www.photonics.com/" target="_blank">Photonics Spectra</a>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="news-card">
+  <div class="news-row">
+    <div class="news-media-side">
       <img src='/images/PW25.jpg' class="news-img-single" alt="Moscone Center">
     </div>
     <div class="news-body-side">
