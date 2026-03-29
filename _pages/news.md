@@ -190,6 +190,9 @@ author_profile: true
         <a href="https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" target="_blank">Optica</a>, 
         <a href="https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html" target="_blank">Phys.org</a>, 
         <a href="https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/" target="_blank">Bioengineer</a>, 
+        <a href="https://sciencesources.eurekalert.org/news-releases/1098403" target="_blank">EurekAlert!</a>, 
+        <a href="https://www.nanowerk.com/nanotechnology-news3/newsid=67657.php" target="_blank">Nanowerk</a>, 
+        <a href="https://optics.org/news/16/9/41" target="_blank">Optics.org</a>, 
         <a href="https://www.f4news.com/2025/10/06/billion-pixel-resolution-microscopy-of-curved-surfaces-2/" target="_blank">F4 News</a>, and 
         <a href="https://www.photonics.com/" target="_blank">Photonics Spectra</a>.
       </div>
