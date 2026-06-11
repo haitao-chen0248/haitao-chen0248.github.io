@@ -30,7 +30,7 @@ I work at the [Computational Optics Lab](https://horstmeyer.pratt.duke.edu/), ai
             <div style="font-size: 1.1rem; font-weight: 700; color: #003087;">Duke University</div>
             <span style="font-size: 0.85rem; color: #666; background: #eee; padding: 2px 8px; border-radius: 4px;">2024 - Present</span>
         </div>
-        <div style="font-style: italic; color: #444; margin-bottom: 4px;">Ph.D. Student in Biomedical Engineering</div>
+        <div style="font-style: italic; color: #444; margin-bottom: 4px;">Ph.D. Candidate in Biomedical Engineering</div>
         
         <div style="background: #fcfcfc; border-left: 3px solid #003087; padding: 10px 15px; border-radius: 0 4px 4px 0; font-size: 0.95rem; color: #555;">
             Developing next-generation computational microscopes and high-throughput imaging systems.
