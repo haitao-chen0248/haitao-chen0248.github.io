@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a Ph.D. student in Biomedical Engineering at **Duke University**, advised by Prof. [Roarke Horstmeyer](https://bme.duke.edu/people/roarke-horstmeyer/). 
+I am a Ph.D. candidate in Biomedical Engineering at **Duke University**, advised by Prof. [Roarke Horstmeyer](https://bme.duke.edu/people/roarke-horstmeyer/). 
 
 I work at the [Computational Optics Lab](https://horstmeyer.pratt.duke.edu/), aiming to bridge the gap between optical physics and modern machine learning. My work focuses on developing high-throughput optical imaging systems that reveal biological dynamics previously invisible to standard microscopy.
 
