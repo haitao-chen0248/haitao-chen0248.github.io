@@ -149,6 +149,20 @@ author_profile: true
 <div class="news-card">
   <div class="news-row">
     <div class="news-media-side">
+      <img src='/images/prelim.jpg' class="news-img-single" alt="Prelim Exam">
+    </div>
+    <div class="news-body-side">
+      <span class="news-date">June 2026</span>
+      <div class="news-content">
+        A major milestone achieved! Today I successfully passed my <strong>Ph.D. Preliminary Exam</strong>. Heartfelt thanks to my committee and labmates for their incredible support along the way. Officially a Ph.D. Candidate now! 
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="news-card">
+  <div class="news-row">
+    <div class="news-media-side">
       <div class="slider-container">
         <input type="radio" name="slider-2026" id="slide1">
         <input type="radio" name="slider-2026" id="slide2">
