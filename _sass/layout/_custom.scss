@@ -397,3 +397,35 @@ html[data-theme="dark"] {
     text-decoration: none;
   }
 }
+
+/* Page layout
+   Pin the footer to the bottom on short pages and keep it clear of the
+   fixed sidebar on wide screens.
+   ========================================================================== */
+
+:root {
+  --hc-footer-height: 3rem;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 0; // template reserves 9em for its old fixed footer
+}
+
+body > #main {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+.page__footer {
+  flex-shrink: 0;
+}
+
+@media screen and (min-width: $sidebar-screen-min-width) {
+  .sidebar {
+    top: 2rem; // matches #main margin-top
+    height: calc(100vh - 2rem - var(--hc-footer-height));
+  }
+}
