@@ -65,6 +65,17 @@ html[data-theme="dark"] {
   }
 }
 
+/* Smaller thumbnail for square images such as course logos */
+.hc-media--sm {
+  flex-basis: 180px;
+  max-width: 180px;
+
+  @media (max-width: 768px) {
+    width: 180px;
+    max-width: 180px;
+  }
+}
+
 .hc-body {
   flex: 1;
   min-width: 0;
@@ -428,5 +439,72 @@ body > #main {
   .sidebar {
     top: 2rem; // matches #main margin-top
     height: calc(100vh - 2rem - var(--hc-footer-height));
+  }
+}
+
+/* Aligned card: square image on the left; text top aligns with the image
+   top and the footer row aligns with the image bottom
+   ========================================================================== */
+
+.hc-card--aligned {
+  align-items: stretch;
+
+  .hc-media {
+    align-self: flex-start;
+
+    img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+  }
+
+  .hc-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .hc-title {
+    margin: 0 0 6px 0 !important;
+    font-size: 1.1em;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .hc-pills {
+    margin-bottom: 8px;
+  }
+
+  .hc-desc {
+    color: var(--hc-muted);
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+
+  .hc-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--global-border-color);
+  }
+
+  .hc-foot .hc-meta {
+    margin: 0;
+    font-size: 0.88em;
+    color: var(--hc-muted);
+
+    i {
+      margin-right: 4px;
+    }
+  }
+
+  .hc-foot .hc-badges {
+    margin: 0;
   }
 }
