@@ -1,27 +1,16 @@
-# The following is the order of the links in the header of the website.
-#
-# Changing the order here will adjust the order and you can also add additional
-# links. Removing a link prevents it from showing in the header, but does not
-# prevent it from being included in the site.
-
+# Top navigation bar. Order here is the order on the site.
 main:
   - title: "About"
-    url: /about/ 
-
-  # - title: "Research"
-  #   url: /research/ 
+    url: /
 
   - title: "Publications"
     url: /publications/
-  
+
   - title: "Talks"
     url: /talks/
 
   - title: "News"
-    url: /news/ 
+    url: /news/
 
   - title: "Teaching"
-    url: /teaching/   
-    
-  # - title: "CV"
-  #   url: /cv/
+    url: /teaching/
