@@ -412,6 +412,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
   padding-bottom: 0; // template reserves 9em for its old fixed footer
+  margin-bottom: 0 !important; // override inline margin set by bumpIt() in _main.js
 }
 
 body > #main {
