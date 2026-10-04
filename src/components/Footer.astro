@@ -79,9 +79,13 @@ const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.co
     padding-left: 10px;
   }
 
+  /* Phones: even columns instead of rows that wrap unevenly */
   @media (max-width: 640px) {
     .links {
-      gap: 4px 16px;
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
+      gap: 6px 24px;
     }
 
     .links li + li {

@@ -15,7 +15,8 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
   {
     href && (
       <a class="more-link" href={href}>
-        {linkLabel}
+        <span class="label">{linkLabel}</span>
+        <span class="label-short">View all</span>
         <span class="arrow" aria-hidden="true">
           →
         </span>
@@ -36,5 +37,30 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
   h2 {
     font-size: clamp(22px, 2.6vw, 28px);
     letter-spacing: -0.022em;
+  }
+
+  .label-short {
+    display: none;
+  }
+
+  /* Phones: "View all" instead of e.g. "All publications" keeps the title on one line */
+  @media (max-width: 420px) {
+    .label {
+      display: none;
+    }
+
+    .label-short {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .section-head {
+      gap: 12px;
+    }
+
+    h2 {
+      font-size: 21px;
+    }
   }
 </style>
