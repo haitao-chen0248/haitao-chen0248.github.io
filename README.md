@@ -1,4 +1,4 @@
-# haitao-chen0248.github.io
+# Haitao Chen's Homepage
 
 Source of my personal academic website, [haitao-chen0248.github.io](https://haitao-chen0248.github.io).
 
