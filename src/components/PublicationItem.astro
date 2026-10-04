@@ -17,9 +17,11 @@ const citeId = `cite-${pub.id}`;
 ---
 
 <article class="pub reveal">
-  <a class="media frame frame--figure" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-    <Image src={image} alt={imageAlt} widths={[320, 480, 640]} sizes="(max-width: 720px) 100vw, 240px" />
-  </a>
+  <div class="media">
+    <a class="frame frame--figure" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+      <Image src={image} alt={imageAlt} widths={[320, 480, 640]} sizes="(max-width: 720px) 100vw, 240px" />
+    </a>
+  </div>
 
   <div class="body">
     <p class="eyebrow">
@@ -135,11 +137,15 @@ const citeId = `cite-${pub.id}`;
     align-items: start;
   }
 
-  .media {
+  /* The figure link gets its own grid cell, so anything a browser extension
+     inserts after links (citation badges, for example) stays in that cell
+     instead of pushing the text column onto a new row. */
+  .media a {
+    display: block;
     aspect-ratio: 16 / 10;
   }
 
-  .media:hover :global(img) {
+  .media a:hover :global(img) {
     transform: scale(1.03);
   }
 
@@ -178,6 +184,13 @@ const citeId = `cite-${pub.id}`;
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 14px;
+  }
+
+  /* A flex row keeps anything an extension adds after a link beside its chip. */
+  .links li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   /* Expanded state of the Cite chip */
