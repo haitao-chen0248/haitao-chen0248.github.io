@@ -32,7 +32,7 @@ const publications = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      // Plain author string. "Haitao Chen" is highlighted automatically.
+      // Plain author string. The site owner's name (site.name) is highlighted automatically.
       authors: z.string(),
       venue: z.string(),
       year: z.number().int(),

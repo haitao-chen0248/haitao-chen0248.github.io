@@ -1,5 +1,7 @@
 // Small formatting helpers shared by pages and components.
 
+import { site } from '@/config';
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /** "2026-06" -> "Jun 2026" */
@@ -22,7 +24,7 @@ export interface AuthorPart {
  * Splits an author string so the site owner's name can be emphasized.
  * Co-first markers ("*") stay attached to the name they follow.
  */
-export function splitAuthors(authors: string, self = 'Haitao Chen'): AuthorPart[] {
+export function splitAuthors(authors: string, self: string = site.name): AuthorPart[] {
   const pattern = new RegExp(`(${self.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\*?)`, 'g');
   return authors
     .split(pattern)
