@@ -20,7 +20,6 @@ Built with [Astro](https://astro.build) and a custom minimal theme. Light and da
 | `src/components/` | Header, footer, publication entry, icons, video embed, etc. |
 | `public/` | Files copied as-is: favicons, `robots.txt` |
 | `.github/workflows/deploy.yml` | Builds and publishes the site on every push to `master` |
-| `CLAUDE.md` | Project notes and design decisions for Claude Code |
 
 Content files are checked against the schemas in `src/content.config.ts`, so a missing field or a bad date fails the build with a clear message.
 
