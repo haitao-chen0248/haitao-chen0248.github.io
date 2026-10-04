@@ -7,7 +7,7 @@ export const site = {
   title: 'Haitao Chen · Computational Imaging',
   // Home page summary in search results and link previews.
   description:
-    'Haitao Chen, Ph.D. candidate in Biomedical Engineering at Duke University, working on computational imaging, optical system design, and machine learning.',
+    'Optics and machine learning, designed as one. Building computational imaging systems that capture biological dynamics invisible to standard microscopy.',
   // Subtitle shown under the name on the home page.
   role: 'Ph.D. Candidate in Biomedical Engineering at Duke University',
   // Job title and institution in the structured data read by search engines.
