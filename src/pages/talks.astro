@@ -140,6 +140,13 @@ const groups = years.map((year) => ({ year, items: talks.filter((t) => t.date.st
     margin-top: 14px;
   }
 
+  /* A flex row keeps anything an extension adds after a link beside its chip. */
+  .links li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   @media (max-width: 760px) {
     .talk {
       grid-template-columns: minmax(0, 1fr);
