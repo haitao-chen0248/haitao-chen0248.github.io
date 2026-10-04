@@ -12,7 +12,7 @@ Requires Node.js 24 (set in `.nvmrc`).
 npm install
 npm run dev       # http://localhost:4321
 npm run build     # production build into dist/
-npm run check     # type-check pages and content
+npm run check     # type-check code and validate content (the deploy runs it first)
 ```
 
 ## Use it for your own site
@@ -34,13 +34,13 @@ npm run check     # type-check pages and content
 | `src/components/` | Header, footer, publication entry, icons, video embed |
 | `src/utils/` | Shared helpers: dates, sorting, profile links, share card version |
 | `src/styles/global.css` | Color, type, and spacing tokens for both themes |
-| `public/` | Files served as-is: favicons, `robots.txt`, `cv.pdf` |
+| `public/` | Files served as-is: favicons, `robots.txt`, and `cv.pdf` once added |
 
 Content is validated against `src/content.config.ts`, so a missing field or a bad date fails the build.
 
 ## Content
 
-Entries appear in file order, so put new ones at the top.
+In the YAML files, entries appear in file order, so put new ones at the top. News is sorted by date.
 
 **Publication** (`src/content/publications.yaml`):
 
@@ -54,8 +54,10 @@ Entries appear in file order, so put new ones at the top.
   featured: true                       # optional: also list on the home page
   image: ../assets/images/pubs/figure.jpg
   imageAlt: One-line description of the figure
-  links:
+  links:                               # the first link is also used for the title and figure
     - { label: Journal, url: "https://doi.org/..." }
+  press:                               # optional: "In the press" links
+    - { label: Outlet, url: "https://..." }
   bibtex: |                            # optional: adds a Cite button and joins /publications.bib
     @article{...}
 ```
@@ -77,9 +79,9 @@ Full text in Markdown.
 
 **Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link.
 
-**Teaching** (`teaching.yaml`): course, term, role, instructor, an image, and optional links.
+**Teaching** (`teaching.yaml`): course code, title, term, role, description, instructor, an image with alt text, and optional links.
 
-**Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png`, with an optional `<id>-white.png` for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` is shown until a logo exists.
+**Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png` (or `.jpg`, `.webp`, `.svg`), with an optional `<id>-white` version for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` (or the initials) is shown until a logo exists.
 
 **CV**: put the PDF at `public/cv.pdf` and a CV link appears on the home page and in the footer.
 
