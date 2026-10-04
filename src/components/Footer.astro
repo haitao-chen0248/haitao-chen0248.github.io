@@ -79,13 +79,23 @@ const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.co
     padding-left: 10px;
   }
 
-  /* Phones: even columns instead of rows that wrap unevenly */
+  /* Phones: a lighter footer with the links in even columns */
   @media (max-width: 640px) {
+    .site-footer {
+      margin-top: 28px;
+    }
+
+    .inner {
+      gap: 8px;
+      padding-block: 16px 20px;
+      font-size: 11px;
+    }
+
     .links {
       display: grid;
       grid-template-columns: repeat(3, auto);
       justify-content: start;
-      gap: 6px 24px;
+      gap: 2px 20px;
     }
 
     .links li + li {

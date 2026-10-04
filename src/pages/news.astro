@@ -4,7 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import Slideshow from '@/components/Slideshow.astro';
 import { site } from '@/config';
-import { byNewest, formatMonth, groupByYear, isoMonth } from '@/utils/format';
+import { byNewest, formatMonth, groupByYear, isoMonth, wrapFriendly } from '@/utils/format';
 
 const items = (await getCollection('news')).sort(byNewest);
 
@@ -41,7 +41,7 @@ const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
                     <p class="eyebrow">
                       <time datetime={isoMonth(item.data.date)}>{formatMonth(item.data.date)}</time>
                     </p>
-                    <h3 class="headline">{item.data.title}</h3>
+                    <h3 class="headline" set:html={wrapFriendly(item.data.title)} />
                     <div class="prose body">
                       <Content />
                     </div>
@@ -112,6 +112,21 @@ const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
     .entry {
       grid-template-columns: minmax(0, 1fr);
       gap: 16px;
+    }
+  }
+
+  /* Phone type scale */
+  @media (max-width: 600px) {
+    .year {
+      font-size: 14px;
+    }
+
+    .headline {
+      font-size: 16.5px;
+    }
+
+    .body {
+      font-size: 14.5px;
     }
   }
 </style>

@@ -2,7 +2,7 @@
 // One publication: figure on the left, venue, title, authors, and links on the right.
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import { splitAuthors } from '@/utils/format';
+import { splitAuthors, wrapFriendly } from '@/utils/format';
 
 interface Props {
   pub: CollectionEntry<'publications'>;
@@ -32,11 +32,9 @@ const citeId = `cite-${pub.id}`;
     <h3 class="title">
       {
         primary ? (
-          <a href={primary} target="_blank" rel="noopener">
-            {title}
-          </a>
+          <a href={primary} target="_blank" rel="noopener" set:html={wrapFriendly(title)} />
         ) : (
-          title
+          <Fragment set:html={wrapFriendly(title)} />
         )
       }
     </h3>
@@ -256,6 +254,22 @@ const citeId = `cite-${pub.id}`;
     .pub {
       grid-template-columns: minmax(0, 1fr);
       gap: 16px;
+    }
+  }
+
+  /* Phone type scale */
+  @media (max-width: 600px) {
+    .title {
+      font-size: 16px;
+    }
+
+    .authors {
+      font-size: 13px;
+    }
+
+    .press,
+    .press a {
+      font-size: 13px;
     }
   }
 </style>

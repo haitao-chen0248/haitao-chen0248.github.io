@@ -5,7 +5,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import { site } from '@/config';
-import { byFileOrder } from '@/utils/format';
+import { byFileOrder, wrapFriendly } from '@/utils/format';
 
 const courses = (await getCollection('teaching')).sort(byFileOrder);
 ---
@@ -25,10 +25,8 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
             <p class="eyebrow">
               {data.term} · {data.role}
             </p>
-            <h2>
-              {data.course}: {data.title}
-            </h2>
-            <p class="desc">{data.description}</p>
+            <h2 set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
+            <p class="desc" set:html={wrapFriendly(data.description)} />
 
             <div class="foot">
               <p class="instructor">
@@ -143,7 +141,7 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     h2 {
       grid-column: 2;
       align-self: start;
-      font-size: 17.5px;
+      font-size: 16px;
     }
 
     .desc,
@@ -153,6 +151,11 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
 
     .desc {
       margin-top: 14px;
+      font-size: 14.5px;
+    }
+
+    .foot {
+      font-size: 13px;
     }
   }
 </style>

@@ -118,6 +118,13 @@
   }
 }
 
+/* Phones use a slightly smaller type scale; components adjust their own sizes */
+@media (max-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+}
+
 /* Reset
    ========================================================================== */
 
@@ -366,6 +373,17 @@ a.text-link:hover {
   transform: none;
 }
 
+/* Line breaks on phones: see wrapFriendly() in src/utils/format.ts */
+@media (max-width: 760px) {
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .phrase {
+    display: inline-block;
+  }
+}
+
 /* Small type
    ========================================================================== */
 
@@ -379,6 +397,12 @@ a.text-link:hover {
   font-weight: 500;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .eyebrow {
+    font-size: 12.5px;
+  }
 }
 
 /* Media

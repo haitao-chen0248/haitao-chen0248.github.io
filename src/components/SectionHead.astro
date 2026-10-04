@@ -54,13 +54,15 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
     }
   }
 
+  @media (max-width: 600px) {
+    h2 {
+      font-size: 20px;
+    }
+  }
+
   @media (max-width: 380px) {
     .section-head {
       gap: 12px;
-    }
-
-    h2 {
-      font-size: 21px;
     }
   }
 </style>

@@ -5,7 +5,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import YouTube from '@/components/YouTube.astro';
 import { site } from '@/config';
-import { byFileOrder, formatMonth, groupByYear, isoMonth } from '@/utils/format';
+import { byFileOrder, formatMonth, groupByYear, isoMonth, wrapFriendly } from '@/utils/format';
 
 // Shown in the order they appear in talks.yaml (newest first), grouped by year.
 const talks = await Promise.all(
@@ -46,7 +46,7 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
                       {talk.event} · <time datetime={isoMonth(talk.date)}>{formatMonth(talk.date)}</time>
                     </span>
                   </p>
-                  <h3>{talk.title}</h3>
+                  <h3 set:html={wrapFriendly(talk.title)} />
                   <p class="location">{talk.location}</p>
 
                   <ul class="links">
@@ -150,6 +150,21 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
     .talk {
       grid-template-columns: minmax(0, 1fr);
       gap: 16px;
+    }
+  }
+
+  /* Phone type scale */
+  @media (max-width: 600px) {
+    .year {
+      font-size: 14px;
+    }
+
+    h3 {
+      font-size: 16.5px;
+    }
+
+    .location {
+      font-size: 13px;
     }
   }
 </style>
