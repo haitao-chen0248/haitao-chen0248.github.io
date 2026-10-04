@@ -20,8 +20,7 @@ export const site = {
     'Computational Imaging',
     'Machine Learning',
     'Differentiable Optics',
-    'Inverse Problems',
-    'Light Field',
+    'Inverse Problems'
   ],
 } as const;
 
