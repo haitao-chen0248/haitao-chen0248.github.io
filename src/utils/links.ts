@@ -10,12 +10,20 @@ export interface ProfileLink {
   href: string;
   /** Open in a new tab (external sites and the PDF). */
   newTab: boolean;
+  /** Left out of the footer on phones. */
+  secondary: boolean;
 }
 
 export function profileLinks(): ProfileLink[] {
-  const list: ProfileLink[] = links.map((l) => ({ ...l, newTab: l.href.startsWith('http') }));
+  const list: ProfileLink[] = links.map((l) => ({
+    label: l.label,
+    icon: l.icon,
+    href: l.href,
+    newTab: l.href.startsWith('http'),
+    secondary: 'secondary' in l && l.secondary,
+  }));
   if (existsSync(path.join(process.cwd(), 'public', cv.file))) {
-    list.unshift({ label: cv.label, icon: 'cv', href: `/${cv.file}`, newTab: true });
+    list.unshift({ label: cv.label, icon: 'cv', href: `/${cv.file}`, newTab: true, secondary: false });
   }
   return list;
 }

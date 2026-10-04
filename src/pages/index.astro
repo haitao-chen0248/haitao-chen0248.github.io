@@ -112,7 +112,7 @@ function initials(org: string): string {
     <div class="container">
       <SectionHead title="Selected publications" href="/publications/" linkLabel="All publications" />
       <div class="pub-list">
-        {featured.map((pub) => <PublicationItem pub={pub} />)}
+        {featured.map((pub) => <PublicationItem pub={pub} compact />)}
       </div>
     </div>
   </section>
@@ -291,24 +291,6 @@ function initials(org: string): string {
     white-space: nowrap;
   }
 
-  /* When the line wraps on phones, a rounded box reads better than a pill */
-  @media (max-width: 560px) {
-    .status {
-      border-radius: 14px;
-    }
-
-    /* Hug the text: as wide as its longest phrase, so no empty space is
-       left beside the wrapped lines */
-    .status {
-      width: min-content;
-      max-width: 100%;
-    }
-
-    .status :global(.phrase) {
-      white-space: nowrap;
-    }
-  }
-
   /* Research interests: labeled, tinted tags */
   .interests {
     margin-top: 28px;
@@ -377,23 +359,9 @@ function initials(org: string): string {
     color: var(--text);
   }
 
-  /* Phones: smaller tags, and profile links in an even two-column grid
-     instead of rows that wrap unevenly */
   @media (max-width: 480px) {
     .tags li {
       padding: 4px 10px;
-      font-size: 12.5px;
-    }
-
-    .pills {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .pills a {
-      width: 100%;
-      height: 32px;
-      padding: 0 12px;
       font-size: 12.5px;
     }
   }
@@ -486,6 +454,63 @@ function initials(org: string): string {
 
     .pills {
       margin-top: 20px;
+    }
+  }
+
+  /* Phones: the availability line is a full-width card with centered text,
+     and the profile links are a row of evenly spaced round icon buttons
+     (the names stay available to screen readers) */
+  @media (max-width: 560px) {
+    .status {
+      display: block;
+      justify-self: stretch;
+      padding: 10px 14px;
+      border-radius: 14px;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .status .dot {
+      display: inline-block;
+      margin: 0 8px 1px 0;
+      vertical-align: middle;
+    }
+
+    .status :global(.phrase) {
+      white-space: nowrap;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .pills li {
+      flex: 0 1 44px;
+    }
+
+    .pills a {
+      justify-content: center;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      padding: 0;
+    }
+
+    .pills a span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .pills :global(svg) {
+      width: 18px;
+      height: 18px;
     }
   }
 

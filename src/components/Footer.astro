@@ -19,7 +19,7 @@ const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.co
     <ul class="links">
       {
         profileLinks().map((link) => (
-          <li>
+          <li class:list={{ secondary: link.secondary }}>
             <a href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
               {link.label}
             </a>
@@ -79,23 +79,24 @@ const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.co
     padding-left: 10px;
   }
 
-  /* Phones: a lighter footer with the links in even columns */
+  /* Phones: two short rows, the copyright line and the main links */
   @media (max-width: 640px) {
     .site-footer {
       margin-top: 28px;
     }
 
     .inner {
-      gap: 8px;
-      padding-block: 16px 20px;
+      gap: 6px;
+      padding-block: 14px 16px;
       font-size: 11px;
     }
 
     .links {
-      display: grid;
-      grid-template-columns: repeat(3, auto);
-      justify-content: start;
-      gap: 2px 20px;
+      gap: 2px 18px;
+    }
+
+    .links .secondary {
+      display: none;
     }
 
     .links li + li {
