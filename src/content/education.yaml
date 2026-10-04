@@ -5,7 +5,7 @@
 - id: duke
   org: Duke University
   abbr: Duke
-  role: Ph.D. Candidate in Biomedical Engineering
+  role: Ph.D. in Biomedical Engineering
   years: 2024 – Present
   description: Developing next-generation computational microscopes and high-throughput imaging systems.
   advisor: { name: Prof. Roarke Horstmeyer, url: "https://bme.duke.edu/people/roarke-horstmeyer/" }
@@ -25,4 +25,4 @@
   role: B.Eng. in Biomedical Engineering
   years: 2020 – 2024
   description: Fluorescence diffuse optical tomography, physics-informed 3D reconstruction, and real-time optical property inversion of whole tissue.
-  advisor: { name: Prof. Yong Deng, url: "http://faculty.hust.edu.cn/dengyong/en/index.htm" }
+  advisor: { name: Prof. Yong Deng, url: "http://faculty.hust.edu.cn/dengyong/en/" }
