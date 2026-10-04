@@ -249,6 +249,7 @@ function initials(org: string): string {
     font-weight: 500;
     letter-spacing: -0.015em;
     color: var(--text-2);
+    text-wrap: balance;
   }
 
   .lead {
@@ -293,6 +294,10 @@ function initials(org: string): string {
   @media (max-width: 560px) {
     .status {
       border-radius: 14px;
+    }
+
+    .status > span:not(.dot) {
+      text-wrap: balance;
     }
   }
 
@@ -355,12 +360,33 @@ function initials(org: string): string {
   }
 
   .pills :global(svg) {
+    flex: none;
     color: var(--text-2);
     transition: color 0.2s;
   }
 
   .pills a:hover :global(svg) {
     color: var(--text);
+  }
+
+  /* Phones: smaller tags, and profile links in an even two-column grid
+     instead of rows that wrap unevenly */
+  @media (max-width: 480px) {
+    .tags li {
+      padding: 4px 10px;
+      font-size: 13px;
+    }
+
+    .pills {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pills a {
+      width: 100%;
+      padding: 0 12px;
+      font-size: 13px;
+    }
   }
 
   .portrait {
@@ -524,24 +550,47 @@ function initials(org: string): string {
     font-variant-numeric: tabular-nums;
   }
 
+  /* Phones: logo beside the years, school, and degree; the description and
+     advisor use the full width below */
   @media (max-width: 640px) {
     .edu li {
       grid-template-columns: 56px minmax(0, 1fr);
       grid-template-areas:
         'logo years'
-        'logo main';
+        'logo org'
+        'logo role'
+        'desc desc'
+        'advisor advisor';
       column-gap: 14px;
       row-gap: 0;
     }
 
     .edu-logo {
       grid-area: logo;
+      align-self: center;
       width: 56px;
       height: 40px;
     }
 
     .edu-main {
-      grid-area: main;
+      display: contents;
+    }
+
+    .edu h3 {
+      grid-area: org;
+    }
+
+    .edu-role {
+      grid-area: role;
+    }
+
+    .edu-desc {
+      grid-area: desc;
+      margin-top: 10px;
+    }
+
+    .edu-advisor {
+      grid-area: advisor;
     }
 
     .edu-years {

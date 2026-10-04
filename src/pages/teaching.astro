@@ -116,13 +116,43 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     color: var(--text-3);
   }
 
+  /* Phones: a small course image beside the term and title; the description
+     and footer use the full width below */
   @media (max-width: 640px) {
     .course {
-      grid-template-columns: 1fr;
+      grid-template-columns: 64px minmax(0, 1fr);
+      column-gap: 16px;
+      row-gap: 0;
     }
 
     .logo {
-      width: 112px;
+      grid-row: span 2;
+      align-self: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .body {
+      display: contents;
+    }
+
+    .eyebrow {
+      grid-column: 2;
+      align-self: end;
+    }
+
+    h2 {
+      grid-column: 2;
+      align-self: start;
+      font-size: 17.5px;
+    }
+
+    .desc,
+    .foot {
+      grid-column: 1 / -1;
+    }
+
+    .desc {
+      margin-top: 14px;
     }
   }
 </style>
