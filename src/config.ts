@@ -3,11 +3,16 @@
 
 export const site = {
   name: 'Haitao Chen',
-  title: 'Haitao Chen',
+  // Home page title in browser tabs and search results. Other pages use "Page · name".
+  title: 'Haitao Chen · Computational Imaging',
+  // Home page summary in search results and link previews.
   description:
-    'Haitao Chen, Ph.D. candidate in Biomedical Engineering at Duke University. Computational imaging and optical system design.',
+    'Haitao Chen, Ph.D. candidate in Biomedical Engineering at Duke University, working on computational imaging, optical system design, and machine learning.',
   // Subtitle shown under the name on the home page.
   role: 'Ph.D. Candidate in Biomedical Engineering at Duke University',
+  // Job title and institution in the structured data read by search engines.
+  jobTitle: 'Ph.D. Candidate in Biomedical Engineering',
+  affiliation: 'Duke University',
   location: 'Durham, NC',
   email: 'haitao.chen@duke.edu',
   // Research interests, shown as tags on the home page.
