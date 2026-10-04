@@ -55,7 +55,7 @@ export const analytics = {
 
 // Google Search Console ownership check. In Search Console choose
 // "URL prefix", then "HTML tag", and paste only the content="..." value here.
-export const googleSiteVerification = '';
+export const googleSiteVerification = '0QHl4RKcM6G0YYaNtPfEIh-oUZ6JQoRlZ750ysE82Lc';
 
 // Top navigation. The home page is reached through the logo.
 export const nav = [
