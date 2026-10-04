@@ -25,7 +25,7 @@ const citeId = `cite-${pub.id}`;
         src={image}
         alt={imageAlt}
         widths={[320, 480, 640]}
-        sizes={`${compact ? '(max-width: 560px) 104px, ' : ''}(max-width: 720px) 100vw, 240px`}
+        sizes={`${compact ? '(max-width: 560px) 84vw, ' : ''}(max-width: 720px) 100vw, 240px`}
       />
     </a>
   </div>
@@ -264,26 +264,35 @@ const citeId = `cite-${pub.id}`;
     }
   }
 
-  /* Compact entries on phones (home page): text only, separated by hairlines
-     like the education list; the Publications page keeps the figures */
+  /* Compact entries on phones (home page): cards with the figure on top and
+     the venue, title, and authors below. Links and Cite stay on the
+     Publications page. */
   @media (max-width: 560px) {
     .compact {
-      grid-template-columns: minmax(0, 1fr);
+      display: flex;
+      flex-direction: column;
       gap: 0;
-      padding-block: 18px 20px;
-      border-top: 1px solid var(--line);
+      overflow: hidden;
+      border: 1px solid var(--card-edge);
+      border-radius: var(--radius-lg);
+      background: var(--tile);
+      scroll-snap-align: start;
+      /* The cards scroll sideways, so skip the scroll-driven reveal */
+      animation: none;
     }
 
-    .compact:last-child {
-      border-bottom: 1px solid var(--line);
+    .compact .media a {
+      border-radius: 0;
     }
 
-    .compact .media {
+    .compact .body {
+      padding: 14px 16px 18px;
+    }
+
+    .compact .links,
+    .compact .cite,
+    .compact .press {
       display: none;
-    }
-
-    .compact .links {
-      margin-top: 12px;
     }
   }
 
@@ -303,7 +312,11 @@ const citeId = `cite-${pub.id}`;
     }
 
     .compact .title {
-      font-size: 15.5px;
+      font-size: 15px;
+    }
+
+    .compact .authors {
+      font-size: 12.5px;
     }
   }
 </style>

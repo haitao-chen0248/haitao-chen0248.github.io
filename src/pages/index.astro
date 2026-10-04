@@ -457,39 +457,13 @@ function initials(org: string): string {
     }
   }
 
-  /* Phones: the availability line is one full-width row, status on the
-     left and the contact link on the right; the profile links are a row of
-     evenly spaced round icon buttons (names kept for screen readers) */
-  @media (max-width: 560px) {
-    .status {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-self: stretch;
-      gap: 4px 8px;
-      padding: 10px 14px;
-      border-radius: 14px;
-      font-size: 12.5px;
-    }
-
-    .status .dot {
-      margin-top: 0;
-    }
-
-    .status > span:not(.dot) {
-      display: contents;
-    }
-
-    .status a {
-      margin-left: auto;
-      padding-left: 8px;
-    }
-
+  /* Phones and small tablets: the profile links are a row of round icon
+     buttons (names kept for screen readers) */
+  @media (max-width: 760px) {
     .pills {
       display: flex;
       flex-wrap: nowrap;
-      justify-content: space-between;
-      gap: 6px;
+      gap: 12px;
     }
 
     .pills li {
@@ -519,6 +493,39 @@ function initials(org: string): string {
     }
   }
 
+  /* Phones: the availability line is one full-width row, status on the
+     left and the contact link on the right; the icon row spans the width */
+  @media (max-width: 560px) {
+    .status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-self: stretch;
+      gap: 4px 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 12.5px;
+    }
+
+    .status .dot {
+      margin-top: 0;
+    }
+
+    .status > span:not(.dot) {
+      display: contents;
+    }
+
+    .status a {
+      margin-left: auto;
+      padding-left: 8px;
+    }
+
+    .pills {
+      justify-content: space-between;
+      gap: 6px;
+    }
+  }
+
   /* Narrow phones: keep the status and contact link on one line */
   @media (max-width: 380px) {
     .status {
@@ -535,9 +542,24 @@ function initials(org: string): string {
     gap: clamp(28px, 4vw, 40px);
   }
 
+  /* Phones: a row of equal-height cards that scrolls sideways; the next
+     card peeks in from the right */
   @media (max-width: 560px) {
     .pub-list {
-      gap: 0;
+      grid-auto-flow: column;
+      grid-auto-columns: 84%;
+      gap: 12px;
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      scroll-padding-inline: var(--gutter);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .pub-list::-webkit-scrollbar {
+      display: none;
     }
   }
 
