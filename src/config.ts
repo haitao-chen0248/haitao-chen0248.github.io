@@ -27,13 +27,14 @@ export const site = {
 export const status = 'Seeking internship opportunities for Summer 2027.';
 
 // Profile links, in display order. "icon" must match a name in src/components/Icon.astro.
+// "secondary" links are left out of the footer on phones.
 export const links = [
   { label: 'Email', icon: 'email', href: `mailto:${site.email}` },
   { label: 'Google Scholar', icon: 'scholar', href: 'https://scholar.google.com/citations?user=bZp1Yi8AAAAJ' },
   { label: 'GitHub', icon: 'github', href: 'https://github.com/haitao-chen0248' },
   { label: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/in/haitao-chen-b569a5285' },
-  { label: 'ORCID', icon: 'orcid', href: 'https://orcid.org/0000-0001-6730-0989' },
-  { label: 'ResearchGate', icon: 'researchgate', href: 'https://www.researchgate.net/profile/Haitao-Chen-15' },
+  { label: 'ORCID', icon: 'orcid', href: 'https://orcid.org/0000-0001-6730-0989', secondary: true },
+  { label: 'ResearchGate', icon: 'researchgate', href: 'https://www.researchgate.net/profile/Haitao-Chen-15', secondary: true },
 ] as const;
 
 // CV: put the PDF in public/ under this file name (e.g. public/cv.pdf).

@@ -294,6 +294,14 @@ a.text-link:hover {
   transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
 
+@media (max-width: 600px) {
+  .chip {
+    height: 26px;
+    padding: 0 11px;
+    font-size: 12.5px;
+  }
+}
+
 .chip:hover {
   color: var(--text);
   border-color: var(--accent-line);

@@ -8,18 +8,25 @@ interface Props {
   pub: CollectionEntry<'publications'>;
   /** Show the year in the venue line (off when entries are grouped by year). */
   showYear?: boolean;
+  /** On phones, a small figure beside the venue and title (home page). */
+  compact?: boolean;
 }
 
-const { pub, showYear = true } = Astro.props;
+const { pub, showYear = true, compact = false } = Astro.props;
 const { title, authors, venue, year, note, image, imageAlt, links, press, bibtex } = pub.data;
 const primary = links[0]?.url;
 const citeId = `cite-${pub.id}`;
 ---
 
-<article class="pub reveal">
+<article class:list={['pub', 'reveal', { compact }]}>
   <div class="media">
     <a class="frame frame--figure" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-      <Image src={image} alt={imageAlt} widths={[320, 480, 640]} sizes="(max-width: 720px) 100vw, 240px" />
+      <Image
+        src={image}
+        alt={imageAlt}
+        widths={[320, 480, 640]}
+        sizes={`${compact ? '(max-width: 560px) 104px, ' : ''}(max-width: 720px) 100vw, 240px`}
+      />
     </a>
   </div>
 
@@ -257,6 +264,40 @@ const citeId = `cite-${pub.id}`;
     }
   }
 
+  /* Compact entries on phones: a small figure beside the venue and title;
+     authors and links use the full width below */
+  @media (max-width: 560px) {
+    .compact {
+      grid-template-columns: clamp(84px, 26vw, 104px) minmax(0, 1fr);
+      column-gap: 14px;
+      row-gap: 0;
+    }
+
+    .compact .media {
+      grid-row: span 2;
+    }
+
+    .compact .body {
+      display: contents;
+    }
+
+    .compact .eyebrow,
+    .compact .title {
+      grid-column: 2;
+    }
+
+    .compact .authors,
+    .compact .links,
+    .compact .cite,
+    .compact .press {
+      grid-column: 1 / -1;
+    }
+
+    .compact .authors {
+      margin-top: 10px;
+    }
+  }
+
   /* Phone type scale */
   @media (max-width: 600px) {
     .title {
@@ -270,6 +311,10 @@ const citeId = `cite-${pub.id}`;
     .press,
     .press a {
       font-size: 13px;
+    }
+
+    .compact .title {
+      font-size: 15px;
     }
   }
 </style>
