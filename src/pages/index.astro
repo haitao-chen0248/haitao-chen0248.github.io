@@ -457,27 +457,32 @@ function initials(org: string): string {
     }
   }
 
-  /* Phones: the availability line is a full-width card with centered text,
-     and the profile links are a row of evenly spaced round icon buttons
-     (the names stay available to screen readers) */
+  /* Phones: the availability line is one full-width row, status on the
+     left and the contact link on the right; the profile links are a row of
+     evenly spaced round icon buttons (names kept for screen readers) */
   @media (max-width: 560px) {
     .status {
-      display: block;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
       justify-self: stretch;
+      gap: 4px 8px;
       padding: 10px 14px;
       border-radius: 14px;
-      text-align: center;
-      text-wrap: balance;
+      font-size: 12.5px;
     }
 
     .status .dot {
-      display: inline-block;
-      margin: 0 8px 1px 0;
-      vertical-align: middle;
+      margin-top: 0;
     }
 
-    .status :global(.phrase) {
-      white-space: nowrap;
+    .status > span:not(.dot) {
+      display: contents;
+    }
+
+    .status a {
+      margin-left: auto;
+      padding-left: 8px;
     }
 
     .pills {
@@ -514,12 +519,26 @@ function initials(org: string): string {
     }
   }
 
+  /* Narrow phones: keep the status and contact link on one line */
+  @media (max-width: 380px) {
+    .status {
+      padding-inline: 12px;
+      font-size: 12px;
+    }
+  }
+
   /* Publications
      ======================================================================== */
 
   .pub-list {
     display: grid;
     gap: clamp(28px, 4vw, 40px);
+  }
+
+  @media (max-width: 560px) {
+    .pub-list {
+      gap: 0;
+    }
   }
 
   /* News tiles
