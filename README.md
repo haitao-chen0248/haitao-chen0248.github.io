@@ -6,7 +6,7 @@ Built with [Astro](https://astro.build): static pages, no client framework, ligh
 
 ## Quick start
 
-Requires Node.js 22.12 or newer (the deploy builds with Node 24, set in `.nvmrc`).
+Requires Node.js 24 (set in `.nvmrc`).
 
 ```bash
 npm install
