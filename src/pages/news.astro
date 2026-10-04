@@ -4,19 +4,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import Slideshow from '@/components/Slideshow.astro';
 import { site } from '@/config';
-import { formatMonth, isoMonth } from '@/utils/format';
+import { byNewest, formatMonth, groupByYear, isoMonth } from '@/utils/format';
 
-const items = (await getCollection('news')).sort(
-  (a, b) => b.data.date.localeCompare(a.data.date) || b.id.localeCompare(a.id),
-);
+const items = (await getCollection('news')).sort(byNewest);
 
 // Render each Markdown body ahead of time, then group by year (newest first).
 const entries = await Promise.all(items.map(async (item) => ({ item, ...(await render(item)) })));
-const years = [...new Set(entries.map((e) => e.item.data.date.slice(0, 4)))];
-const groups = years.map((year) => ({
-  year,
-  entries: entries.filter((e) => e.item.data.date.startsWith(year)),
-}));
+const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
 ---
 
 <BaseLayout title="News" description={`News and milestones from ${site.name}.`}>
@@ -33,7 +27,7 @@ const groups = years.map((year) => ({
           </h2>
 
           <ol class="entries">
-            {group.entries.map(({ item, Content }) => {
+            {group.items.map(({ item, Content }) => {
               const images = item.data.images;
               return (
                 <li id={item.id} class:list={['entry', 'reveal', { 'no-media': images.length === 0 }]}>
