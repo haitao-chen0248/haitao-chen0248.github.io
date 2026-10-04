@@ -18,9 +18,10 @@ npm run check     # type-check pages and content
 ## Use it for your own site
 
 1. Set `site` in `astro.config.mjs` to your URL.
-2. Replace every value in `src/config.ts`, and the bolded author name in `src/utils/format.ts`.
-3. Replace `src/assets/images/headshot.jpg` and the intro paragraph in `src/pages/index.astro`.
-4. Replace the entries in `src/content/` and the images in `src/assets/images/`.
+2. Replace every value in `src/config.ts`. Your `name` there is the one bolded in author lists.
+3. Update the text still written directly in `src/layouts/BaseLayout.astro` (home page title, structured data) and the page descriptions in `src/pages/`.
+4. Replace `src/assets/images/headshot.jpg` and the intro paragraph in `src/pages/index.astro`.
+5. Replace the entries in `src/content/` and the images in `src/assets/images/`.
 
 ## Structure
 
