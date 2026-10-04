@@ -13,7 +13,6 @@ export const site = {
   // Job title and institution in the structured data read by search engines.
   jobTitle: 'Ph.D. Candidate in Biomedical Engineering',
   affiliation: 'Duke University',
-  location: 'Durham, NC',
   email: 'haitao.chen@duke.edu',
   // Research interests, shown as tags on the home page.
   interests: [

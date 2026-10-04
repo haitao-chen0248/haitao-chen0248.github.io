@@ -10,15 +10,13 @@ import SectionHead from '@/components/SectionHead.astro';
 import headshot from '@/assets/images/headshot.jpg';
 import { site, status } from '@/config';
 import { profileLinks } from '@/utils/links';
-import { byFileOrder, formatMonth, isoMonth } from '@/utils/format';
+import { byFileOrder, byNewest, formatMonth, isoMonth } from '@/utils/format';
 
 // Featured publications, in the order they appear in publications.yaml.
 const featured = (await getCollection('publications')).filter((p) => p.data.featured).sort(byFileOrder);
 
 // The three newest news items.
-const recent = (await getCollection('news'))
-  .sort((a, b) => b.data.date.localeCompare(a.data.date) || b.id.localeCompare(a.id))
-  .slice(0, 3);
+const recent = (await getCollection('news')).sort(byNewest).slice(0, 3);
 
 const education = (await getCollection('education')).sort(byFileOrder);
 

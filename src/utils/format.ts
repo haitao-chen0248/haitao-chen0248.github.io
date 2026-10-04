@@ -32,12 +32,18 @@ export function splitAuthors(authors: string, self: string = site.name): AuthorP
     .map((text) => ({ text, self: text.startsWith(self) }));
 }
 
-/** Two-digit section index: 1 -> "01" */
-export function pad(n: number): string {
-  return String(n).padStart(2, '0');
-}
-
 /** Sort by position in the source YAML file (see orderedYaml in content.config.ts). */
 export function byFileOrder(a: { data: { order: number } }, b: { data: { order: number } }): number {
   return a.data.order - b.data.order;
+}
+
+/** Sort news newest first; items from the same month by file name, descending. */
+export function byNewest(a: { id: string; data: { date: string } }, b: { id: string; data: { date: string } }): number {
+  return b.data.date.localeCompare(a.data.date) || b.id.localeCompare(a.id);
+}
+
+/** Group items by year, newest year first. Items keep their order within a year. */
+export function groupByYear<T>(items: T[], yearOf: (item: T) => string | number): { year: string; items: T[] }[] {
+  const years = [...new Set(items.map((item) => String(yearOf(item))))].sort().reverse();
+  return years.map((year) => ({ year, items: items.filter((item) => String(yearOf(item)) === year) }));
 }

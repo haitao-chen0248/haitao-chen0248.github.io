@@ -5,13 +5,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
 import { links, site } from '@/config';
-import { byFileOrder } from '@/utils/format';
+import { byFileOrder, groupByYear } from '@/utils/format';
 
 const pubs = (await getCollection('publications')).sort(byFileOrder);
 
 // Group by year, newest year first. Entries keep their order from the YAML file.
-const years = [...new Set(pubs.map((p) => p.data.year))].sort((a, b) => b - a);
-const groups = years.map((year) => ({ year, items: pubs.filter((p) => p.data.year === year) }));
+const groups = groupByYear(pubs, (p) => p.data.year);
 
 const scholar = links.find((l) => l.label === 'Google Scholar')?.href;
 ---
