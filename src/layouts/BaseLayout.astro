@@ -23,7 +23,7 @@ interface Props {
 
 const { title, description = site.description, noindex = false } = Astro.props;
 
-const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · Computational Imaging`;
+const pageTitle = title ? `${title} · ${site.name}` : site.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 // Headshot URL for structured data.
@@ -42,8 +42,8 @@ const personSchema = {
   url: Astro.site?.toString(),
   image: portraitUrl.toString(),
   email: `mailto:${site.email}`,
-  jobTitle: 'Ph.D. Candidate in Biomedical Engineering',
-  affiliation: { '@type': 'CollegeOrUniversity', name: 'Duke University' },
+  jobTitle: site.jobTitle,
+  affiliation: { '@type': 'CollegeOrUniversity', name: site.affiliation },
   sameAs: links.filter((l) => l.href.startsWith('http')).map((l) => l.href),
 };
 ---
