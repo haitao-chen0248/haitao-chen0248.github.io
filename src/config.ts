@@ -24,7 +24,7 @@ export const site = {
 } as const;
 
 // Availability line under the intro on the home page. Set to '' to hide it.
-export const status = 'Seeking internship opportunities for Summer 2027.';
+export const status = 'Seeking Summer 2027 internships.';
 
 // Profile links, in display order. "icon" must match a name in src/components/Icon.astro.
 // "secondary" links are left out of the footer on phones.

@@ -264,37 +264,26 @@ const citeId = `cite-${pub.id}`;
     }
   }
 
-  /* Compact entries on phones: a small figure beside the venue and title;
-     authors and links use the full width below */
+  /* Compact entries on phones (home page): text only, separated by hairlines
+     like the education list; the Publications page keeps the figures */
   @media (max-width: 560px) {
     .compact {
-      grid-template-columns: clamp(84px, 26vw, 104px) minmax(0, 1fr);
-      column-gap: 14px;
-      row-gap: 0;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      padding-block: 18px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .compact:last-child {
+      border-bottom: 1px solid var(--line);
     }
 
     .compact .media {
-      grid-row: span 2;
+      display: none;
     }
 
-    .compact .body {
-      display: contents;
-    }
-
-    .compact .eyebrow,
-    .compact .title {
-      grid-column: 2;
-    }
-
-    .compact .authors,
-    .compact .links,
-    .compact .cite,
-    .compact .press {
-      grid-column: 1 / -1;
-    }
-
-    .compact .authors {
-      margin-top: 10px;
+    .compact .links {
+      margin-top: 12px;
     }
   }
 
@@ -314,7 +303,7 @@ const citeId = `cite-${pub.id}`;
     }
 
     .compact .title {
-      font-size: 15px;
+      font-size: 15.5px;
     }
   }
 </style>
