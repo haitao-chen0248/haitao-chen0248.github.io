@@ -6,7 +6,7 @@ Built with [Astro](https://astro.build): static pages, no client framework, ligh
 
 ## Quick start
 
-Requires Node.js 22.12 or newer.
+Requires Node.js 22.12 or newer (the deploy builds with Node 24, set in `.nvmrc`).
 
 ```bash
 npm install
@@ -26,11 +26,13 @@ npm run check     # type-check pages and content
 
 | Path | Contents |
 | --- | --- |
-| `src/config.ts` | Name, role, research interests, profile links, menu |
+| `src/config.ts` | Name, role, home page title and description, research interests, profile links, menu |
 | `src/pages/` | Pages; `index.astro` holds the intro |
+| `src/layouts/` | Page shell: `<head>` metadata, header, footer |
 | `src/content/` | Publications, talks, news, education, teaching |
 | `src/assets/images/` | Headshot and figures, converted to WebP at build time |
 | `src/components/` | Header, footer, publication entry, icons, video embed |
+| `src/utils/` | Shared helpers: dates, sorting, profile links, share card version |
 | `src/styles/global.css` | Color, type, and spacing tokens for both themes |
 | `public/` | Files served as-is: favicons, `robots.txt`, `cv.pdf` |
 
@@ -74,6 +76,8 @@ Full text in Markdown.
 ```
 
 **Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link.
+
+**Teaching** (`teaching.yaml`): course, term, role, instructor, an image, and optional links.
 
 **Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png`, with an optional `<id>-white.png` for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` is shown until a logo exists.
 
