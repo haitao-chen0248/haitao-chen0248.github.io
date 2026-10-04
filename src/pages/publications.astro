@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import PublicationItem from '@/components/PublicationItem.astro';
+import { links } from '@/config';
+import { byFileOrder } from '@/utils/format';
+
+const pubs = (await getCollection('publications')).sort(byFileOrder);
+
+// Group by year, newest year first. Entries keep their order from the YAML file.
+const years = [...new Set(pubs.map((p) => p.data.year))].sort((a, b) => b - a);
+const groups = years.map((year) => ({ year, items: pubs.filter((p) => p.data.year === year) }));
+
+const scholar = links.find((l) => l.label === 'Google Scholar')?.href;
+---
+
+<BaseLayout title="Publications" description="Peer-reviewed publications by Haitao Chen.">
+  <PageHeader title="Publications">
+    <p>
+      Full list on <a href={scholar} target="_blank" rel="noopener">Google Scholar</a>. * Co-first author.
+    </p>
+  </PageHeader>
+
+  <div class="container">
+    {
+      groups.map((group) => (
+        <section class="group" aria-labelledby={`y${group.year}`}>
+          <h2 class="year" id={`y${group.year}`}>
+            {group.year}
+          </h2>
+          <div class="items">
+            {group.items.map((pub) => (
+              <PublicationItem pub={pub} showYear={false} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .group {
+    padding-block: 20px 36px;
+    border-top: 1px solid var(--line);
+  }
+
+  .year {
+    margin-bottom: 18px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .items {
+    display: grid;
+    gap: clamp(28px, 4vw, 40px);
+  }
+</style>

@@ -1,0 +1,207 @@
+---
+import { nav, site } from '@/config';
+import AiryMark from './AiryMark.astro';
+
+const path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a href="/" class="brand" aria-label={`${site.name}, home`}>
+      <AiryMark size={18} class="brand-mark" />
+      <span class="brand-name">{site.name}</span>
+    </a>
+
+    <div class="right">
+      <nav aria-label="Main">
+        <ul>
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Light/dark switch. Icons from Feather (MIT); CSS shows the one that fits the current theme. -->
+      <button class="theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle light and dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Theme switch. The current theme is already on <html data-theme> (set by the
+  // inline script in BaseLayout). A choice that matches the system setting is not
+  // stored, so the site goes back to following the system.
+  const KEY = 'theme';
+  const root = document.documentElement;
+  const systemQuery = matchMedia('(prefers-color-scheme: light)');
+  const systemTheme = () => (systemQuery.matches ? 'light' : 'dark');
+
+  function readSaved(): string | null {
+    try {
+      return localStorage.getItem(KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function save(theme: string) {
+    try {
+      if (theme === systemTheme()) localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, theme);
+    } catch {
+      /* Storage unavailable (private mode, blocked cookies): the switch still works for this page. */
+    }
+  }
+
+  function apply(theme: string) {
+    root.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
+  }
+
+  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    save(next);
+    // Cross-fade between themes where the browser supports it.
+    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.startViewTransition(() => apply(next));
+    } else {
+      apply(next);
+    }
+  });
+
+  // Follow live system changes unless the visitor picked a theme.
+  systemQuery.addEventListener('change', () => {
+    if (!readSaved()) apply(systemTheme());
+  });
+</script>
+
+<style>
+  /* Frosted-glass bar */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    /* Keep the header still while pages cross-fade. */
+    view-transition-name: site-header;
+  }
+
+  .inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+
+  .brand :global(.brand-mark) {
+    color: var(--accent);
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .brand:hover :global(.brand-mark) {
+    transform: scale(1.12);
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  nav ul {
+    display: flex;
+    gap: 24px;
+  }
+
+  nav a {
+    font-size: 13.5px;
+    color: var(--text-2);
+    transition: color 0.2s;
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: var(--text);
+  }
+
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: var(--text-2);
+    transition: color 0.2s, background-color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    color: var(--text);
+    background: var(--pill);
+  }
+
+  .theme-toggle svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-sun {
+    display: var(--show-sun);
+  }
+
+  .icon-moon {
+    display: var(--show-moon);
+  }
+
+  @media (max-width: 600px) {
+    .right {
+      gap: 10px;
+    }
+
+    nav ul {
+      gap: 14px;
+    }
+
+    nav a {
+      font-size: 13px;
+    }
+  }
+
+  /* On narrow phones keep the logo mark and drop the name to make room */
+  @media (max-width: 420px) {
+    .brand-name {
+      display: none;
+    }
+  }
+</style>

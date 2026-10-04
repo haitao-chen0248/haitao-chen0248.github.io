@@ -1,0 +1,148 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import YouTube from '@/components/YouTube.astro';
+import { byFileOrder, formatMonth, isoMonth } from '@/utils/format';
+
+// Shown in the order they appear in talks.yaml (newest first), grouped by year.
+const talks = await Promise.all(
+  (await getCollection('talks')).sort(byFileOrder).map(async (talk) => {
+    // Link to the related paper's first link (usually the journal page).
+    const paper = talk.data.paper ? await getEntry(talk.data.paper) : undefined;
+    return { ...talk.data, paperUrl: paper?.data.links[0]?.url };
+  }),
+);
+const years = [...new Set(talks.map((t) => t.date.slice(0, 4)))];
+const groups = years.map((year) => ({ year, items: talks.filter((t) => t.date.startsWith(year)) }));
+---
+
+<BaseLayout title="Talks" description="Talks and presentations by Haitao Chen.">
+  <PageHeader title="Talks">
+    <p>Talks and presentations.</p>
+  </PageHeader>
+
+  <div class="container">
+    {
+      groups.map((group) => (
+        <section class="year-group" aria-labelledby={`y${group.year}`}>
+          <h2 class="year" id={`y${group.year}`}>
+            {group.year}
+          </h2>
+
+          <div class="items">
+            {group.items.map((talk) => (
+              <article class:list={['talk', 'reveal', { 'no-media': !talk.youtube }]}>
+                {talk.youtube && (
+                  <div class="media">
+                    <YouTube id={talk.youtube} title={talk.title} />
+                  </div>
+                )}
+
+                <div class="meta">
+                  <p class="eyebrow">
+                    <span>
+                      {talk.event} · <time datetime={isoMonth(talk.date)}>{formatMonth(talk.date)}</time>
+                    </span>
+                  </p>
+                  <h3>{talk.title}</h3>
+                  <p class="location">{talk.location}</p>
+
+                  <ul class="links">
+                    {talk.youtube && (
+                      <li>
+                        <a class="chip" href={`https://www.youtube.com/watch?v=${talk.youtube}`} target="_blank" rel="noopener">
+                          YouTube
+                          <span class="arrow" aria-hidden="true">
+                            ↗
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                    {talk.paperUrl && (
+                      <li>
+                        <a class="chip" href={talk.paperUrl} target="_blank" rel="noopener">
+                          Paper
+                          <span class="arrow" aria-hidden="true">
+                            ↗
+                          </span>
+                        </a>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .year-group {
+    padding-block: 20px 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .year {
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .items {
+    display: grid;
+    gap: clamp(28px, 4vw, 40px);
+  }
+
+  /* Video on the left, details on the right (same rhythm as News) */
+  .talk {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 40px);
+    align-items: start;
+  }
+
+  .talk.no-media {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Hairline edge so white slides stand out from a white page in light mode */
+  .media :global(.yt) {
+    border: 1px solid var(--card-edge);
+    border-radius: var(--radius-sm);
+  }
+
+  h3 {
+    margin-top: 4px;
+    font-size: 19px;
+    line-height: 1.35;
+    letter-spacing: -0.016em;
+  }
+
+  .location {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--text-3);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  @media (max-width: 760px) {
+    .talk {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+  }
+</style>

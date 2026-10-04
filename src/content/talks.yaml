@@ -1,0 +1,17 @@
+# Talks, newest first. "paper" is optional: the id of the related entry in publications.yaml.
+
+- id: pw26-gigapixel
+  title: Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale
+  event: SPIE Photonics West 2026
+  location: San Francisco, CA
+  date: 2026-01
+  youtube: WSLuhnqptSg
+  paper: curvature-adaptive-gigapixel
+
+- id: pw26-zebrafish
+  title: Automated 3D behavioral profiling of zebrafish larvae at high throughput
+  event: SPIE Photonics West 2026
+  location: San Francisco, CA
+  date: 2026-01
+  youtube: IXfsqg_8Y6I
+  paper: zebrafish-3d-behavior

@@ -1,0 +1,110 @@
+---
+// Shared page shell: <head> metadata, fonts, header, and footer.
+// Inter with optical sizing, used where San Francisco is not available.
+import '@fontsource-variable/inter/opsz.css';
+import '@/styles/global.css';
+
+import { getImage } from 'astro:assets';
+
+import Analytics from '@/components/Analytics.astro';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import headshot from '@/assets/images/headshot.jpg';
+import { googleSiteVerification, links, site } from '@/config';
+import { shareCardVersion } from '@/utils/og';
+
+interface Props {
+  /** Page name. Omit on the home page. */
+  title?: string;
+  description?: string;
+  /** Keep this page out of search results (used by the 404 page). */
+  noindex?: boolean;
+}
+
+const { title, description = site.description, noindex = false } = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · Computational Imaging`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// Headshot URL for structured data.
+const portrait = await getImage({ src: headshot, width: 600, format: 'jpg' });
+const portraitUrl = new URL(portrait.src, Astro.site);
+
+// Social share card, rendered at build time by src/pages/og.png.ts. The version
+// query changes with the card's content so platforms fetch the new image.
+const shareCardUrl = new URL(`/og.png?v=${shareCardVersion()}`, Astro.site);
+
+// Structured data so search engines can identify the person behind the site.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: Astro.site?.toString(),
+  image: portraitUrl.toString(),
+  email: `mailto:${site.email}`,
+  jobTitle: 'Ph.D. Candidate in Biomedical Engineering',
+  affiliation: { '@type': 'CollegeOrUniversity', name: 'Duke University' },
+  sameAs: links.filter((l) => l.href.startsWith('http')).map((l) => l.href),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- Pick the theme before the first paint to avoid a flash:
+         the visitor's saved choice, otherwise the system setting. -->
+    <script is:inline>
+      (() => {
+        let theme = null;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#ffffff' : '#000000';
+      })();
+    </script>
+    <meta name="generator" content={Astro.generator} />
+    {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph / social cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareCardUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}, ${site.role}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+    <Analytics />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

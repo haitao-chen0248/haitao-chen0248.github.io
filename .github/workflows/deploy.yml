@@ -1,0 +1,73 @@
+# Build the Astro site and publish it to GitHub Pages on every push to master.
+# One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one deployment at a time; let an in-progress deploy finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      # Confirm the share card is live and put one-click preview refresh links
+      # in the run summary (LinkedIn and Facebook cache link previews).
+      - name: Share preview
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          live=no
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS -o /dev/null -w '%{content_type}' "${PAGE_URL}og.png" | grep -q image/png; then
+              live=yes
+              break
+            fi
+            sleep 10
+          done
+          [ "$live" = yes ] || echo "::warning::Share card not reachable yet at ${PAGE_URL}og.png"
+          enc=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$PAGE_URL")
+          {
+            echo "### Share preview"
+            echo
+            echo "![Share card](${PAGE_URL}og.png)"
+            echo
+            echo "If the card changed, refresh cached previews once:"
+            echo
+            echo "- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/inspect/${enc})"
+            echo "- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/?q=${enc})"
+          } >> "$GITHUB_STEP_SUMMARY"

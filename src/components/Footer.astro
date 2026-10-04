@@ -1,0 +1,103 @@
+---
+import { analytics, site } from '@/config';
+import { profileLinks } from '@/utils/links';
+
+const year = new Date().getFullYear();
+
+// Optional public visit total from GoatCounter (see src/config.ts).
+const code = analytics.goatcounter.trim();
+const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.com/counter/TOTAL.json` : '';
+---
+
+<footer class="site-footer">
+  <div class="container inner">
+    <p>
+      Copyright © {year} {site.name}. All rights reserved.
+      {visitsUrl && <span class="visits" data-url={visitsUrl} hidden />}
+    </p>
+
+    <ul class="links">
+      {
+        profileLinks().map((link) => (
+          <li>
+            <a href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+{
+  visitsUrl && (
+    <script is:inline>
+      // Fill in the total visit count; stay hidden if the request fails.
+      (() => {
+        const el = document.querySelector('.site-footer .visits');
+        if (!el) return;
+        fetch(el.dataset.url)
+          .then((r) => (r.ok ? r.json() : Promise.reject()))
+          .then((data) => {
+            el.textContent = ' · ' + data.count + ' visits';
+            el.hidden = false;
+          })
+          .catch(() => {});
+      })();
+    </script>
+  )
+}
+
+<style>
+  .site-footer {
+    margin-top: clamp(32px, 5vw, 56px);
+    background: var(--tile);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding-block: 22px 28px;
+    font-size: 12px;
+    letter-spacing: -0.005em;
+    color: var(--text-3);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* Thin dividers between links */
+  .links li + li {
+    border-left: 1px solid var(--line-strong);
+    margin-left: 10px;
+    padding-left: 10px;
+  }
+
+  @media (max-width: 640px) {
+    .links {
+      gap: 4px 16px;
+    }
+
+    .links li + li {
+      border-left: 0;
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  .links a {
+    color: var(--text-2);
+    transition: color 0.2s;
+  }
+
+  .links a:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+</style>

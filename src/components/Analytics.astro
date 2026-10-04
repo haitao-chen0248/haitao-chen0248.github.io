@@ -1,0 +1,14 @@
+---
+// GoatCounter page-view counting. Renders nothing unless a site code is set in
+// src/config.ts, and only on production builds so local previews are not counted.
+import { analytics } from '@/config';
+
+const code = analytics.goatcounter.trim();
+const enabled = code !== '' && import.meta.env.PROD;
+---
+
+{
+  enabled && (
+    <script is:inline async data-goatcounter={`https://${code}.goatcounter.com/count`} src="//gc.zgo.at/count.js" />
+  )
+}

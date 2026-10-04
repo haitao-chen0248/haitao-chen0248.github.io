@@ -1,0 +1,155 @@
+# Publications, newest first. "*" marks co-first authors.
+# Images live in src/assets/images/pubs/ (about 1200 px wide is plenty).
+# "bibtex" powers the Cite button and /publications.bib; keep the same field order for new entries
+# (author, title, journal, volume, number, pages, year, month, publisher, doi; month/publisher only if known).
+
+- id: zebrafish-heart-rate
+  title: High-throughput heart rate sensing in freely moving zebrafish using a multi-well plate-based fluorescence microscope
+  authors: Kevin Li, Xi Yang, Jennifer Bagwell, Lucas Kreiss, Haitao Chen, ..., Roarke Horstmeyer
+  venue: Optics Letters
+  year: 2026
+  image: ../assets/images/pubs/zebrafish-heart-rate.jpg
+  imageAlt: Fluorescence images of zebrafish in a well plate, a heart-rate trace, and the layout of the multi-camera fluorescence microscope
+  links:
+    - { label: Journal, url: "https://doi.org/10.1364/OL.597720" }
+  bibtex: |
+    @article{li2026high,
+      author    = {Li, Kevin and Yang, Xi and Bagwell, Jennifer and Kreiss, Lucas and Chen, Haitao and Saliu, Veton and B{\`e}gue, Aur{\'e}lien and Harfouche, Mark and Bagnat, Michel and Horstmeyer, Roarke},
+      title     = {High-throughput heart rate sensing in freely moving zebrafish using a multi-well plate-based fluorescence microscope},
+      journal   = {Optics Letters},
+      volume    = {51},
+      number    = {18},
+      pages     = {5269--5272},
+      year      = {2026},
+      month     = {Sep},
+      publisher = {Optica Publishing Group},
+      doi       = {10.1364/OL.597720}
+    }
+
+- id: zebrafish-3d-behavior
+  title: High-throughput multi-camera array microscope platform for automated 3D behavioral analysis of swimming zebrafish larvae
+  authors: Haitao Chen, Kevin Li, Lucas Kreiss, Paul Reamey, ..., Roarke Horstmeyer
+  venue: Communications Biology
+  year: 2026
+  featured: true
+  image: ../assets/images/pubs/zebrafish-3d-behavior.jpg
+  imageAlt: Multi-camera array microscope with 3D skeletal tracking and trajectories of zebrafish larvae
+  links:
+    - { label: Journal, url: "https://doi.org/10.1038/s42003-025-09421-w" }
+    - { label: Preprint, url: "https://www.biorxiv.org/content/10.1101/2025.07.07.661868v2.full" }
+    - { label: Code, url: "https://github.com/haitao-chen0248/ZebraPheno3D" }
+    - { label: Video, url: "https://www.youtube.com/watch?v=j5l38dja1R4" }
+    - { label: Talk, url: "https://www.youtube.com/watch?v=IXfsqg_8Y6I" }
+  bibtex: |
+    @article{chen2026high,
+      author    = {Chen, Haitao and Li, Kevin and Kreiss, Lucas and Reamey, Paul and Pierce, Lain X. and Zhang, Ralph and Da Luz, Ricardo and Chaware, Amey and Kim, Kanghyun and Cook, Clare B. and Yang, Xi and Lerner, Joshua F. and Doman, Jed and B{\`e}gue, Aur{\'e}lien and Efromson, John and Harfouche, Mark and Horstmeyer, Gregor and McCarroll, Matthew N. and Horstmeyer, Roarke},
+      title     = {High-throughput multi-camera array microscope platform for automated {3D} behavioral analysis of swimming zebrafish larvae},
+      journal   = {Communications Biology},
+      volume    = {9},
+      number    = {1},
+      pages     = {141},
+      year      = {2026},
+      publisher = {Nature Publishing Group UK},
+      doi       = {10.1038/s42003-025-09421-w}
+    }
+
+- id: curvature-adaptive-gigapixel
+  title: Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale
+  authors: Xi Yang*, Haitao Chen*, Lucas Kreiss, Clare B. Cook, ..., Roarke Horstmeyer
+  venue: Optics Letters
+  year: 2025
+  note: Editors' Pick
+  featured: true
+  image: ../assets/images/pubs/curvature-adaptive-gigapixel.jpg
+  imageAlt: Optical layout of the curvature-adaptive multi-camera array microscope
+  links:
+    - { label: Journal, url: "https://doi.org/10.1364/OL.572466" }
+    - { label: Preprint, url: "https://arxiv.org/abs/2507.09697" }
+    - { label: Talk, url: "https://www.youtube.com/watch?v=WSLuhnqptSg" }
+  press:
+    - { label: Optica, url: "https://www.optica.org/about/newsroom/news_releases/2025/new_microscope_captures_large_high-resolution_images_of_curved_samples_in_single_snapshot/" }
+    - { label: Phys.org, url: "https://phys.org/news/2025-09-microscope-captures-large-high-resolution.html" }
+    - { label: Bioengineer, url: "https://bioengineer.org/revolutionary-microscope-snaps-high-resolution-wide-angle-images-of-curved-samples-in-a-single-shot/" }
+  bibtex: |
+    @article{yang2025curvature,
+      author    = {Yang, Xi and Chen, Haitao and Kreiss, Lucas and Cook, Clare B. and Kuczewski, Genevieve and Harfouche, Mark and Bohlen, Martin O. and Horstmeyer, Roarke},
+      title     = {Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale},
+      journal   = {Optics Letters},
+      volume    = {50},
+      number    = {19},
+      pages     = {5977--5980},
+      year      = {2025},
+      month     = {Oct},
+      publisher = {Optica Publishing Group},
+      doi       = {10.1364/OL.572466}
+    }
+
+- id: multierror-learning-rfdt
+  title: Multierror learning enhanced fluorescence diffusion tomography in reflection geometry
+  authors: Haitao Chen, Kaixian Liu, Yuxuan Jiang, Yuxiang Dou, Yong Deng
+  venue: Optics Express
+  year: 2025
+  featured: true
+  image: ../assets/images/pubs/multierror-learning-rfdt.jpg
+  imageAlt: Reflection-geometry fluorescence diffusion tomography system and reconstruction pipeline
+  links:
+    - { label: Journal, url: "https://doi.org/10.1364/OE.560810" }
+  bibtex: |
+    @article{chen2025multierror,
+      author    = {Chen, Haitao and Liu, Kaixian and Jiang, Yuxuan and Dou, Yuxiang and Deng, Yong},
+      title     = {Multierror learning enhanced fluorescence diffusion tomography in reflection geometry},
+      journal   = {Optics Express},
+      volume    = {33},
+      number    = {10},
+      pages     = {22062--22077},
+      year      = {2025},
+      month     = {May},
+      publisher = {Optica Publishing Group},
+      doi       = {10.1364/OE.560810}
+    }
+
+- id: optical-properties-cfnn
+  title: Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network
+  authors: Haitao Chen, Kaixian Liu, Yuxuan Jiang, Yafeng Liu, Yong Deng
+  venue: Biomedical Optics Express
+  year: 2023
+  image: ../assets/images/pubs/optical-properties-cfnn.jpg
+  imageAlt: Scatter plots of estimated optical properties for thin tissue
+  links:
+    - { label: Journal, url: "https://doi.org/10.1364/BOE.489079" }
+  bibtex: |
+    @article{chen2023real,
+      author    = {Chen, Haitao and Liu, Kaixian and Jiang, Yuxuan and Liu, Yafeng and Deng, Yong},
+      title     = {Real-time and accurate estimation ex vivo of four basic optical properties from thin tissue based on a cascade forward neural network},
+      journal   = {Biomedical Optics Express},
+      volume    = {14},
+      number    = {4},
+      pages     = {1818--1832},
+      year      = {2023},
+      month     = {Apr},
+      publisher = {Optica Publishing Group},
+      doi       = {10.1364/BOE.489079}
+    }
+
+- id: ssb-net-fmt
+  title: High-fidelity mesoscopic fluorescence molecular tomography based on SSB-Net
+  authors: Kaixian Liu, Yuxuan Jiang, Wensong Li, Haitao Chen, Qingming Luo, Yong Deng
+  venue: Optics Letters
+  year: 2023
+  image: ../assets/images/pubs/ssb-net-fmt.jpg
+  imageAlt: Phantom, ground truth, and SSB-Net reconstruction for fluorescence molecular tomography
+  links:
+    - { label: Journal, url: "https://doi.org/10.1364/OL.475949" }
+  bibtex: |
+    @article{liu2023high,
+      author    = {Liu, Kaixian and Jiang, Yuxuan and Li, Wensong and Chen, Haitao and Luo, Qingming and Deng, Yong},
+      title     = {High-fidelity mesoscopic fluorescence molecular tomography based on {SSB-Net}},
+      journal   = {Optics Letters},
+      volume    = {48},
+      number    = {2},
+      pages     = {199--202},
+      year      = {2023},
+      month     = {Jan},
+      publisher = {Optica Publishing Group},
+      doi       = {10.1364/OL.475949}
+    }

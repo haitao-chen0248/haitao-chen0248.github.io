@@ -1,0 +1,122 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Slideshow from '@/components/Slideshow.astro';
+import { formatMonth, isoMonth } from '@/utils/format';
+
+const items = (await getCollection('news')).sort(
+  (a, b) => b.data.date.localeCompare(a.data.date) || b.id.localeCompare(a.id),
+);
+
+// Render each Markdown body ahead of time, then group by year (newest first).
+const entries = await Promise.all(items.map(async (item) => ({ item, ...(await render(item)) })));
+const years = [...new Set(entries.map((e) => e.item.data.date.slice(0, 4)))];
+const groups = years.map((year) => ({
+  year,
+  entries: entries.filter((e) => e.item.data.date.startsWith(year)),
+}));
+---
+
+<BaseLayout title="News" description="News and milestones from Haitao Chen.">
+  <PageHeader title="News">
+    <p>Milestones, papers, and conferences.</p>
+  </PageHeader>
+
+  <div class="container">
+    {
+      groups.map((group) => (
+        <section class="year-group" aria-labelledby={`y${group.year}`}>
+          <h2 class="year" id={`y${group.year}`}>
+            {group.year}
+          </h2>
+
+          <ol class="entries">
+            {group.entries.map(({ item, Content }) => {
+              const images = item.data.images;
+              return (
+                <li id={item.id} class:list={['entry', 'reveal', { 'no-media': images.length === 0 }]}>
+                  {images.length > 0 && (
+                    <div class="media">
+                      <Slideshow images={images} sizes="(max-width: 760px) 100vw, 340px" />
+                    </div>
+                  )}
+
+                  <div class="text">
+                    <p class="eyebrow">
+                      <time datetime={isoMonth(item.data.date)}>{formatMonth(item.data.date)}</time>
+                    </p>
+                    <h3 class="headline">{item.data.title}</h3>
+                    <div class="prose body">
+                      <Content />
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .year-group {
+    padding-block: 20px 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .year {
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .entries {
+    display: grid;
+    gap: clamp(32px, 4vw, 44px);
+  }
+
+  /* Photos on the left, text on the right */
+  .entry {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 40px);
+    align-items: start;
+  }
+
+  .entry.no-media {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .headline {
+    margin-top: 4px;
+    font-size: 19px;
+    line-height: 1.35;
+    letter-spacing: -0.016em;
+  }
+
+  .body {
+    max-width: 620px;
+    margin-top: 8px;
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--text-2);
+  }
+
+  /* Highlight the item linked from the home page */
+  .entry:target .headline {
+    color: var(--accent);
+  }
+
+  @media (max-width: 760px) {
+    .entry {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+  }
+</style>

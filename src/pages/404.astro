@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import AiryMark from '@/components/AiryMark.astro';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <section class="container nf">
+    <AiryMark size={56} class="mark enter" />
+    <p class="eyebrow enter" style="--i: 1">404</p>
+    <h1 class="enter" style="--i: 2">Out of focus.</h1>
+    <p class="msg enter" style="--i: 3">This page does not exist or has moved.</p>
+    <a class="more-link enter" style="--i: 4" href="/">Back to home <span class="arrow" aria-hidden="true">→</span></a>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-block: clamp(80px, 14vw, 160px);
+  }
+
+  .nf :global(.mark) {
+    color: var(--text);
+    filter: blur(1.5px);
+    margin-bottom: 28px;
+  }
+
+  h1 {
+    margin-top: 8px;
+    font-size: clamp(32px, 4.5vw, 48px);
+    letter-spacing: -0.03em;
+  }
+
+  .msg {
+    margin: 10px 0 20px;
+    font-size: 16px;
+    color: var(--text-2);
+  }
+</style>
