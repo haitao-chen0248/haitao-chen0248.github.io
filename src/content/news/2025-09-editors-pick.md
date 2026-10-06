@@ -15,4 +15,4 @@ Our **curvature-adaptive gigapixel microscopy** paper was published and selected
 [Nanowerk](https://www.nanowerk.com/nanotechnology-news3/newsid=67657.php),
 [Optics.org](https://optics.org/news/16/9/41),
 [F4 News](https://www.f4news.com/2025/10/06/billion-pixel-resolution-microscopy-of-curved-surfaces-2/), and
-[Photonics Spectra](https://www.photonics.com/](https://www.photonics.com/Articles/Microscope-Produces-Sharp-Images-of-Curved-Samples/p5/a71488).
+[Photonics Spectra](https://www.photonics.com/Articles/Microscope-Produces-Sharp-Images-of-Curved-Samples/p5/a71488).
