@@ -45,6 +45,7 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
                     <span>
                       {talk.event} · <time datetime={isoMonth(talk.date)}>{formatMonth(talk.date)}</time>
                     </span>
+                    {talk.note && <span class="badge">{talk.note}</span>}
                   </p>
                   <h3 set:html={wrapFriendly(talk.title)} />
                   <p class="location">{talk.location}</p>

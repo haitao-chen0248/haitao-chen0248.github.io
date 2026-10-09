@@ -15,42 +15,50 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
 
   <div class="container list">
     {
-      courses.map(({ data }) => (
-        <article class="course reveal">
-          <div class="logo frame">
-            <Image src={data.image} alt={data.imageAlt} widths={[140, 280, 420]} sizes="140px" />
-          </div>
+      courses.map(({ data }) => {
+        // The course image links to the first course link, like a paper figure.
+        const href = data.links[0]?.url;
+        const Media = href ? 'a' : 'div';
+        const linkProps = href
+          ? { href, target: '_blank', rel: 'noopener', tabindex: -1, 'aria-hidden': 'true' as const }
+          : {};
+        return (
+          <article class="course reveal">
+            <Media class:list={['logo', 'frame', { sheen: !!href, lift: !!href }]} {...linkProps}>
+              <Image src={data.image} alt={data.imageAlt} widths={[140, 280, 420]} sizes="140px" />
+            </Media>
 
-          <div class="body">
-            <p class="eyebrow">
-              {data.term} · {data.role}
-            </p>
-            <h2 set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
-            <p class="desc" set:html={wrapFriendly(data.description)} />
-
-            <div class="foot">
-              <p class="instructor">
-                Instructor:{' '}
-                {data.instructor.url ? (
-                  <a class="text-link" href={data.instructor.url} target="_blank" rel="noopener">
-                    {data.instructor.name}
-                  </a>
-                ) : (
-                  data.instructor.name
-                )}
+            <div class="body">
+              <p class="eyebrow">
+                {data.term} · {data.role}
               </p>
-              {data.links.map((link) => (
-                <a class="chip" href={link.url} target="_blank" rel="noopener">
-                  {link.label}
-                  <span class="arrow" aria-hidden="true">
-                    ↗
-                  </span>
-                </a>
-              ))}
+              <h2 set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
+              <p class="desc" set:html={wrapFriendly(data.description)} />
+
+              <div class="foot">
+                <p class="instructor">
+                  Instructor:{' '}
+                  {data.instructor.url ? (
+                    <a class="text-link" href={data.instructor.url} target="_blank" rel="noopener">
+                      {data.instructor.name}
+                    </a>
+                  ) : (
+                    data.instructor.name
+                  )}
+                </p>
+                {data.links.map((link) => (
+                  <a class="chip" href={link.url} target="_blank" rel="noopener">
+                    {link.label}
+                    <span class="arrow" aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        </article>
-      ))
+          </article>
+        );
+      })
     }
   </div>
 </BaseLayout>
@@ -75,6 +83,10 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     aspect-ratio: 1;
     align-self: start;
     border-radius: var(--radius);
+  }
+
+  a.logo:hover :global(img) {
+    transform: scale(1.03);
   }
 
   h2 {

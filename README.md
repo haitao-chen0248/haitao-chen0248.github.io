@@ -77,7 +77,7 @@ images:                                # optional, up to six; several play as a 
 Full text in Markdown.
 ```
 
-**Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link.
+**Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link; `note` adds a badge, as on publications.
 
 **Teaching** (`teaching.yaml`): course code, title, term, role, description, instructor, an image with alt text, and optional links.
 
