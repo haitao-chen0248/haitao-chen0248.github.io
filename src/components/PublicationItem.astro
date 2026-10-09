@@ -20,7 +20,7 @@ const citeId = `cite-${pub.id}`;
 
 <article class:list={['pub', 'reveal', { compact }]}>
   <div class="media">
-    <a class="frame frame--figure" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+    <a class="frame frame--figure sheen lift" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
       <Image
         src={image}
         alt={imageAlt}
@@ -76,7 +76,7 @@ const citeId = `cite-${pub.id}`;
 
     {
       bibtex && (
-        <div class="cite" id={citeId} hidden>
+        <div class="cite glass" id={citeId} hidden>
           <pre><code>{bibtex.trim()}</code></pre>
           <button type="button" class="copy">Copy</button>
         </div>
@@ -205,14 +205,26 @@ const citeId = `cite-${pub.id}`;
     background: var(--accent-soft);
   }
 
-  /* BibTeX panel */
+  /* BibTeX panel: a glass sheet that springs open */
   .cite {
-    position: relative;
+    --light-size: 280px;
     margin-top: 12px;
     padding: 14px 16px;
-    border: 1px solid var(--card-edge);
     border-radius: var(--radius-sm);
-    background: var(--tile);
+    transform-origin: top left;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cite:not([hidden]) {
+      animation: cite-open 0.6s var(--spring);
+    }
+  }
+
+  @keyframes cite-open {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
   }
 
   /* Keep BibTeX lines intact; long lines scroll sideways */
@@ -234,17 +246,27 @@ const citeId = `cite-${pub.id}`;
     right: 10px;
     height: 26px;
     padding: 0 10px;
-    border: 1px solid var(--line-strong);
+    border: 1px solid var(--glass-edge);
     border-radius: 999px;
     font-size: 12px;
     color: var(--text-2);
-    background: var(--bg);
-    transition: color 0.2s, border-color 0.2s;
+    background: var(--glass-fill);
+    box-shadow: inset 0 1px 0 var(--glass-hi);
+    transition:
+      color 0.2s,
+      background-color 0.2s,
+      transform 0.5s var(--spring);
   }
 
   .cite .copy:hover {
     color: var(--text);
-    border-color: var(--accent-line);
+    background: var(--glass-fill-hover);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cite .copy:active {
+      transform: scale(0.94);
+    }
   }
 
   .press {

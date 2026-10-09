@@ -13,4 +13,4 @@ images:
     alt: The full award certificate
 ---
 
-Back in San Francisco for **SPIE Photonics West**, where I gave two talks on curvature-adaptive gigapixel microscopy and high-throughput 3D zebrafish profiling ([watch the video](https://www.youtube.com/watch?v=IXfsqg_8Y6I)). The zebrafish talk, *High-throughput automated 3D behavioral profiling of freely swimming zebrafish larvae using a multi-camera array microscope*, received the **BaySpec Best Presentation Award** at the High-Throughput Biophotonics: Imaging, Spectroscopy, and Beyond XI conference (BiOS). Another highlight of the week was meeting **Prof. Joseph Goodman**.
+Back in San Francisco for **SPIE Photonics West**, where I gave two talks on curvature-adaptive gigapixel microscopy and high-throughput 3D zebrafish profiling ([watch the video](https://www.youtube.com/watch?v=IXfsqg_8Y6I)). The zebrafish talk received the **BaySpec Best Presentation Award**. Another highlight of the week was meeting **Prof. Joseph Goodman**.
