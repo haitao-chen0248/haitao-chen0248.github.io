@@ -13,6 +13,7 @@ const path = Astro.url.pathname;
     </a>
 
     <div class="right">
+      <span class="lens glass" aria-hidden="true"></span>
       <nav aria-label="Main">
         <ul>
           {
@@ -72,25 +73,87 @@ const path = Astro.url.pathname;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
   }
 
-  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+  const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  toggle?.addEventListener('click', () => {
     const next = root.dataset.theme === 'light' ? 'dark' : 'light';
     save(next);
-    // Cross-fade between themes where the browser supports it.
-    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.startViewTransition(() => apply(next));
-    } else {
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
       apply(next);
+      return;
     }
+    // The new theme spreads out from the switch as a growing circle.
+    const box = toggle.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    root.classList.add('theme-switch');
+    const transition = document.startViewTransition(() => apply(next));
+    transition.ready
+      .then(() =>
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 700, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', pseudoElement: '::view-transition-new(root)' },
+        ),
+      )
+      .catch(() => {});
+    transition.finished.finally(() => root.classList.remove('theme-switch'));
   });
 
   // Follow live system changes unless the visitor picked a theme.
   systemQuery.addEventListener('change', () => {
     if (!readSaved()) apply(systemTheme());
   });
+
+  // Menu lens: a glass capsule that rests behind the current page's menu item
+  // and glides to whichever item the pointer or keyboard focus is on.
+  const bar = document.querySelector<HTMLElement>('.site-header .right');
+  const lens = bar?.querySelector<HTMLElement>('.lens');
+  if (bar && lens) {
+    const current = bar.querySelector<HTMLElement>('nav a[aria-current="page"]');
+    let active: HTMLElement | null = null;
+
+    function place(item: HTMLElement | null, animate = true) {
+      active = item;
+      if (!item) {
+        lens!.classList.remove('shown');
+        return;
+      }
+      // Start from the item itself when the lens is not on screen yet.
+      const jump = !animate || !lens!.classList.contains('shown');
+      const box = item.getBoundingClientRect();
+      const base = bar!.getBoundingClientRect();
+      const pad = item.matches('nav a') ? parseFloat(getComputedStyle(bar!).getPropertyValue('--lens-pad')) : 0;
+      const height = Math.max(box.height, 30);
+      lens!.classList.toggle('instant', jump);
+      lens!.style.setProperty('--lx', `${box.left - base.left - pad}px`);
+      lens!.style.setProperty('--ly', `${box.top - base.top - (height - box.height) / 2}px`);
+      lens!.style.setProperty('--lw', `${box.width + pad * 2}px`);
+      lens!.style.setProperty('--lh', `${height}px`);
+      if (jump) void lens!.offsetWidth;
+      lens!.classList.remove('instant');
+      lens!.classList.add('shown');
+    }
+
+    place(current, false);
+
+    for (const item of bar.querySelectorAll<HTMLElement>('nav a, .theme-toggle')) {
+      item.addEventListener('pointerenter', () => place(item));
+      item.addEventListener('focus', () => place(item));
+      item.addEventListener('blur', () => place(current));
+    }
+    bar.addEventListener('pointerleave', () => place(current));
+
+    // A small squeeze while pressed
+    bar.addEventListener('pointerdown', () => lens.classList.add('pressed'));
+    addEventListener('pointerup', () => lens.classList.remove('pressed'));
+
+    new ResizeObserver(() => place(active, false)).observe(bar);
+  }
 </script>
 
 <style>
-  /* Frosted-glass bar */
+  /* Frosted-glass bar. At the top of the page it is clear and lets the
+     ambient light through; it frosts over as the page scrolls. */
   .site-header {
     position: sticky;
     top: 0;
@@ -99,9 +162,34 @@ const path = Astro.url.pathname;
     background: var(--header-bg);
     border-bottom: 1px solid var(--line);
     backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
     /* Keep the header still while pages cross-fade. */
     view-transition-name: site-header;
+  }
+
+  /* While the theme switches, the header is part of the page so the new theme
+     sweeps over it too. */
+  :global(.theme-switch) .site-header {
+    view-transition-name: none;
+  }
+
+  /* The shorthand and the timeline sit in separate rules on purpose; see the
+     note on .reveal in global.css. */
+  @supports (animation-timeline: scroll()) {
+    :where(.site-header) {
+      animation: header-clear linear both;
+    }
+
+    .site-header {
+      animation-timeline: scroll();
+      animation-range: 0 64px;
+    }
+  }
+
+  @keyframes header-clear {
+    from {
+      background-color: transparent;
+      border-bottom-color: transparent;
+    }
   }
 
   .inner {
@@ -133,9 +221,51 @@ const path = Astro.url.pathname;
   }
 
   .right {
+    --lens-pad: 12px;
+    position: relative;
+    isolation: isolate;
     display: flex;
     align-items: center;
     gap: 20px;
+  }
+
+  /* Glass capsule behind the current or hovered menu item. It moves on a
+     spring, so it overshoots a little and settles like a drop of liquid. */
+  .lens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: var(--lw, 0px);
+    height: var(--lh, 0px);
+    border-radius: 999px;
+    backdrop-filter: none;
+    opacity: 0;
+    transform: translate(var(--lx, 0px), var(--ly, 0px)) scale(var(--ls, 1));
+    transition:
+      opacity 0.25s,
+      transform 0.6s var(--spring),
+      width 0.6s var(--spring),
+      height 0.6s var(--spring);
+    pointer-events: none;
+  }
+
+  .lens.shown {
+    opacity: 1;
+  }
+
+  .lens.pressed {
+    --ls: 0.92;
+  }
+
+  .lens.instant {
+    transition: opacity 0.25s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lens {
+      transition: opacity 0.25s;
+    }
   }
 
   nav ul {
@@ -161,12 +291,11 @@ const path = Astro.url.pathname;
     height: 30px;
     border-radius: 50%;
     color: var(--text-2);
-    transition: color 0.2s, background-color 0.2s;
+    transition: color 0.2s;
   }
 
   .theme-toggle:hover {
     color: var(--text);
-    background: var(--pill);
   }
 
   .theme-toggle svg {
@@ -187,6 +316,7 @@ const path = Astro.url.pathname;
 
   @media (max-width: 600px) {
     .right {
+      --lens-pad: 8px;
       gap: 10px;
     }
 
@@ -212,6 +342,7 @@ const path = Astro.url.pathname;
     }
 
     .right {
+      --lens-pad: 7px;
       gap: 6px;
     }
 

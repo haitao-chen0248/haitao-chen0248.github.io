@@ -17,6 +17,14 @@ export default defineConfig({
     '/about': '/',
   },
 
+  // Browsers the CSS is built for. Knowing them, the minifier adds the vendor
+  // prefixes older Safari needs, such as -webkit-backdrop-filter.
+  vite: {
+    build: {
+      cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
+    },
+  },
+
   // Prefetch internal pages on hover so navigation feels instant.
   prefetch: {
     prefetchAll: true,
