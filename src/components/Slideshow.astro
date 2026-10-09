@@ -19,13 +19,13 @@ const multiple = images.length > 1;
 ---
 
 <div
-  class:list={['slideshow', { multiple }]}
+  class:list={['slideshow', 'lift', { multiple }]}
   data-interval={interval}
   role={multiple ? 'region' : undefined}
   aria-roledescription={multiple ? 'carousel' : undefined}
   aria-label={multiple ? 'Photos' : undefined}
 >
-  <div class="slides">
+  <div class="slides sheen">
     {
       images.map((img, i) => (
         <div
@@ -119,8 +119,10 @@ const multiple = images.length > 1;
 </script>
 
 <style>
+  /* Rises on hover and catches the pointer light, like the other cards */
   .slideshow {
     position: relative;
+    border-radius: var(--radius-sm);
   }
 
   .slides {
@@ -147,6 +149,13 @@ const multiple = images.length > 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.8s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .slideshow:hover .slide :global(img) {
+      transform: scale(1.03);
+    }
   }
 
   /* Small dots on a glass capsule over the bottom of the photo */

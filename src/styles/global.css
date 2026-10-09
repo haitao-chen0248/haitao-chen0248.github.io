@@ -25,7 +25,7 @@
   --text-2: #a1a1a6;
   --text-3: #6e6e73;
 
-  /* Accent: used sparingly for underlines, hovers, tags, and badges */
+  /* Accent: used sparingly for underlines, hovers, and tags */
   --accent: #7fc4ff;
   --accent-soft: rgb(127 196 255 / 0.12);
   --accent-line: rgb(127 196 255 / 0.35);
@@ -33,6 +33,12 @@
   /* "Available" green for the status dot */
   --ok: #30d158;
   --ok-soft: rgb(48 209 88 / 0.2);
+
+  /* Champagne gold for honors (badges such as "Editors' Pick" or an award),
+     kept apart from the blue that marks links and hovers */
+  --honor: #dcc08a;
+  --honor-soft: rgb(220 192 138 / 0.12);
+  --honor-line: rgb(220 192 138 / 0.32);
 
   /* Paper figures sit on a white plate in both themes */
   --figure-bg: #fff;
@@ -90,6 +96,10 @@
 
   --ok: #1f9d4c;
   --ok-soft: rgb(31 157 76 / 0.16);
+
+  --honor: #86652a;
+  --honor-soft: rgb(176 138 69 / 0.1);
+  --honor-line: rgb(176 138 69 / 0.35);
 
   --figure-edge: rgb(0 0 0 / 0.08);
   --card-edge: rgb(0 0 0 / 0.08);
@@ -358,14 +368,14 @@ a.text-link:hover {
   transform: translate(1px, -1px);
 }
 
-/* Small highlight badge, e.g. "Editors' Pick" */
+/* Small honor badge, e.g. "Editors' Pick" or an award */
 .badge {
   display: inline-block;
   padding: 1px 8px;
-  border: 1px solid var(--accent-line);
+  border: 1px solid var(--honor-line);
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--honor-soft);
+  color: var(--honor);
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.6;
