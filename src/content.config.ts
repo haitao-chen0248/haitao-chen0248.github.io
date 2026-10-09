@@ -61,6 +61,8 @@ const talks = defineCollection({
     youtube: z.string().optional(),
     // Optional id of the related entry in publications.yaml; adds a "Paper" link.
     paper: reference('publications').optional(),
+    // Optional badge, e.g. an award
+    note: z.string().optional(),
     order: z.number(),
   }),
 });
