@@ -3,10 +3,10 @@ date: 2026-01
 title: "Two talks and a Best Presentation Award at SPIE Photonics West 2026"
 summary: Gave two talks at SPIE Photonics West 2026 and received the BaySpec Best Presentation Award.
 images:
-  - src: ../../assets/images/news/2026-01-spie-award.jpg
-    alt: BaySpec Best Presentation award certificate from SPIE Photonics West 2026 BiOS
   - src: ../../assets/images/news/2026-01-photonics-west-talk.jpg
     alt: Giving a talk at SPIE Photonics West 2026
+  - src: ../../assets/images/news/2026-01-spie-award.jpg
+    alt: BaySpec Best Presentation award certificate from SPIE Photonics West 2026 BiOS
   - src: ../../assets/images/news/2026-01-joseph-goodman.jpg
     alt: Meeting Prof. Joseph Goodman at SPIE Photonics West 2026
   - src: ../../assets/images/news/2026-01-spie-award-certificate.jpg
