@@ -124,7 +124,7 @@ function initials(org: string): string {
       <div class="tiles">
         {
           recent.map((item) => (
-            <a class="news-tile sheen reveal" href={`/news/#${item.id}`}>
+            <a class="news-tile sheen lift reveal" href={`/news/#${item.id}`}>
               {item.data.images[0] && (
                 <div class="frame media">
                   <Image
@@ -611,13 +611,6 @@ function initials(org: string): string {
 
   .news-tile:hover {
     background: var(--tile-hover);
-    box-shadow: var(--glass-drop);
-  }
-
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .news-tile:hover {
-      translate: 0 -3px;
-    }
   }
 
   .news-tile .media {

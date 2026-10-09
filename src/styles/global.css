@@ -481,6 +481,12 @@ a.text-link:hover {
   padding: 6%;
 }
 
+/* A white plate cannot get brighter, so the pointer light shows as a soft
+   falloff around it instead */
+.frame--figure.sheen::after {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), transparent, rgb(0 0 0 / 0.07));
+}
+
 /* Liquid glass
    ========================================================================== */
 
@@ -502,13 +508,17 @@ a.text-link:hover {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(80px circle at var(--mx, 50%) var(--my, 0%), var(--glass-light), transparent);
+  background: radial-gradient(var(--light-size, 80px) circle at var(--mx, 50%) var(--my, 0%), var(--glass-light), transparent);
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
 }
 
 /* The same light, sweeping across a whole card */
+:where(.sheen) {
+  position: relative;
+}
+
 .sheen::after {
   content: '';
   position: absolute;
@@ -525,6 +535,25 @@ a.text-link:hover {
   .glass:hover::after,
   .sheen:hover::after {
     opacity: 1;
+  }
+}
+
+/* Cards that rise a little on hover, on a spring */
+:where(.lift) {
+  transition:
+    translate 0.6s var(--spring),
+    box-shadow 0.4s;
+}
+
+@media (hover: hover) {
+  .lift:hover {
+    box-shadow: var(--glass-drop);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift:hover {
+    translate: 0 -3px;
   }
 }
 
