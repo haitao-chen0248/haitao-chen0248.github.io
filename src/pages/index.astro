@@ -61,7 +61,7 @@ function initials(org: string): string {
 
       {
         status && (
-          <p class="status enter" style="--i: 3">
+          <p class="status glass enter" style="--i: 3">
             <span class="dot" aria-hidden="true" />
             <span>
               <Fragment set:html={wrapFriendly(status, true)} />{' '}
@@ -96,7 +96,7 @@ function initials(org: string): string {
         {
           profileLinks().map((link) => (
             <li>
-              <a href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              <a class="glass" href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
                 <Icon name={link.icon} size={15} />
                 <span>{link.label}</span>
               </a>
@@ -124,7 +124,7 @@ function initials(org: string): string {
       <div class="tiles">
         {
           recent.map((item) => (
-            <a class="news-tile reveal" href={`/news/#${item.id}`}>
+            <a class="news-tile sheen reveal" href={`/news/#${item.id}`}>
               {item.data.images[0] && (
                 <div class="frame media">
                   <Image
@@ -268,7 +268,6 @@ function initials(org: string): string {
     gap: 10px;
     margin-top: 18px;
     padding: 7px 14px 7px 12px;
-    border: 1px solid var(--line-strong);
     border-radius: 999px;
     font-size: 14px;
     line-height: 1.5;
@@ -316,6 +315,7 @@ function initials(org: string): string {
     border: 1px solid var(--tag-border);
     border-radius: 8px;
     background: var(--tag-bg);
+    backdrop-filter: blur(14px) saturate(180%);
     font-size: 14px;
     font-weight: 500;
     color: var(--text);
@@ -328,25 +328,35 @@ function initials(org: string): string {
     margin-top: 28px;
   }
 
+  /* Glass pills (the border comes from .glass, so the padding is 1px less) */
   .pills a {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     height: 34px;
-    padding: 0 14px;
+    padding: 0 13px;
     border-radius: 999px;
-    background: var(--pill);
     font-size: 13.5px;
     color: var(--text);
-    transition: background-color 0.2s, transform 0.2s var(--ease);
+    transition:
+      background-color 0.2s,
+      transform 0.5s var(--spring);
   }
 
   .pills a:hover {
-    background: var(--pill-hover);
+    background: var(--glass-fill-hover);
   }
 
-  .pills a:active {
-    transform: scale(0.97);
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .pills a:hover {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pills a:active {
+      transform: scale(0.95);
+    }
   }
 
   .pills :global(svg) {
@@ -586,17 +596,28 @@ function initials(org: string): string {
   }
 
   .news-tile {
+    position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border: 1px solid var(--card-edge);
     border-radius: var(--radius-lg);
     background: var(--tile);
-    transition: background-color 0.3s;
+    transition:
+      background-color 0.3s,
+      box-shadow 0.4s,
+      translate 0.6s var(--spring);
   }
 
   .news-tile:hover {
     background: var(--tile-hover);
+    box-shadow: var(--glass-drop);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .news-tile:hover {
+      translate: 0 -3px;
+    }
   }
 
   .news-tile .media {

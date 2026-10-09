@@ -14,8 +14,6 @@
   --bg: #000;
   --tile: #161617;
   --tile-hover: #1c1c1e;
-  --pill: #1c1c1e;
-  --pill-hover: #2a2a2d;
   --header-bg: rgb(22 22 23 / 0.8);
 
   /* Lines */
@@ -47,6 +45,20 @@
   --tag-bg: var(--accent-soft);
   --tag-border: var(--accent-line);
 
+  /* Liquid glass: translucent fill, edge, top highlight, drop shadow, and
+     the light that follows the pointer */
+  --glass-fill: rgb(255 255 255 / 0.07);
+  --glass-fill-hover: rgb(255 255 255 / 0.12);
+  --glass-edge: rgb(255 255 255 / 0.12);
+  --glass-hi: rgb(255 255 255 / 0.2);
+  --glass-drop: 0 8px 24px rgb(0 0 0 / 0.35);
+  --glass-light: rgb(255 255 255 / 0.16);
+
+  /* Ambient light at the top of each page */
+  --glow-1: rgb(64 140 255 / 0.3);
+  --glow-2: rgb(0 190 200 / 0.16);
+  --glow-3: rgb(140 90 255 / 0.14);
+
   /* Theme toggle shows the sun in dark mode (click to go light) */
   --show-sun: block;
   --show-moon: none;
@@ -63,8 +75,6 @@
   --bg: #fff;
   --tile: #f5f5f7;
   --tile-hover: #ededf0;
-  --pill: #f2f2f4;
-  --pill-hover: #e6e6ea;
   --header-bg: rgb(255 255 255 / 0.78);
 
   --line: rgb(0 0 0 / 0.09);
@@ -84,8 +94,19 @@
   --figure-edge: rgb(0 0 0 / 0.08);
   --card-edge: rgb(0 0 0 / 0.08);
 
-  --tag-bg: #fff;
+  --tag-bg: rgb(255 255 255 / 0.6);
   --tag-border: rgb(0 0 0 / 0.14);
+
+  --glass-fill: rgb(255 255 255 / 0.6);
+  --glass-fill-hover: rgb(255 255 255 / 0.85);
+  --glass-edge: rgb(0 0 0 / 0.07);
+  --glass-hi: rgb(255 255 255 / 0.9);
+  --glass-drop: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 18px rgb(0 0 0 / 0.06);
+  --glass-light: rgb(255 255 255 / 0.9);
+
+  --glow-1: rgb(31 111 235 / 0.13);
+  --glow-2: rgb(0 170 190 / 0.1);
+  --glow-3: rgb(130 80 255 / 0.09);
 
   --show-sun: none;
   --show-moon: block;
@@ -109,6 +130,8 @@
   /* Motion */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Damped spring with a slight overshoot, for things that move or resize */
+  --spring: linear(0, 0.049, 0.166, 0.313, 0.466, 0.608, 0.73, 0.83, 0.906, 0.962, 0.999, 1.022, 1.034, 1.038, 1.037, 1.033, 1.028, 1.022, 1.017, 1.012, 1.008, 1.004, 1);
 }
 
 /* Narrow phones get a slightly tighter gutter */
@@ -291,7 +314,11 @@ a.text-link:hover {
   font-size: 13px;
   color: var(--text-2);
   white-space: nowrap;
-  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background-color 0.2s,
+    transform 0.5s var(--spring);
 }
 
 @media (max-width: 600px) {
@@ -306,6 +333,18 @@ a.text-link:hover {
   color: var(--text);
   border-color: var(--accent-line);
   background: var(--accent-soft);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .chip:hover {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chip:active {
+    transform: scale(0.95);
+  }
 }
 
 .chip .arrow {
@@ -442,6 +481,146 @@ a.text-link:hover {
   padding: 6%;
 }
 
+/* Liquid glass
+   ========================================================================== */
+
+/* Translucent surface that blurs and brightens what lies behind it, with a
+   lit top edge. The light that follows the pointer (--mx, --my) is set by
+   the script in BaseLayout. */
+.glass {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-fill);
+  box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-drop);
+  backdrop-filter: blur(14px) saturate(180%);
+}
+
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(80px circle at var(--mx, 50%) var(--my, 0%), var(--glass-light), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+/* The same light, sweeping across a whole card */
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgb(255 255 255 / 0.14), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .glass:hover::after,
+  .sheen:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Ambient light: soft color fields behind the top of every page. They drift
+   slowly, lean toward the pointer, and give the glass something to refract. */
+.ambient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 900px;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(#000 30%, transparent);
+}
+
+.ambient-field {
+  position: absolute;
+  inset: 0;
+  transform: translate(var(--px, 0px), var(--py, 0px));
+  transition: transform 2s var(--ease-out);
+}
+
+.ambient span {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.ambient span:nth-child(1) {
+  top: 140px;
+  left: 78%;
+  width: clamp(420px, 62vw, 880px);
+  background: radial-gradient(closest-side, var(--glow-1), transparent);
+}
+
+.ambient span:nth-child(2) {
+  top: 400px;
+  left: 10%;
+  width: clamp(360px, 48vw, 700px);
+  background: radial-gradient(closest-side, var(--glow-2), transparent);
+}
+
+.ambient span:nth-child(3) {
+  top: 120px;
+  left: 36%;
+  width: clamp(320px, 40vw, 600px);
+  background: radial-gradient(closest-side, var(--glow-3), transparent);
+}
+
+@keyframes drift-1 {
+  to {
+    transform: translate(-9%, 12%) scale(1.15);
+  }
+}
+
+@keyframes drift-2 {
+  to {
+    transform: translate(16%, -10%) scale(0.9);
+  }
+}
+
+@keyframes drift-3 {
+  to {
+    transform: translate(12%, 18%) scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient span:nth-child(1) {
+    animation: drift-1 23s ease-in-out infinite alternate;
+  }
+
+  .ambient span:nth-child(2) {
+    animation: drift-2 31s ease-in-out infinite alternate;
+  }
+
+  .ambient span:nth-child(3) {
+    animation: drift-3 37s ease-in-out infinite alternate;
+  }
+}
+
+/* Visitors who ask for less transparency get plain surfaces */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--tile);
+    backdrop-filter: none;
+  }
+
+  .ambient {
+    display: none;
+  }
+}
+
 /* Motion
    ========================================================================== */
 
@@ -453,6 +632,14 @@ a.text-link:hover {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.25s;
+}
+
+/* Theme switch: the new theme is revealed by a circle the header script
+   animates, so the default cross-fade is turned off. */
+.theme-switch::view-transition-old(root),
+.theme-switch::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @keyframes fade-up {
