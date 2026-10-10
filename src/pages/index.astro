@@ -334,9 +334,10 @@ function initials(org: string): string {
   }
 
   .interests-label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-3);
   }
@@ -762,10 +763,11 @@ function initials(org: string): string {
   }
 
   .edu-years {
-    font-size: 14.5px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0;
     color: var(--text-2);
     white-space: nowrap;
-    font-variant-numeric: tabular-nums;
   }
 
   /* Phones: logo beside the years, school, and degree; the description and
@@ -814,8 +816,7 @@ function initials(org: string): string {
     .edu-years {
       grid-area: years;
       margin-bottom: 2px;
-      font-size: 12.5px;
-      font-weight: 500;
+      font-size: 11.5px;
       color: var(--text-3);
     }
 

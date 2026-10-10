@@ -64,11 +64,11 @@ const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
 
   .year {
     margin-bottom: 20px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--text-2);
-    font-variant-numeric: tabular-nums;
   }
 
   .entries {
@@ -118,7 +118,7 @@ const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
   /* Phone type scale */
   @media (max-width: 600px) {
     .year {
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .headline {

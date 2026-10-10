@@ -129,8 +129,9 @@
 }
 
 :root {
-  /* Type. Apple devices get San Francisco; everything else gets Inter. */
-  --font: -apple-system, BlinkMacSystemFont, 'Inter Variable', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Type: Geist everywhere, Geist Mono for small labels (dates, venues) */
+  --font: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Layout */
   --container: 1024px;
@@ -196,7 +197,6 @@ body {
   font-size: 16px;
   line-height: 1.55;
   letter-spacing: -0.008em;
-  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -379,9 +379,11 @@ a.text-link:hover {
   border-radius: 999px;
   background: var(--honor-soft);
   color: var(--honor);
+  font-family: var(--font);
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.6;
+  letter-spacing: -0.008em;
 }
 
 /* Layout helpers
@@ -453,15 +455,15 @@ a.text-link:hover {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 10px;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0;
   color: var(--text-3);
-  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 600px) {
   .eyebrow {
-    font-size: 12.5px;
+    font-size: 11.5px;
   }
 }
 
