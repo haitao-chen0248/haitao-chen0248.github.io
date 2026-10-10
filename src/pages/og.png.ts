@@ -22,7 +22,7 @@ function h(type: string, props: Record<string, unknown>, ...children: unknown[])
 
 const root = process.cwd();
 const font = (weight: number) =>
-  readFile(path.join(root, `node_modules/@fontsource/inter/files/inter-latin-${weight}-normal.woff`));
+  readFile(path.join(root, `node_modules/@fontsource/geist/files/geist-latin-${weight}-normal.woff`));
 
 // The Airy-pattern logo mark, same as the favicon.
 const mark =
@@ -55,7 +55,7 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
         gap: 64,
         backgroundColor: '#000',
         backgroundImage: 'radial-gradient(circle at 85% 15%, rgba(77, 141, 255, 0.22), rgba(0, 0, 0, 0) 55%)',
-        fontFamily: 'Inter',
+        fontFamily: 'Geist',
         color: '#f5f5f7',
       },
     },
@@ -76,7 +76,7 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
       ),
       h(
         'div',
-        { style: { marginTop: 22, fontSize: 32, fontWeight: 500, color: '#a1a1a6', lineHeight: 1.3 } },
+        { style: { marginTop: 22, fontSize: 32, fontWeight: 500, color: '#a1a1a6', lineHeight: 1.3, textWrap: 'balance' } },
         site.role,
       ),
       h(
@@ -114,9 +114,9 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
     width: WIDTH,
     height: HEIGHT,
     fonts: [
-      { name: 'Inter', data: regular, weight: 400, style: 'normal' },
-      { name: 'Inter', data: medium, weight: 500, style: 'normal' },
-      { name: 'Inter', data: semibold, weight: 600, style: 'normal' },
+      { name: 'Geist', data: regular, weight: 400, style: 'normal' },
+      { name: 'Geist', data: medium, weight: 500, style: 'normal' },
+      { name: 'Geist', data: semibold, weight: 600, style: 'normal' },
     ],
   });
 
