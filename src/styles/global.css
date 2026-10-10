@@ -25,8 +25,10 @@
   --text-2: #a1a1a6;
   --text-3: #6e6e73;
 
-  /* Accent: used sparingly for underlines, hovers, and tags */
+  /* Accent: used sparingly for underlines, hovers, and tags. The second
+     accent (teal) only appears in gradients with the first. */
   --accent: #7fc4ff;
+  --accent-2: #5fd6c8;
   --accent-soft: rgb(127 196 255 / 0.12);
   --accent-line: rgb(127 196 255 / 0.35);
 
@@ -91,6 +93,7 @@
   --text-3: #86868b;
 
   --accent: #1f6feb;
+  --accent-2: #0fa3a3;
   --accent-soft: rgb(31 111 235 / 0.07);
   --accent-line: rgb(31 111 235 / 0.3);
 
@@ -717,3 +720,28 @@ a.text-link:hover {
     }
   }
 }
+
+/* Photos, figures, and video posters settle into their frames as they
+   scroll in, so the page moves with the reader. "scale" is used rather than
+   "transform", which the hover zoom already uses. */
+@keyframes settle {
+  from {
+    scale: 1.08;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.frame img, .slide img, .poster img) {
+      animation: settle linear both;
+    }
+
+    .frame img,
+    .slide img,
+    .poster img {
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+  }
+}
+

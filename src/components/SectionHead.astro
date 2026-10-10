@@ -1,5 +1,6 @@
 ---
-// Section title with an optional "View all" link on the right.
+// Section title with an optional "View all" link on the right. As the
+// section scrolls in, a rule draws across above it and the title rises.
 interface Props {
   title: string;
   id?: string;
@@ -11,7 +12,8 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
 ---
 
 <div class="section-head">
-  <h2 id={id}>{title}</h2>
+  <span class="rule" aria-hidden="true"></span>
+  <h2 id={id}><span class="title">{title}</span></h2>
   {
     href && (
       <a class="more-link" href={href}>
@@ -27,6 +29,7 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
 
 <style>
   .section-head {
+    position: relative;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -37,6 +40,63 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
   h2 {
     font-size: clamp(22px, 2.6vw, 28px);
     letter-spacing: -0.022em;
+  }
+
+  /* Hairline above the title, halfway into the section's top padding */
+  .rule {
+    position: absolute;
+    top: calc(clamp(14px, 2vw, 24px) * -1);
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--line);
+    transform-origin: left;
+  }
+
+  .title {
+    display: inline-block;
+  }
+
+  @keyframes draw {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.6em);
+    }
+  }
+
+  /* The shorthand and the timeline sit in separate rules on purpose; see the
+     note on .reveal in global.css. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .section-head {
+        view-timeline: --head;
+      }
+
+      :where(.rule) {
+        animation: draw linear both;
+      }
+
+      :where(.title, .section-head > a) {
+        animation: rise linear both;
+      }
+
+      .rule {
+        animation-timeline: --head;
+        animation-range: entry 0% cover 40%;
+      }
+
+      .title,
+      .section-head > a {
+        animation-timeline: --head;
+        animation-range: entry 30% cover 45%;
+      }
+    }
   }
 
   .label-short {
