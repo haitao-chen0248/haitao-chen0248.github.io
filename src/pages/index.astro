@@ -5,7 +5,9 @@ import { Image } from 'astro:assets';
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icon from '@/components/Icon.astro';
+import Letters from '@/components/Letters.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
+import SectionDock from '@/components/SectionDock.astro';
 import SectionHead from '@/components/SectionHead.astro';
 import headshot from '@/assets/images/headshot.jpg';
 import { site, status } from '@/config';
@@ -19,6 +21,14 @@ const featured = (await getCollection('publications')).filter((p) => p.data.feat
 const recent = (await getCollection('news')).sort(byNewest).slice(0, 3);
 
 const education = (await getCollection('education')).sort(byFileOrder);
+
+// Sections listed in the "On this page" dock.
+const sections = [
+  { id: 'about', label: 'About' },
+  { id: 'publications', label: 'Publications' },
+  { id: 'news', label: 'News' },
+  { id: 'education', label: 'Education' },
+];
 
 // School logos: files in src/assets/images/logos/ named after the entry id are
 // picked up automatically. "<id>.png" is used in light mode; an optional
@@ -44,9 +54,9 @@ function initials(org: string): string {
 
 <BaseLayout>
   <!-- Hero: intro on the left, portrait on the right, interests and links below -->
-  <section class="container hero">
+  <section class="container hero" id="about">
     <div class="hero-text">
-      <h1 class="enter">{site.name}</h1>
+      <h1><Letters text={site.name} /></h1>
       <p class="role enter" style="--i: 1" set:html={wrapFriendly(site.role, true)} />
 
       <p class="lead prose enter" style="--i: 2">
@@ -96,7 +106,7 @@ function initials(org: string): string {
         {
           profileLinks().map((link) => (
             <li>
-              <a class="glass" href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              <a class="glass" data-magnetic href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
                 <Icon name={link.icon} size={15} />
                 <span>{link.label}</span>
               </a>
@@ -108,9 +118,9 @@ function initials(org: string): string {
   </section>
 
   <!-- Selected publications -->
-  <section class="section">
+  <section class="section" id="publications">
     <div class="container">
-      <SectionHead title="Selected publications" href="/publications/" linkLabel="All publications" />
+      <SectionHead title="Selected publications" ghost="Publications" href="/publications/" linkLabel="All publications" />
       <div class="pub-list">
         {featured.map((pub) => <PublicationItem pub={pub} compact />)}
       </div>
@@ -118,9 +128,9 @@ function initials(org: string): string {
   </section>
 
   <!-- Recent news -->
-  <section class="section">
+  <section class="section" id="news">
     <div class="container">
-      <SectionHead title="Recent news" href="/news/" linkLabel="All news" />
+      <SectionHead title="Recent news" ghost="News" href="/news/" linkLabel="All news" />
       <div class="tiles">
         {
           recent.map((item) => (
@@ -149,9 +159,9 @@ function initials(org: string): string {
   </section>
 
   <!-- Education & experience -->
-  <section class="section">
+  <section class="section" id="education">
     <div class="container">
-      <SectionHead title="Education & experience" />
+      <SectionHead title="Education & experience" ghost="Education" />
       <ol class="edu">
         {
           education.map(({ id, data }) => {
@@ -207,11 +217,39 @@ function initials(org: string): string {
       </ol>
     </div>
   </section>
+
+  <SectionDock sections={sections} />
 </BaseLayout>
 
 <style>
   /* Hero
      ======================================================================== */
+
+  /* The intro recedes as the page scrolls past it: it drifts slower than
+     the page, which gives a sense of depth, and fades once mostly gone. */
+  @keyframes recede {
+    40% {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 64px;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      :where(.hero) {
+        animation: recede linear both;
+      }
+
+      .hero {
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+    }
+  }
 
   .hero {
     display: grid;
@@ -296,9 +334,10 @@ function initials(org: string): string {
   }
 
   .interests-label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-3);
   }
@@ -340,7 +379,8 @@ function initials(org: string): string {
     color: var(--text);
     transition:
       background-color 0.2s,
-      transform 0.5s var(--spring);
+      transform 0.5s var(--spring),
+      translate 0.6s var(--spring);
   }
 
   .pills a:hover {
@@ -723,10 +763,11 @@ function initials(org: string): string {
   }
 
   .edu-years {
-    font-size: 14.5px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0;
     color: var(--text-2);
     white-space: nowrap;
-    font-variant-numeric: tabular-nums;
   }
 
   /* Phones: logo beside the years, school, and degree; the description and
@@ -775,8 +816,7 @@ function initials(org: string): string {
     .edu-years {
       grid-area: years;
       margin-bottom: 2px;
-      font-size: 12.5px;
-      font-weight: 500;
+      font-size: 11.5px;
       color: var(--text-3);
     }
 

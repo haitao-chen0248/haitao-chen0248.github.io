@@ -19,14 +19,17 @@
   /* Lines */
   --line: rgb(255 255 255 / 0.1);
   --line-strong: rgb(255 255 255 / 0.18);
+  --ghost: rgb(255 255 255 / 0.045);
 
   /* Text */
   --text: #f5f5f7;
   --text-2: #a1a1a6;
   --text-3: #6e6e73;
 
-  /* Accent: used sparingly for underlines, hovers, and tags */
+  /* Accent: used sparingly for underlines, hovers, and tags. The second
+     accent (teal) only appears in gradients with the first. */
   --accent: #7fc4ff;
+  --accent-2: #5fd6c8;
   --accent-soft: rgb(127 196 255 / 0.12);
   --accent-line: rgb(127 196 255 / 0.35);
 
@@ -85,12 +88,14 @@
 
   --line: rgb(0 0 0 / 0.09);
   --line-strong: rgb(0 0 0 / 0.16);
+  --ghost: rgb(0 0 0 / 0.04);
 
   --text: #1d1d1f;
   --text-2: #515154;
   --text-3: #86868b;
 
   --accent: #1f6feb;
+  --accent-2: #0fa3a3;
   --accent-soft: rgb(31 111 235 / 0.07);
   --accent-line: rgb(31 111 235 / 0.3);
 
@@ -126,8 +131,9 @@
 }
 
 :root {
-  /* Type. Apple devices get San Francisco; everything else gets Inter. */
-  --font: -apple-system, BlinkMacSystemFont, 'Inter Variable', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Type: Geist everywhere, Geist Mono for small labels (dates, venues) */
+  --font: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Layout */
   --container: 1024px;
@@ -193,7 +199,6 @@ body {
   font-size: 16px;
   line-height: 1.55;
   letter-spacing: -0.008em;
-  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -201,6 +206,8 @@ body {
 
 main {
   flex: 1;
+  /* Oversized decorative words (SectionHead) may run past the screen edge */
+  overflow-x: clip;
 }
 
 img,
@@ -376,9 +383,11 @@ a.text-link:hover {
   border-radius: 999px;
   background: var(--honor-soft);
   color: var(--honor);
+  font-family: var(--font);
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.6;
+  letter-spacing: -0.008em;
 }
 
 /* Layout helpers
@@ -450,15 +459,15 @@ a.text-link:hover {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 10px;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0;
   color: var(--text-3);
-  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 600px) {
   .eyebrow {
-    font-size: 12.5px;
+    font-size: 11.5px;
   }
 }
 
@@ -692,6 +701,31 @@ a.text-link:hover {
   }
 }
 
+/* Page titles: letters rise into place one after another (Letters.astro) */
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.letter {
+  display: inline-block;
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(8px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .letter {
+    animation: letter-in 0.9s var(--spring) both;
+    animation-delay: calc(var(--n) * 32ms + 60ms);
+  }
+}
+
 /* Staggered entrance for above-the-fold content */
 @media (prefers-reduced-motion: no-preference) {
   .enter {
@@ -705,15 +739,47 @@ a.text-link:hover {
    minifier would otherwise merge them into one "animation" shorthand that
    browsers reject. :where() keeps the shorthand at zero specificity so the
    timeline in the second rule always wins. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(36px) scale(0.985);
+  }
+}
+
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     :where(.reveal) {
-      animation: fade-up linear both;
+      animation: reveal-up linear both;
     }
 
     .reveal {
       animation-timeline: view();
-      animation-range: entry 0% entry 160px;
+      animation-range: entry 0% entry 220px;
     }
   }
 }
+
+/* Photos, figures, and video posters settle into their frames as they
+   scroll in, so the page moves with the reader. "scale" is used rather than
+   "transform", which the hover zoom already uses. */
+@keyframes settle {
+  from {
+    scale: 1.08;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.frame img, .slide img, .poster img) {
+      animation: settle linear both;
+    }
+
+    .frame img,
+    .slide img,
+    .poster img {
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+  }
+}
+

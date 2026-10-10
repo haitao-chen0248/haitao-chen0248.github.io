@@ -1,7 +1,8 @@
 ---
 // Shared page shell: <head> metadata, fonts, header, and footer.
-// Inter with optical sizing, used where San Francisco is not available.
-import '@fontsource-variable/inter/opsz.css';
+// Geist for all text; Geist Mono for small labels such as dates and venues.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
 import '@/styles/global.css';
 
 import { getImage } from 'astro:assets';
@@ -112,15 +113,26 @@ const personSchema = {
 
     <script>
       // Pointer light: glass surfaces and cards catch a soft highlight where the
-      // pointer is, and the ambient light leans gently toward it. Mouse and
-      // trackpad only; touch screens keep the static look.
+      // pointer is, and the ambient light leans gently toward it. Elements
+      // marked data-magnetic lean a few pixels toward the pointer too. Mouse
+      // and trackpad only; touch screens keep the static look.
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
         const field = document.querySelector<HTMLElement>('.ambient-field');
         const still = matchMedia('(prefers-reduced-motion: reduce)');
         let x = 0;
         let y = 0;
         let target: HTMLElement | null = null;
+        let magnet: HTMLElement | null = null;
+        let pull = [0, 0];
         let frame = 0;
+
+        const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
+
+        function release() {
+          if (magnet) magnet.style.translate = '';
+          magnet = null;
+          pull = [0, 0];
+        }
 
         function update() {
           frame = 0;
@@ -133,6 +145,14 @@ const personSchema = {
             field.style.setProperty('--px', `${(x / innerWidth - 0.5) * 48}px`);
             field.style.setProperty('--py', `${(y / innerHeight - 0.5) * 32}px`);
           }
+          if (magnet && !still.matches) {
+            // Measure from the resting position, not the pulled one.
+            const box = magnet.getBoundingClientRect();
+            const cx = box.left - pull[0] + box.width / 2;
+            const cy = box.top - pull[1] + box.height / 2;
+            pull = [clamp((x - cx) * 0.3, 6), clamp((y - cy) * 0.3, 4)];
+            magnet.style.translate = `${pull[0]}px ${pull[1]}px`;
+          }
         }
 
         document.addEventListener(
@@ -141,10 +161,20 @@ const personSchema = {
             x = event.clientX;
             y = event.clientY;
             target = (event.target as Element).closest<HTMLElement>('.glass, .sheen');
+            const next = (event.target as Element).closest<HTMLElement>('[data-magnetic]');
+            if (next !== magnet) {
+              release();
+              magnet = next;
+            }
             frame ||= requestAnimationFrame(update);
           },
           { passive: true },
         );
+
+        // Let go when the pointer leaves the window.
+        document.addEventListener('pointerout', (event) => {
+          if (!event.relatedTarget) release();
+        });
       }
     </script>
   </body>

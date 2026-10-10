@@ -1,0 +1,26 @@
+---
+// Text whose letters rise into place one after another when the page loads.
+// Each word stays in one piece so it never breaks across lines.
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+let n = 0;
+const words = text.split(' ').map((word) => [...word].map((char) => ({ char, n: n++ })));
+---
+
+{
+  words.map((word, w) => (
+    <>
+      <span class="word">
+        {word.map(({ char, n }) => (
+          <span class="letter" style={`--n: ${n}`}>
+            {char}
+          </span>
+        ))}
+      </span>
+      {w < words.length - 1 && ' '}
+    </>
+  ))
+}

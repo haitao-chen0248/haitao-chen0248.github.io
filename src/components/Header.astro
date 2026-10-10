@@ -40,6 +40,7 @@ const path = Astro.url.pathname;
       </button>
     </div>
   </div>
+  <span class="progress" aria-hidden="true"></span>
 </header>
 
 <script>
@@ -207,6 +208,37 @@ const path = Astro.url.pathname;
     from {
       background-color: transparent;
       border-bottom-color: transparent;
+    }
+  }
+
+  /* Reading progress: a hairline along the bottom of the bar that fills as
+     the page scrolls. Only shown where scroll-driven animations work. */
+  .progress {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    :where(.progress) {
+      animation: progress linear both;
+    }
+
+    .progress {
+      display: block;
+      animation-timeline: scroll(root);
+    }
+  }
+
+  @keyframes progress {
+    to {
+      transform: scaleX(1);
     }
   }
 

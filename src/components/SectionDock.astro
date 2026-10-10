@@ -1,0 +1,165 @@
+---
+// "On this page" dock: a glass capsule centered at the bottom of the screen
+// that lists the page's sections. It appears once the intro (the first
+// section) scrolls away and hides again over the footer. A glass lens rests
+// behind the section in the middle of the screen and glides to whichever
+// one the pointer is on, like the menu lens in the header.
+interface Props {
+  /** Section ids on the page and their short labels, in page order. */
+  sections: { id: string; label: string }[];
+}
+
+const { sections } = Astro.props;
+---
+
+<nav class="dock glass" aria-label="On this page">
+  <span class="lens" aria-hidden="true"></span>
+  {
+    sections.map((s) => (
+      <a href={`#${s.id}`} data-section={s.id}>
+        {s.label}
+      </a>
+    ))
+  }
+</nav>
+
+<script>
+  const dock = document.querySelector<HTMLElement>('.dock');
+  const lens = dock?.querySelector<HTMLElement>('.lens');
+  if (dock && lens) {
+    const links = [...dock.querySelectorAll<HTMLAnchorElement>('a[data-section]')];
+    const sections = links
+      .map((link) => document.getElementById(link.dataset.section!))
+      .filter((s): s is HTMLElement => s !== null);
+    let current: HTMLAnchorElement | null = null;
+
+    function place(link: HTMLAnchorElement | null, animate = true) {
+      if (!link) return;
+      lens!.classList.toggle('instant', !animate);
+      lens!.style.setProperty('--lx', `${link.offsetLeft}px`);
+      lens!.style.setProperty('--lw', `${link.offsetWidth}px`);
+      if (!animate) void lens!.offsetWidth;
+      lens!.classList.remove('instant');
+    }
+
+    function mark(id: string) {
+      current = links.find((link) => link.dataset.section === id) ?? null;
+      for (const link of links) {
+        if (link === current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      }
+      place(current, dock!.classList.contains('shown'));
+    }
+
+    // Shown once the first section is half gone, hidden over the footer.
+    let introGone = false;
+    let footerShown = false;
+    const update = () => dock.classList.toggle('shown', introGone && !footerShown);
+    new IntersectionObserver(([entry]) => ((introGone = entry.intersectionRatio < 0.5), update()), {
+      threshold: [0, 0.5, 1],
+    }).observe(sections[0]);
+    const footer = document.querySelector('footer');
+    if (footer) new IntersectionObserver(([entry]) => ((footerShown = entry.isIntersecting), update())).observe(footer);
+
+    // The section crossing the middle of the screen is the current one.
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) if (entry.isIntersecting) mark(entry.target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => watcher.observe(s));
+
+    for (const link of links) {
+      link.addEventListener('pointerenter', () => place(link));
+      link.addEventListener('focus', () => place(link));
+      link.addEventListener('click', () => mark(link.dataset.section!));
+    }
+    dock.addEventListener('pointerleave', () => place(current));
+    dock.addEventListener('focusout', () => place(current));
+  }
+</script>
+
+<style>
+  .dock {
+    position: fixed;
+    left: 50%;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 45;
+    display: flex;
+    gap: 2px;
+    padding: 5px;
+    border-radius: 999px;
+    /* Nearly opaque, unlike other glass: text scrolls right under it and
+       must never compete with the labels, even where blur is unavailable */
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(24px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 var(--glass-hi),
+      0 12px 32px rgb(0 0 0 / 0.14);
+    opacity: 0;
+    visibility: hidden;
+    translate: -50% 16px;
+    transition:
+      opacity 0.4s var(--ease),
+      translate 0.7s var(--spring),
+      visibility 0.4s;
+  }
+
+  .dock.shown {
+    opacity: 1;
+    visibility: visible;
+    translate: -50% 0;
+  }
+
+  .dock a {
+    position: relative;
+    z-index: 1;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+    transition: color 0.25s;
+  }
+
+  .dock a:hover,
+  .dock a[aria-current] {
+    color: var(--text);
+  }
+
+  /* Moves on a spring, so it overshoots a little and settles */
+  .lens {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    width: var(--lw, 0px);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    box-shadow: inset 0 1px 0 var(--glass-hi);
+    translate: var(--lx, 0px) 0;
+    transition:
+      translate 0.6s var(--spring),
+      width 0.6s var(--spring);
+  }
+
+  .lens.instant {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock,
+    .lens {
+      transition: opacity 0.3s;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .dock a {
+      padding: 7px 11px;
+      font-size: 12.5px;
+    }
+  }
+</style>

@@ -48,11 +48,11 @@ const scholar = links.find((l) => l.label === 'Google Scholar')?.href;
 
   .year {
     margin-bottom: 18px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--text-2);
-    font-variant-numeric: tabular-nums;
   }
 
   .items {
@@ -62,7 +62,7 @@ const scholar = links.find((l) => l.label === 'Google Scholar')?.href;
 
   @media (max-width: 600px) {
     .year {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 </style>
