@@ -35,14 +35,6 @@ function logoFor(id: string): { light: ImageMetadata; dark?: ImageMetadata } | u
   return light ? { light, dark: findLogo(`${id}-white`) } : undefined;
 }
 
-// Sections listed in the side index on wide screens.
-const chapters = [
-  { id: 'about', label: 'About' },
-  { id: 'publications', label: 'Publications' },
-  { id: 'news', label: 'News' },
-  { id: 'education', label: 'Education' },
-];
-
 // Fallback badge text when no logo file exists: "Duke University" -> "D", "HUST" stays "HUST".
 function initials(org: string): string {
   const words = org.split(/\s+/).filter((w) => !['of', 'and', 'the', 'University'].includes(w));
@@ -215,60 +207,7 @@ function initials(org: string): string {
       </ol>
     </div>
   </section>
-
-  <!-- Side index (wide screens): shows where you are on the page -->
-  <nav class="rail" aria-label="On this page">
-    <span class="rail-track" aria-hidden="true"><span class="rail-fill"></span></span>
-    <ol>
-      {
-        chapters.map((c) => (
-          <li>
-            <a href={`#${c.id}`} data-chapter={c.id}>
-              {c.label}
-            </a>
-          </li>
-        ))
-      }
-    </ol>
-  </nav>
 </BaseLayout>
-
-<script>
-  // Side index: appears once the intro scrolls away, marks the section in
-  // the middle of the screen, and fills its track down to that section.
-  const rail = document.querySelector<HTMLElement>('.rail');
-  const hero = document.querySelector<HTMLElement>('.hero');
-  if (rail && hero && matchMedia('(min-width: 1280px)').matches) {
-    const links = new Map(
-      [...rail.querySelectorAll<HTMLAnchorElement>('a[data-chapter]')].map((a) => [a.dataset.chapter!, a]),
-    );
-    const fill = rail.querySelector<HTMLElement>('.rail-fill');
-
-    function mark(id: string) {
-      for (const [key, link] of links) {
-        if (key === id) link.setAttribute('aria-current', 'true');
-        else link.removeAttribute('aria-current');
-      }
-      const link = links.get(id);
-      if (link && fill) fill.style.height = `${link.offsetTop + link.offsetHeight / 2}px`;
-    }
-
-    new IntersectionObserver(([entry]) => rail.classList.toggle('shown', entry.intersectionRatio < 0.5), {
-      threshold: [0, 0.5, 1],
-    }).observe(hero);
-
-    const sections = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) if (entry.isIntersecting) mark(entry.target.id);
-      },
-      { rootMargin: '-45% 0px -50% 0px' },
-    );
-    for (const id of links.keys()) {
-      const section = document.getElementById(id);
-      if (section) sections.observe(section);
-    }
-  }
-</script>
 
 <style>
   /* Hero
@@ -875,97 +814,5 @@ function initials(org: string): string {
     .edu-advisor {
       font-size: 13.5px;
     }
-  }
-
-  /* Side index
-     ======================================================================== */
-
-  .rail {
-    display: none;
-  }
-
-  @media (min-width: 1280px) {
-    .rail {
-      position: fixed;
-      top: 50%;
-      left: max(24px, calc((100vw - var(--container)) / 2 - 168px));
-      z-index: 40;
-      display: block;
-      padding-left: 18px;
-      opacity: 0;
-      visibility: hidden;
-      translate: -6px -50%;
-      transition:
-        opacity 0.5s var(--ease),
-        translate 0.6s var(--ease-out),
-        visibility 0.5s;
-    }
-
-    .rail.shown {
-      opacity: 1;
-      visibility: visible;
-      translate: 0 -50%;
-    }
-  }
-
-  .rail ol {
-    display: grid;
-    gap: 14px;
-  }
-
-  .rail a {
-    position: relative;
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--text-3);
-    transition: color 0.3s;
-  }
-
-  .rail a:hover,
-  .rail a[aria-current='true'] {
-    color: var(--text);
-  }
-
-  /* A dot on the track for each section; the current one is lit */
-  .rail a::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -18px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--line-strong);
-    translate: 0 -50%;
-    transition:
-      background-color 0.3s,
-      scale 0.4s var(--spring);
-  }
-
-  .rail a[aria-current='true']::before {
-    background: var(--accent);
-    scale: 1.5;
-  }
-
-  .rail-track {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 2px;
-    width: 1px;
-    background: var(--line);
-  }
-
-  /* Filled down to the current section */
-  .rail-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 0;
-    background: linear-gradient(var(--accent-2), var(--accent));
-    transition: height 0.6s var(--ease-out);
   }
 </style>
