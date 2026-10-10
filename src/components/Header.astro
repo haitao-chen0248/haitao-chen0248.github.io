@@ -73,6 +73,18 @@ const path = Astro.url.pathname;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
   }
 
+  // Height of the viewport with the browser bars retracted (100lvh). On
+  // phones the page snapshot for a view transition covers this whole area,
+  // which is taller than innerHeight while the bars are showing.
+  function largeViewportHeight(): number {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;height:100lvh;visibility:hidden;pointer-events:none';
+    document.body.append(probe);
+    const height = probe.offsetHeight;
+    probe.remove();
+    return height;
+  }
+
   const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
   toggle?.addEventListener('click', () => {
     const next = root.dataset.theme === 'light' ? 'dark' : 'light';
@@ -81,18 +93,24 @@ const path = Astro.url.pathname;
       apply(next);
       return;
     }
-    // The new theme spreads out from the switch as a growing circle.
+    // The new theme spreads out from the switch as a growing circle. It is
+    // sized to reach past the farthest corner of the snapshot, including the
+    // area under the browser bars (counted twice, since the bars may sit at
+    // the top or the bottom), so no strip is left to pop in at the end. The
+    // easing keeps it moving until it reaches that corner.
     const box = toggle.getBoundingClientRect();
     const x = box.left + box.width / 2;
     const y = box.top + box.height / 2;
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const height = Math.max(innerHeight, largeViewportHeight());
+    const bars = height - innerHeight;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, height - y) + bars) + 24;
     root.classList.add('theme-switch');
     const transition = document.startViewTransition(() => apply(next));
     transition.ready
       .then(() =>
         root.animate(
           { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-          { duration: 700, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', pseudoElement: '::view-transition-new(root)' },
+          { duration: 600, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
         ),
       )
       .catch(() => {});
