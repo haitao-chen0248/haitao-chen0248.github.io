@@ -38,8 +38,8 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
   }
 
   h2 {
-    font-size: clamp(22px, 2.6vw, 28px);
-    letter-spacing: -0.022em;
+    font-size: clamp(24px, 3vw, 32px);
+    letter-spacing: -0.025em;
   }
 
   /* Hairline above the title, halfway into the section's top padding */
@@ -114,9 +114,11 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
     }
   }
 
+  /* Phones: 22px, easing to 20px on the narrowest screens so titles stay
+     on one line beside "View all" */
   @media (max-width: 600px) {
     h2 {
-      font-size: 20px;
+      font-size: clamp(20px, 6.2vw, 22px);
     }
   }
 
