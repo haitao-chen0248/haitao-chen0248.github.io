@@ -279,6 +279,23 @@ const citeId = `cite-${pub.id}`;
     font-size: 13.5px;
   }
 
+  /* Small tablets: a slightly narrower figure and tighter buttons keep a
+     paper's links and Cite on one row */
+  @media (min-width: 721px) and (max-width: 800px) {
+    .pub {
+      grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .links {
+      gap: 6px;
+    }
+
+    .links .chip {
+      gap: 4px;
+      padding: 0 10px;
+    }
+  }
+
   @media (max-width: 720px) {
     .pub {
       grid-template-columns: minmax(0, 1fr);
