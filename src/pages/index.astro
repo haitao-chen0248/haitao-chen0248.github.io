@@ -7,6 +7,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icon from '@/components/Icon.astro';
 import Letters from '@/components/Letters.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
+import SectionDock from '@/components/SectionDock.astro';
 import SectionHead from '@/components/SectionHead.astro';
 import headshot from '@/assets/images/headshot.jpg';
 import { site, status } from '@/config';
@@ -20,6 +21,14 @@ const featured = (await getCollection('publications')).filter((p) => p.data.feat
 const recent = (await getCollection('news')).sort(byNewest).slice(0, 3);
 
 const education = (await getCollection('education')).sort(byFileOrder);
+
+// Sections listed in the "On this page" dock.
+const sections = [
+  { id: 'about', label: 'About' },
+  { id: 'publications', label: 'Publications' },
+  { id: 'news', label: 'News' },
+  { id: 'education', label: 'Education' },
+];
 
 // School logos: files in src/assets/images/logos/ named after the entry id are
 // picked up automatically. "<id>.png" is used in light mode; an optional
@@ -208,6 +217,8 @@ function initials(org: string): string {
       </ol>
     </div>
   </section>
+
+  <SectionDock sections={sections} />
 </BaseLayout>
 
 <style>
