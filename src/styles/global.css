@@ -668,14 +668,41 @@ a.text-link:hover {
 /* Motion
    ========================================================================== */
 
-/* Smooth cross-page fades in browsers that support view transitions. */
+/* Page changes, in browsers that support view transitions: the header and
+   background stay still, the old page fades out where the reader left it,
+   and the new page's content (main, named "page" by BaseLayout for the
+   length of the change) fades in and rises a little. */
 @view-transition {
   navigation: auto;
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.25s;
+  animation-duration: 0.18s;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+::view-transition-new(page) {
+  animation: page-in 0.6s var(--ease-out) 0.12s both;
+}
+
+/* Reduced motion: a plain fade, no rise */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(page) {
+    animation-name: page-fade-in;
+  }
 }
 
 /* Theme switch: the new theme is revealed by a circle the header script

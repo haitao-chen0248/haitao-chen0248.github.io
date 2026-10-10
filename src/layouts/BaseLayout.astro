@@ -75,6 +75,20 @@ const personSchema = {
         document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#ffffff' : '#000000';
       })();
     </script>
+
+    <!-- Arriving from another page: the content gets its own view transition
+         layer, so it can fade in over a background that stays still (see
+         "Page changes" in global.css). The name is only set for the length
+         of the change. The link holds the first paint until <main> exists. -->
+    <link rel="expect" href="#main" blocking="render" />
+    <script is:inline>
+      addEventListener('pagereveal', (event) => {
+        const main = document.getElementById('main');
+        if (!event.viewTransition || !main) return;
+        main.style.viewTransitionName = 'page';
+        event.viewTransition.finished.finally(() => main.style.removeProperty('view-transition-name'));
+      });
+    </script>
     <meta name="generator" content={Astro.generator} />
     {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
 
