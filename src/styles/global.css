@@ -695,6 +695,31 @@ a.text-link:hover {
   }
 }
 
+/* Page titles: letters rise into place one after another (Letters.astro) */
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.letter {
+  display: inline-block;
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(8px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .letter {
+    animation: letter-in 0.9s var(--spring) both;
+    animation-delay: calc(var(--n) * 32ms + 60ms);
+  }
+}
+
 /* Staggered entrance for above-the-fold content */
 @media (prefers-reduced-motion: no-preference) {
   .enter {

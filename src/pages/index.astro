@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icon from '@/components/Icon.astro';
+import Letters from '@/components/Letters.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
 import SectionHead from '@/components/SectionHead.astro';
 import headshot from '@/assets/images/headshot.jpg';
@@ -46,7 +47,7 @@ function initials(org: string): string {
   <!-- Hero: intro on the left, portrait on the right, interests and links below -->
   <section class="container hero" id="about">
     <div class="hero-text">
-      <h1 class="enter">{site.name}</h1>
+      <h1><Letters text={site.name} /></h1>
       <p class="role enter" style="--i: 1" set:html={wrapFriendly(site.role, true)} />
 
       <p class="lead prose enter" style="--i: 2">
@@ -96,7 +97,7 @@ function initials(org: string): string {
         {
           profileLinks().map((link) => (
             <li>
-              <a class="glass" href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              <a class="glass" data-magnetic href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
                 <Icon name={link.icon} size={15} />
                 <span>{link.label}</span>
               </a>
@@ -366,7 +367,8 @@ function initials(org: string): string {
     color: var(--text);
     transition:
       background-color 0.2s,
-      transform 0.5s var(--spring);
+      transform 0.5s var(--spring),
+      translate 0.6s var(--spring);
   }
 
   .pills a:hover {
