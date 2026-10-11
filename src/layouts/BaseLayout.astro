@@ -99,15 +99,25 @@ const personSchema = {
 
     <!-- Arriving from another page: the content gets its own view transition
          layer, so it can fade in over a background that stays still (see
-         "Page changes" in global.css). The name is only set for the length
-         of the change. The link holds the first paint until <main> exists. -->
+         "Page changes" in global.css). The rest of the new page, header
+         included, takes no part in the transition: it is shown live under
+         the old page as that fades out, because the browser does not pass
+         clicks to anything in a transition, and the menu would otherwise
+         ignore clicks until the content had faded in. The names are only
+         set for the length of the change. The link holds the first paint
+         until <main> exists. -->
     <link rel="expect" href="#main" blocking="render" />
     <script is:inline>
       addEventListener('pagereveal', (event) => {
         const main = document.getElementById('main');
         if (!event.viewTransition || !main) return;
+        const live = [document.documentElement, document.querySelector('.site-header')].filter(Boolean);
         main.style.viewTransitionName = 'page';
-        event.viewTransition.finished.finally(() => main.style.removeProperty('view-transition-name'));
+        live.forEach((el) => (el.style.viewTransitionName = 'none'));
+        event.viewTransition.finished.finally(() => {
+          main.style.removeProperty('view-transition-name');
+          live.forEach((el) => el.style.removeProperty('view-transition-name'));
+        });
       });
     </script>
     <meta name="generator" content={Astro.generator} />
