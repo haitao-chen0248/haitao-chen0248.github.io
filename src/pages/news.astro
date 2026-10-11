@@ -33,7 +33,7 @@ const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
                 <li id={item.id} class:list={['entry', 'reveal', { 'no-media': images.length === 0 }]}>
                   {images.length > 0 && (
                     <div class="media">
-                      <Slideshow images={images} sizes="(max-width: 760px) 100vw, 340px" />
+                      <Slideshow images={images} sizes="(max-width: 760px) 100vw, 340px" label={item.data.title} />
                     </div>
                   )}
 
