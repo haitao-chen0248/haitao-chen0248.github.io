@@ -10,9 +10,12 @@ interface Props {
   showYear?: boolean;
   /** On phones, a small figure beside the venue and title (home page). */
   compact?: boolean;
+  /** Load the figure right away and ahead of other images: set it on the
+      first entry, whose figure is often the largest thing on screen. */
+  priority?: boolean;
 }
 
-const { pub, showYear = true, compact = false } = Astro.props;
+const { pub, showYear = true, compact = false, priority = false } = Astro.props;
 const { title, authors, venue, year, note, image, imageAlt, links, press, bibtex } = pub.data;
 const primary = links[0]?.url;
 const citeId = `cite-${pub.id}`;
@@ -24,8 +27,9 @@ const citeId = `cite-${pub.id}`;
       <Image
         src={image}
         alt={imageAlt}
-        widths={[320, 480, 640]}
-        sizes={`${compact ? '(max-width: 560px) 84vw, ' : ''}(max-width: 720px) 100vw, 240px`}
+        widths={[320, 480, 560, 640]}
+        sizes={`${compact ? '(max-width: 560px) 76vw, ' : ''}(max-width: 720px) 100vw, 240px`}
+        priority={priority}
       />
     </a>
   </div>

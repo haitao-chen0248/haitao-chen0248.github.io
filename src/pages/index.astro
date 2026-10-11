@@ -122,7 +122,7 @@ function initials(org: string): string {
     <div class="container">
       <SectionHead title="Selected publications" href="/publications/" linkLabel="All publications" />
       <div class="pub-list">
-        {featured.map((pub) => <PublicationItem pub={pub} compact />)}
+        {featured.map((pub, i) => <PublicationItem pub={pub} compact priority={i === 0} />)}
       </div>
     </div>
   </section>
@@ -140,8 +140,8 @@ function initials(org: string): string {
                   <Image
                     src={item.data.images[0].src}
                     alt={item.data.images[0].alt}
-                    widths={[360, 540, 720]}
-                    sizes="(max-width: 640px) 100vw, 330px"
+                    widths={[192, 288, 360, 540, 720]}
+                    sizes="(max-width: 560px) 96px, (max-width: 860px) 46vw, 330px"
                   />
                 </div>
               )}
