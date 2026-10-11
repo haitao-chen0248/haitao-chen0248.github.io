@@ -252,6 +252,12 @@ const personSchema = {
     </script>
 
     <script>
+      // iOS Safari shows pressed (:active) styles only on pages that listen
+      // for touches. Passive, so it never holds up scrolling.
+      document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+
+    <script>
       // Content already on screen when the page opens is shown in full; the
       // scroll-in fades are for what scrolls into view later. Otherwise a card
       // or section title at the bottom edge would sit half faded until the
