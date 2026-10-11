@@ -727,6 +727,15 @@ function initials(org: string): string {
     gap: 20px;
     align-items: start;
     padding-block: 22px;
+  }
+
+  /* Hairlines only between entries: the section's own rule sits above the
+     title, as in the other sections, and the footer closes the page. */
+  .edu li:first-child {
+    padding-top: 0;
+  }
+
+  .edu li + li {
     border-top: 1px solid var(--line);
   }
 
@@ -750,10 +759,6 @@ function initials(org: string): string {
     font-weight: 600;
     letter-spacing: -0.01em;
     color: var(--text-2);
-  }
-
-  .edu li:last-child {
-    border-bottom: 1px solid var(--line);
   }
 
   .edu h3 {
