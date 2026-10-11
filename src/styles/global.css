@@ -342,13 +342,22 @@ a.text-link {
   transition: color 0.2s, text-decoration-color 0.2s;
 }
 
-/* Hover, or pressed on a touch screen */
-.prose a:hover,
-a.text-link:hover,
+/* Pressed, or hovered where there is a mouse. Hover styles are kept to
+   devices that can hover throughout: on a touch screen the last link
+   tapped counts as hovered until something else is tapped, so it would
+   stay highlighted after the reader comes back to the page. */
 .prose a:active,
 a.text-link:active {
   color: var(--accent);
   text-decoration-color: var(--accent);
+}
+
+@media (hover: hover) {
+  .prose a:hover,
+  a.text-link:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
 }
 
 .prose strong {
@@ -366,18 +375,28 @@ a.text-link:active {
   transition: color 0.2s;
 }
 
-.more-link:hover,
 .more-link:active {
   color: var(--text);
+}
+
+@media (hover: hover) {
+  .more-link:hover {
+    color: var(--text);
+  }
 }
 
 .more-link .arrow {
   transition: transform 0.25s var(--ease);
 }
 
-.more-link:hover .arrow,
 .more-link:active .arrow {
   transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .more-link:hover .arrow {
+    transform: translateX(3px);
+  }
 }
 
 /* Outlined pill link (Journal, Code, ...) */
@@ -407,10 +426,18 @@ a.text-link:active {
   }
 }
 
-.chip:hover {
+.chip:active {
   color: var(--text);
   border-color: var(--accent-line);
   background: var(--accent-soft);
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    color: var(--text);
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+  }
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
@@ -431,9 +458,16 @@ a.text-link:active {
   transition: transform 0.2s var(--ease), opacity 0.2s;
 }
 
-.chip:hover .arrow {
+.chip:active .arrow {
   opacity: 1;
   transform: translate(1px, -1px);
+}
+
+@media (hover: hover) {
+  .chip:hover .arrow {
+    opacity: 1;
+    transform: translate(1px, -1px);
+  }
 }
 
 /* Small honor badge, e.g. "Editors' Pick" or an award */

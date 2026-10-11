@@ -85,8 +85,10 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     border-radius: var(--radius);
   }
 
-  a.logo:hover :global(img) {
-    transform: scale(1.03);
+  @media (hover: hover) {
+    a.logo:hover :global(img) {
+      transform: scale(1.03);
+    }
   }
 
   h2 {

@@ -370,8 +370,10 @@ const multiple = images.length > 1;
     transition: background-color 0.3s;
   }
 
-  .dot:hover::before {
-    background: rgb(255 255 255 / 0.8);
+  @media (hover: hover) {
+    .dot:hover::before {
+      background: rgb(255 255 255 / 0.8);
+    }
   }
 
   /* The current photo's dot stretches into a 16px pill */
