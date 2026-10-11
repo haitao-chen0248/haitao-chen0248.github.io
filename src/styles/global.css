@@ -848,11 +848,13 @@ a.text-link:hover {
   display: inline-block;
 }
 
+/* Only opacity and transform, so the browser can run the letters off the
+   main thread. A blur here kept them on it: on a phone busy opening the
+   page, the title stalled and then jumped into place. */
 @keyframes letter-in {
   from {
     opacity: 0;
     transform: translateY(0.35em);
-    filter: blur(8px);
   }
 }
 
