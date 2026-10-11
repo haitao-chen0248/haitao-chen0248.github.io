@@ -25,6 +25,13 @@ export default defineConfig({
     },
   },
 
+  // Put each page's CSS inside the page itself. The styles are small, and
+  // phones no longer wait for separate stylesheet requests before the first
+  // paint.
+  build: {
+    inlineStylesheets: 'always',
+  },
+
   // Prefetch internal pages on hover so navigation feels instant.
   prefetch: {
     prefetchAll: true,
