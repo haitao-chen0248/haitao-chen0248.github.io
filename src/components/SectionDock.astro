@@ -33,14 +33,31 @@ const { sections } = Astro.props;
       .filter((s): s is HTMLElement => s !== null);
     let current: HTMLAnchorElement | null = null;
 
+    // Where each link sits in the dock. It is measured in a ResizeObserver
+    // callback, which comes right after layout, so moving the lens never
+    // makes the browser lay out the page again.
+    const spots = new Map<HTMLAnchorElement, { x: number; w: number }>();
+    let settling = 0;
+
     function place(link: HTMLAnchorElement | null, animate = true) {
-      if (!link) return;
-      lens!.classList.toggle('instant', !animate);
-      lens!.style.setProperty('--lx', `${link.offsetLeft}px`);
-      lens!.style.setProperty('--lw', `${link.offsetWidth}px`);
-      if (!animate) void lens!.offsetWidth;
-      lens!.classList.remove('instant');
+      const spot = link && spots.get(link);
+      if (!spot) return;
+      if (!animate) {
+        lens!.classList.add('instant');
+        // Transitions come back once a frame has been drawn in place.
+        cancelAnimationFrame(settling);
+        settling = requestAnimationFrame(() => {
+          settling = requestAnimationFrame(() => lens!.classList.remove('instant'));
+        });
+      }
+      lens!.style.setProperty('--lx', `${spot.x}px`);
+      lens!.style.setProperty('--lw', `${spot.w}px`);
     }
+
+    new ResizeObserver(() => {
+      for (const link of links) spots.set(link, { x: link.offsetLeft, w: link.offsetWidth });
+      requestAnimationFrame(() => place(current, false));
+    }).observe(dock);
 
     function mark(id: string) {
       current = links.find((link) => link.dataset.section === id) ?? null;

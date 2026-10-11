@@ -137,17 +137,23 @@ const personSchema = {
       // bottom.
       const yearLabels = document.querySelectorAll<HTMLElement>('.sticky-year');
       if (yearLabels.length) {
-        const top = parseFloat(getComputedStyle(yearLabels[0]).top);
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
-              entry.target.classList.toggle('stuck', stuck);
-            }
-          },
-          { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
-        );
-        yearLabels.forEach((label) => observer.observe(label));
+        // The stuck position is read in a ResizeObserver callback, right after
+        // layout, so reading it never makes the browser recompute styles.
+        const sizer = new ResizeObserver(() => {
+          sizer.disconnect();
+          const top = parseFloat(getComputedStyle(yearLabels[0]).top);
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
+                entry.target.classList.toggle('stuck', stuck);
+              }
+            },
+            { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
+          );
+          yearLabels.forEach((label) => observer.observe(label));
+        });
+        sizer.observe(yearLabels[0]);
       }
     </script>
 
