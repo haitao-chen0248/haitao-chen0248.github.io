@@ -231,6 +231,9 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: calc(var(--header-h) + 24px);
+  /* No translucent blue box over whatever is tapped on a phone; the menu
+     and other controls show their own pressed and current states. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Pages with sticky year labels: links to an entry leave room for the label */
