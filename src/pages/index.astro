@@ -122,7 +122,7 @@ function initials(org: string): string {
     <div class="container">
       <SectionHead title="Selected publications" href="/publications/" linkLabel="All publications" />
       <div class="pub-list">
-        {featured.map((pub, i) => <PublicationItem pub={pub} compact priority={i === 0} />)}
+        {featured.map((pub) => <PublicationItem pub={pub} compact />)}
       </div>
     </div>
   </section>

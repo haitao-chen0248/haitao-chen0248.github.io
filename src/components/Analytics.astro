@@ -1,14 +1,29 @@
 ---
 // GoatCounter page-view counting. Renders nothing unless a site code is set in
 // src/config.ts, and only on production builds so local previews are not counted.
+// The counter script loads once the page has finished loading and the browser
+// is idle, so it never competes with the page itself; the visit is still
+// counted.
 import { analytics } from '@/config';
 
 const code = analytics.goatcounter.trim();
 const enabled = code !== '' && import.meta.env.PROD;
+const endpoint = `https://${code}.goatcounter.com/count`;
 ---
 
 {
   enabled && (
-    <script is:inline async data-goatcounter={`https://${code}.goatcounter.com/count`} src="//gc.zgo.at/count.js" />
+    <script is:inline define:vars={{ endpoint }}>
+      const loadCounter = () => {
+        const script = document.createElement('script');
+        script.async = true;
+        script.dataset.goatcounter = endpoint;
+        script.src = 'https://gc.zgo.at/count.js';
+        document.body.append(script);
+      };
+      const whenIdle = () => ('requestIdleCallback' in window ? requestIdleCallback(loadCounter, { timeout: 3000 }) : setTimeout(loadCounter, 1000));
+      if (document.readyState === 'complete') whenIdle();
+      else addEventListener('load', whenIdle, { once: true });
+    </script>
   )
 }
