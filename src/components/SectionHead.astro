@@ -96,6 +96,13 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
         animation-timeline: --head;
         animation-range: entry 30% cover 45%;
       }
+
+      /* Already on screen when the page opened (BaseLayout) */
+      .first-view > .rule,
+      .first-view .title,
+      .first-view > a {
+        animation: none;
+      }
     }
   }
 

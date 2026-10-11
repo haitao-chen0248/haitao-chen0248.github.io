@@ -895,6 +895,11 @@ a.text-link:hover {
       animation-timeline: view();
       animation-range: entry 0% entry 220px;
     }
+
+    /* Already on screen when the page opened (BaseLayout) */
+    .reveal.first-view {
+      animation: none;
+    }
   }
 }
 
