@@ -111,9 +111,15 @@ const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.co
     transition: color 0.2s;
   }
 
-  .links a:hover,
   .links a:active {
     color: var(--text);
     text-decoration: underline;
+  }
+
+  @media (hover: hover) {
+    .links a:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
   }
 </style>

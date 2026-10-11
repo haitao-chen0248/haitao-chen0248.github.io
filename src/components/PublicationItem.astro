@@ -154,8 +154,10 @@ const citeId = `cite-${pub.id}`;
     aspect-ratio: 16 / 10;
   }
 
-  .media a:hover :global(img) {
-    transform: scale(1.03);
+  @media (hover: hover) {
+    .media a:hover :global(img) {
+      transform: scale(1.03);
+    }
   }
 
   .eyebrow {
@@ -172,9 +174,14 @@ const citeId = `cite-${pub.id}`;
     transition: color 0.2s;
   }
 
-  .title a:hover,
   .title a:active {
     color: var(--accent);
+  }
+
+  @media (hover: hover) {
+    .title a:hover {
+      color: var(--accent);
+    }
   }
 
   .authors {
@@ -263,9 +270,16 @@ const citeId = `cite-${pub.id}`;
       transform 0.5s var(--spring);
   }
 
-  .cite .copy:hover {
+  .cite .copy:active {
     color: var(--text);
     background: var(--glass-fill-hover);
+  }
+
+  @media (hover: hover) {
+    .cite .copy:hover {
+      color: var(--text);
+      background: var(--glass-fill-hover);
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {

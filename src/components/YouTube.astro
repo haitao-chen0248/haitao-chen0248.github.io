@@ -104,8 +104,10 @@ const fallback =
     transition: transform 0.8s var(--ease-out);
   }
 
-  .poster:hover img {
-    transform: scale(1.03);
+  @media (hover: hover) {
+    .poster:hover img {
+      transform: scale(1.03);
+    }
   }
 
   /* Glass play button */
@@ -135,8 +137,10 @@ const fallback =
     margin-left: 2px;
   }
 
-  .poster:hover .play {
-    background: rgb(40 40 42 / 0.7);
-    transform: translate(-50%, -50%) scale(1.1);
+  @media (hover: hover) {
+    .poster:hover .play {
+      background: rgb(40 40 42 / 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
   }
 </style>

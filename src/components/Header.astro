@@ -332,8 +332,10 @@ const path = Astro.url.pathname;
     transition: transform 0.6s var(--ease-out);
   }
 
-  .brand:hover :global(.brand-mark) {
-    transform: scale(1.12);
+  @media (hover: hover) {
+    .brand:hover :global(.brand-mark) {
+      transform: scale(1.12);
+    }
   }
 
   .right {
@@ -410,11 +412,16 @@ const path = Astro.url.pathname;
     transition: color 0.2s;
   }
 
-  nav a:hover,
   nav a[aria-current='page'],
   nav a.chosen,
   nav li.pressed a {
     color: var(--text);
+  }
+
+  @media (hover: hover) {
+    nav a:hover {
+      color: var(--text);
+    }
   }
 
   /* Once another page is chosen, only that item stays highlighted */
@@ -454,8 +461,10 @@ const path = Astro.url.pathname;
       scale 0.5s var(--spring);
   }
 
-  .theme-toggle:hover {
-    color: var(--text);
+  @media (hover: hover) {
+    .theme-toggle:hover {
+      color: var(--text);
+    }
   }
 
   .theme-toggle svg {

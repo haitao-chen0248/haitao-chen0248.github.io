@@ -141,9 +141,14 @@ const { sections } = Astro.props;
     transition: color 0.25s;
   }
 
-  .dock a:hover,
   .dock a[aria-current] {
     color: var(--text);
+  }
+
+  @media (hover: hover) {
+    .dock a:hover {
+      color: var(--text);
+    }
   }
 
   /* Moves on a spring, so it overshoots a little and settles */
