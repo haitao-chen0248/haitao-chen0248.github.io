@@ -12,7 +12,10 @@ const talks = await Promise.all(
   (await getCollection('talks')).sort(byFileOrder).map(async (talk) => {
     // Link to the related paper's first link (usually the journal page).
     const paper = talk.data.paper ? await getEntry(talk.data.paper) : undefined;
-    return { ...talk.data, paperUrl: paper?.data.links[0]?.url };
+    const videoUrl = talk.data.youtube && `https://www.youtube.com/watch?v=${talk.data.youtube}`;
+    const paperUrl = paper?.data.links[0]?.url;
+    // The title links to the recording, or else the paper, as a paper's title does.
+    return { ...talk.data, videoUrl, paperUrl, primary: videoUrl || paperUrl };
   }),
 );
 const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
@@ -47,13 +50,19 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
                     </span>
                     {talk.note && <span class="badge">{talk.note}</span>}
                   </p>
-                  <h3 set:html={wrapFriendly(talk.title)} />
+                  <h3>
+                    {talk.primary ? (
+                      <a href={talk.primary} target="_blank" rel="noopener" set:html={wrapFriendly(talk.title)} />
+                    ) : (
+                      <Fragment set:html={wrapFriendly(talk.title)} />
+                    )}
+                  </h3>
                   <p class="location">{talk.location}</p>
 
                   <ul class="links">
-                    {talk.youtube && (
+                    {talk.videoUrl && (
                       <li>
-                        <a class="chip" href={`https://www.youtube.com/watch?v=${talk.youtube}`} target="_blank" rel="noopener">
+                        <a class="chip" href={talk.videoUrl} target="_blank" rel="noopener">
                           YouTube
                           <span class="arrow" aria-hidden="true">
                             ↗
@@ -125,6 +134,20 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
     font-size: 19px;
     line-height: 1.35;
     letter-spacing: -0.016em;
+  }
+
+  h3 a {
+    transition: color 0.2s;
+  }
+
+  h3 a:active {
+    color: var(--accent);
+  }
+
+  @media (hover: hover) {
+    h3 a:hover {
+      color: var(--accent);
+    }
   }
 
   .location {
