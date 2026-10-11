@@ -3,6 +3,8 @@ import { nav, site } from '@/config';
 import AiryMark from './AiryMark.astro';
 
 const path = Astro.url.pathname;
+// Home is current only on the home page; the others for their whole section.
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 ---
 
 <header class="site-header">
@@ -19,7 +21,7 @@ const path = Astro.url.pathname;
           {
             nav.map((item) => (
               <li>
-                <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
                   {item.label}
                 </a>
               </li>
@@ -499,9 +501,20 @@ const path = Astro.url.pathname;
   }
 
   /* On phones keep the logo mark and drop the name to make room for the menu */
-  @media (max-width: 460px) {
+  @media (max-width: 520px) {
     .brand-name {
       display: none;
+    }
+  }
+
+  /* The narrowest phones have room for the menu only; Home is in it */
+  @media (max-width: 340px) {
+    .brand {
+      display: none;
+    }
+
+    .inner {
+      justify-content: center;
     }
   }
 
