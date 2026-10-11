@@ -12,9 +12,12 @@ interface Props {
   sizes: string;
   /** Milliseconds each photo stays on screen. */
   interval?: number;
+  /** What the photos show, e.g. the news item's title. Screen readers use it
+   * to tell one slideshow from another. */
+  label?: string;
 }
 
-const { images, sizes, interval = 3000 } = Astro.props;
+const { images, sizes, interval = 3000, label } = Astro.props;
 const multiple = images.length > 1;
 ---
 
@@ -23,7 +26,7 @@ const multiple = images.length > 1;
   data-interval={interval}
   role={multiple ? 'region' : undefined}
   aria-roledescription={multiple ? 'carousel' : undefined}
-  aria-label={multiple ? 'Photos' : undefined}
+  aria-label={multiple ? (label ? `Photos: ${label}` : 'Photos') : undefined}
 >
   <div class="slides sheen">
     {
