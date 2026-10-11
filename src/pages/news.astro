@@ -11,6 +11,8 @@ const items = (await getCollection('news')).sort(byNewest);
 // Render each Markdown body ahead of time, then group by year (newest first).
 const entries = await Promise.all(items.map(async (item) => ({ item, ...(await render(item)) })));
 const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
+// The first photo on the page loads right away (see priority in Slideshow).
+const lead = items.find((item) => item.data.images.length > 0)?.id;
 ---
 
 <BaseLayout title="News" description={`News and milestones from ${site.name}.`}>
@@ -33,7 +35,12 @@ const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
                 <li id={item.id} class:list={['entry', 'reveal', { 'no-media': images.length === 0 }]}>
                   {images.length > 0 && (
                     <div class="media">
-                      <Slideshow images={images} sizes="(max-width: 760px) 100vw, 340px" label={item.data.title} />
+                      <Slideshow
+                        images={images}
+                        sizes="(max-width: 760px) 100vw, 340px"
+                        label={item.data.title}
+                        priority={item.id === lead}
+                      />
                     </div>
                   )}
 
