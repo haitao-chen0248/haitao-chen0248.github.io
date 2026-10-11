@@ -3,9 +3,10 @@
 // Geist for all text; Geist Mono for small labels such as dates and venues.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
-// The Latin file covers all of the site's text. Preloading it lets the first
-// paint use Geist instead of swapping in from a fallback font.
+// The Latin files cover all of the site's text. Preloading them starts both
+// downloads with the page, instead of only once the styles ask for them.
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import '@/styles/global.css';
 
 import { getImage } from 'astro:assets';
@@ -58,6 +59,22 @@ const personSchema = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geistMonoLatin} as="font" type="font/woff2" crossorigin />
+
+    <!-- Fetch a page in the background when its link is hovered or pressed,
+         so it opens at once. Browsers without speculation rules ignore this. -->
+    <script
+      is:inline
+      type="speculationrules"
+      set:html={JSON.stringify({
+        prefetch: [
+          {
+            where: { and: [{ href_matches: '/*' }, { not: { selector_matches: '[target=_blank]' } }] },
+            eagerness: 'moderate',
+          },
+        ],
+      })}
+    />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}

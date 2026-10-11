@@ -31,10 +31,4 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'always',
   },
-
-  // Prefetch internal pages on hover so navigation feels instant.
-  prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'hover',
-  },
 });
