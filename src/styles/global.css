@@ -787,6 +787,13 @@ a.text-link:hover {
   navigation: auto;
 }
 
+/* Clicks go through to the page while it fades in. Otherwise the layer the
+   browser draws the transition on would catch them, and a link pressed
+   before the fade ends would do nothing. */
+::view-transition {
+  pointer-events: none;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.18s;
