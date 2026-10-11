@@ -128,7 +128,8 @@ const path = Astro.url.pathname;
   const bar = document.querySelector<HTMLElement>('.site-header .right');
   const lens = bar?.querySelector<HTMLElement>('.lens');
   if (bar && lens) {
-    const current = bar.querySelector<HTMLElement>('nav a[aria-current="page"]');
+    let current = bar.querySelector<HTMLElement>('nav a[aria-current="page"]');
+    const initial = current;
     let active: HTMLElement | null = null;
 
     function place(item: HTMLElement | null, animate = true) {
@@ -153,7 +154,16 @@ const path = Astro.url.pathname;
       lens!.classList.add('shown');
     }
 
-    place(current, false);
+    // On arrival the lens is simply there, without fading in, so during a page
+    // change it carries straight over from the previous page's menu.
+    function placeNow(item: HTMLElement | null) {
+      lens!.style.transition = 'none';
+      place(item, false);
+      void lens!.offsetWidth;
+      lens!.style.removeProperty('transition');
+    }
+
+    placeNow(current);
 
     for (const item of bar.querySelectorAll<HTMLElement>('nav a, .theme-toggle')) {
       item.addEventListener('pointerenter', () => place(item));
@@ -162,9 +172,42 @@ const path = Astro.url.pathname;
     }
     bar.addEventListener('pointerleave', () => place(current));
 
-    // A small squeeze while pressed
-    bar.addEventListener('pointerdown', () => lens.classList.add('pressed'));
-    addEventListener('pointerup', () => lens.classList.remove('pressed'));
+    // Pressing an item squeezes it and the lens a little; letting go springs
+    // them back.
+    let pressed: Element | null = null;
+    bar.addEventListener('pointerdown', (event) => {
+      pressed = (event.target as Element).closest('nav li, .theme-toggle');
+      pressed?.classList.add('pressed');
+      lens.classList.add('pressed');
+    });
+    const release = () => {
+      pressed?.classList.remove('pressed');
+      pressed = null;
+      lens.classList.remove('pressed');
+    };
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
+
+    // A chosen page becomes the current item right away, so the lens stays on
+    // it while the next page loads and that page's menu picks up from there.
+    for (const link of bar.querySelectorAll<HTMLAnchorElement>('nav a')) {
+      link.addEventListener('click', (event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        current?.classList.remove('chosen');
+        current = link;
+        link.classList.add('chosen');
+        place(link);
+      });
+    }
+
+    // Coming back with the Back button can restore this page as it was left;
+    // put the lens back on this page's own item.
+    addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      current?.classList.remove('chosen');
+      current = initial;
+      placeNow(current);
+    });
 
     new ResizeObserver(() => place(active, false)).observe(bar);
   }
@@ -306,6 +349,11 @@ const path = Astro.url.pathname;
 
   .lens.pressed {
     --ls: 0.92;
+    transition:
+      opacity 0.25s,
+      transform 0.15s var(--ease-out),
+      width 0.6s var(--spring),
+      height 0.6s var(--spring);
   }
 
   .lens.instant {
@@ -313,7 +361,9 @@ const path = Astro.url.pathname;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .lens {
+    .lens,
+    .lens.pressed {
+      --ls: 1;
       transition: opacity 0.25s;
     }
   }
@@ -323,6 +373,10 @@ const path = Astro.url.pathname;
     gap: 24px;
   }
 
+  nav li {
+    transition: scale 0.5s var(--spring);
+  }
+
   nav a {
     font-size: 13.5px;
     color: var(--text-2);
@@ -330,8 +384,35 @@ const path = Astro.url.pathname;
   }
 
   nav a:hover,
-  nav a[aria-current='page'] {
+  nav a[aria-current='page'],
+  nav a.chosen,
+  nav li.pressed a {
     color: var(--text);
+  }
+
+  /* Once another page is chosen, only that item stays highlighted */
+  nav:has(.chosen) a[aria-current='page']:not(.chosen, :hover) {
+    color: var(--text-2);
+  }
+
+  /* Pressed: a quick squeeze; the release springs back */
+  nav li.pressed {
+    scale: 0.94;
+    transition: scale 0.12s var(--ease-out);
+  }
+
+  .theme-toggle.pressed {
+    scale: 0.94;
+    transition:
+      color 0.2s,
+      scale 0.12s var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    nav li.pressed,
+    .theme-toggle.pressed {
+      scale: none;
+    }
   }
 
   .theme-toggle {
@@ -341,7 +422,9 @@ const path = Astro.url.pathname;
     height: 30px;
     border-radius: 50%;
     color: var(--text-2);
-    transition: color 0.2s;
+    transition:
+      color 0.2s,
+      scale 0.5s var(--spring);
   }
 
   .theme-toggle:hover {
