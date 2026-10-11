@@ -824,9 +824,12 @@ a.text-link:hover {
   mix-blend-mode: normal;
 }
 
+/* Entrances start faint rather than invisible: text with opacity 0 is
+   skipped when the browser picks the page's largest paint, so a fully
+   transparent intro made a lower figure count instead, at a later time. */
 @keyframes fade-up {
   from {
-    opacity: 0;
+    opacity: 0.3;
     transform: translateY(16px);
   }
   to {
