@@ -231,6 +231,9 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: calc(var(--header-h) + 24px);
+  /* No translucent blue box over whatever is tapped on a phone; the menu
+     and other controls show their own pressed and current states. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Pages with sticky year labels: links to an entry leave room for the label */
@@ -339,8 +342,11 @@ a.text-link {
   transition: color 0.2s, text-decoration-color 0.2s;
 }
 
+/* Hover, or pressed on a touch screen */
 .prose a:hover,
-a.text-link:hover {
+a.text-link:hover,
+.prose a:active,
+a.text-link:active {
   color: var(--accent);
   text-decoration-color: var(--accent);
 }
@@ -360,7 +366,8 @@ a.text-link:hover {
   transition: color 0.2s;
 }
 
-.more-link:hover {
+.more-link:hover,
+.more-link:active {
   color: var(--text);
 }
 
@@ -368,7 +375,8 @@ a.text-link:hover {
   transition: transform 0.25s var(--ease);
 }
 
-.more-link:hover .arrow {
+.more-link:hover .arrow,
+.more-link:active .arrow {
   transform: translateX(3px);
 }
 
@@ -668,6 +676,7 @@ a.text-link:hover {
 :where(.lift) {
   transition:
     translate 0.6s var(--spring),
+    scale 0.6s var(--spring),
     box-shadow 0.4s;
 }
 
@@ -680,6 +689,17 @@ a.text-link:hover {
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .lift:hover {
     translate: 0 -3px;
+  }
+}
+
+/* A card that is a link gives a little while pressed, then springs back */
+@media (prefers-reduced-motion: no-preference) {
+  a.lift:active {
+    scale: 0.97;
+    transition:
+      translate 0.6s var(--spring),
+      scale 0.15s var(--ease-out),
+      box-shadow 0.4s;
   }
 }
 
