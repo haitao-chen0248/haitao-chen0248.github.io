@@ -130,6 +130,28 @@ const personSchema = {
     <Footer />
 
     <script>
+      // Sticky year labels: mark a label as stuck while it rides below the
+      // header, which shows its capsule (see .sticky-year in global.css). The
+      // observed area starts 1px below the stuck position, so a stuck label is
+      // cut off at the top, while one entering from below is cut off at the
+      // bottom.
+      const yearLabels = document.querySelectorAll<HTMLElement>('.sticky-year');
+      if (yearLabels.length) {
+        const top = parseFloat(getComputedStyle(yearLabels[0]).top);
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
+              entry.target.classList.toggle('stuck', stuck);
+            }
+          },
+          { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
+        );
+        yearLabels.forEach((label) => observer.observe(label));
+      }
+    </script>
+
+    <script>
       // Pointer light: glass surfaces and cards catch a soft highlight where the
       // pointer is, and the ambient light leans gently toward it. Elements
       // marked data-magnetic lean a few pixels toward the pointer too. Mouse
