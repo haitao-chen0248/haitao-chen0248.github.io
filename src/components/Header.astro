@@ -163,8 +163,6 @@ const path = Astro.url.pathname;
       lens!.style.removeProperty('transition');
     }
 
-    placeNow(current);
-
     for (const item of bar.querySelectorAll<HTMLElement>('nav a, .theme-toggle')) {
       item.addEventListener('pointerenter', () => place(item));
       item.addEventListener('focus', () => place(item));
@@ -209,7 +207,15 @@ const path = Astro.url.pathname;
       placeNow(current);
     });
 
-    new ResizeObserver(() => place(active, false)).observe(bar);
+    // The first call comes right after the page's first layout, so placing the
+    // lens there reads sizes without forcing an extra layout, and it still
+    // shows in the first frame. Later calls follow size changes.
+    let placed = false;
+    new ResizeObserver(() => {
+      if (placed) place(active, false);
+      else placeNow(current);
+      placed = true;
+    }).observe(bar);
   }
 </script>
 
