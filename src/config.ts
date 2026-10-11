@@ -61,8 +61,9 @@ export const analytics = {
 // "URL prefix", then "HTML tag", and paste only the content="..." value here.
 export const googleSiteVerification = '0QHl4RKcM6G0YYaNtPfEIh-oUZ6JQoRlZ750ysE82Lc';
 
-// Top navigation. The home page is reached through the logo.
+// Top navigation. The logo links home too, but a named item is easier to find.
 export const nav = [
+  { label: 'Home', href: '/' },
   { label: 'Publications', href: '/publications/' },
   { label: 'Talks', href: '/talks/' },
   { label: 'News', href: '/news/' },
