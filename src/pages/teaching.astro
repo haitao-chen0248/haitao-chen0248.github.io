@@ -16,7 +16,8 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
   <div class="container list">
     {
       courses.map(({ data }) => {
-        // The course image links to the first course link, like a paper figure.
+        // The course image and title link to the first course link, like a
+        // paper's figure and title.
         const href = data.links[0]?.url;
         const Media = href ? 'a' : 'div';
         const linkProps = href
@@ -32,7 +33,13 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
               <p class="eyebrow">
                 {data.term} · {data.role}
               </p>
-              <h2 set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
+              <h2>
+                {href ? (
+                  <a href={href} target="_blank" rel="noopener" set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
+                ) : (
+                  <Fragment set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
+                )}
+              </h2>
               <p class="desc" set:html={wrapFriendly(data.description)} />
 
               <div class="foot">
@@ -95,6 +102,20 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     margin-top: 4px;
     font-size: 19px;
     letter-spacing: -0.018em;
+  }
+
+  h2 a {
+    transition: color 0.2s;
+  }
+
+  h2 a:active {
+    color: var(--accent);
+  }
+
+  @media (hover: hover) {
+    h2 a:hover {
+      color: var(--accent);
+    }
   }
 
   .body {
