@@ -4,6 +4,8 @@
 // sideways swipe moves to the next or previous photo. Autoplay pauses on
 // hover, keyboard focus or touch, while the slideshow is off screen or the
 // tab is hidden, and is off entirely for visitors who prefer reduced motion.
+// On touch screens, the first slideshow to come into view nudges its photo
+// aside once, to show that it can be swiped.
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 
@@ -61,6 +63,10 @@ const multiple = images.length > 1;
 
 <script>
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touchOnly = matchMedia('(hover: none) and (pointer: coarse)').matches;
+  // Share of the photo's width a swipe must cover to move to the next photo
+  const reach = 0.2;
+  let hinted = false; // the swipe hint plays once per page
 
   document.querySelectorAll<HTMLElement>('.slideshow.multiple').forEach((show) => {
     const slides = [...show.querySelectorAll<HTMLElement>('.slide')];
@@ -113,12 +119,42 @@ const multiple = images.length > 1;
       | undefined;
     let swiped = false;
     let settling: number | undefined;
+    let hint: Animation[] = [];
+    let hintTimer: number | undefined;
 
-    // Clear what a swipe left on the slides, so the classes take over again.
-    // The styles are applied before the transitions come back, so a photo that
-    // has slid out does not then fade out over the new one.
+    // The highlighted dot. During a swipe it moves as soon as letting go
+    // would switch photos.
+    function mark(i: number) {
+      dots.forEach((dot, j) => dot.classList.toggle('active', j === i));
+    }
+
+    // Swipe hint: the photo slides a little to the left, showing the edge of
+    // the next one, then back.
+    function nudge() {
+      if (hinted || touched) return;
+      hinted = true;
+      const width = slides[index].clientWidth;
+      const next = slides[(index + 1) % slides.length];
+      next.style.transition = 'none';
+      next.style.opacity = '1';
+      const path = (from: number) => [
+        { translate: `${from}px`, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+        { translate: `${from - 40}px`, offset: 0.35 },
+        { translate: `${from - 40}px`, offset: 0.5, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' },
+        { translate: `${from}px` },
+      ];
+      const timing = { duration: 1100, fill: 'forwards' } as const;
+      hint = [slides[index].animate(path(0), timing), next.animate(path(width), timing)];
+      settling = window.setTimeout(settle, 1100);
+    }
+
+    // Clear what a swipe or the hint left on the slides, so the classes take
+    // over again. The styles are applied before the transitions come back, so
+    // a photo that has slid out does not then fade out over the new one.
     function settle() {
       window.clearTimeout(settling);
+      hint.forEach((animation) => animation.cancel());
+      hint = [];
       for (const slide of slides) {
         if (!slide.style.length) continue;
         slide.style.transition = 'none';
@@ -141,6 +177,7 @@ const multiple = images.length > 1;
       });
       slides[index].style.translate = `${dx}px`;
       slides[to].style.translate = `${dx + step * swipe.width}px`;
+      mark(Math.abs(dx) > swipe.width * reach ? to : index);
     }
 
     function release(event: PointerEvent) {
@@ -154,7 +191,7 @@ const multiple = images.length > 1;
         // Far enough, or a quick flick the same way that did not stop before
         // the finger lifted
         const flick = Math.abs(speed) > 0.3 && Math.sign(speed) === Math.sign(dx) && event.timeStamp - time < 100;
-        const done = event.type === 'pointerup' && (Math.abs(dx) > width * 0.2 || flick);
+        const done = event.type === 'pointerup' && (Math.abs(dx) > width * reach || flick);
         const from = slides[index];
         const next = slides[to];
         from.style.transition = next.style.transition = 'translate 0.45s var(--ease-out)';
@@ -165,6 +202,7 @@ const multiple = images.length > 1;
         } else {
           from.style.translate = '0px';
           next.style.translate = `${step * width}px`;
+          mark(index);
         }
         settling = window.setTimeout(settle, 450);
       }
@@ -195,6 +233,7 @@ const multiple = images.length > 1;
       // Wait until the finger has clearly moved sideways
       if (!swipe.on && (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(event.clientY - swipe.y))) return;
       swipe.on = true;
+      hinted = true; // no need to show what they have just done
       const elapsed = event.timeStamp - swipe.time;
       if (elapsed > 0) swipe.speed = (dx - swipe.dx) / elapsed;
       swipe.dx = dx;
@@ -234,6 +273,9 @@ const multiple = images.length > 1;
     new IntersectionObserver(
       ([entry]) => {
         onScreen = entry.isIntersecting;
+        // The hint waits until the page has settled after opening or scrolling
+        window.clearTimeout(hintTimer);
+        if (onScreen && touchOnly && !reduceMotion && !hinted) hintTimer = window.setTimeout(nudge, 800);
         start();
       },
       { threshold: 0.4 },
