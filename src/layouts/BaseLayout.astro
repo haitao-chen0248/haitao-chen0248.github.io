@@ -3,9 +3,10 @@
 // Geist for all text; Geist Mono for small labels such as dates and venues.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
-// The Latin file covers all of the site's text. Preloading it lets the first
-// paint use Geist instead of swapping in from a fallback font.
+// The Latin files cover all of the site's text. Preloading them starts both
+// downloads with the page, instead of only once the styles ask for them.
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import '@/styles/global.css';
 
 import { getImage } from 'astro:assets';
@@ -58,6 +59,22 @@ const personSchema = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geistMonoLatin} as="font" type="font/woff2" crossorigin />
+
+    <!-- Fetch a page in the background when its link is hovered or pressed,
+         so it opens at once. Browsers without speculation rules ignore this. -->
+    <script
+      is:inline
+      type="speculationrules"
+      set:html={JSON.stringify({
+        prefetch: [
+          {
+            where: { and: [{ href_matches: '/*' }, { not: { selector_matches: '[target=_blank]' } }] },
+            eagerness: 'moderate',
+          },
+        ],
+      })}
+    />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
@@ -137,17 +154,23 @@ const personSchema = {
       // bottom.
       const yearLabels = document.querySelectorAll<HTMLElement>('.sticky-year');
       if (yearLabels.length) {
-        const top = parseFloat(getComputedStyle(yearLabels[0]).top);
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
-              entry.target.classList.toggle('stuck', stuck);
-            }
-          },
-          { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
-        );
-        yearLabels.forEach((label) => observer.observe(label));
+        // The stuck position is read in a ResizeObserver callback, right after
+        // layout, so reading it never makes the browser recompute styles.
+        const sizer = new ResizeObserver(() => {
+          sizer.disconnect();
+          const top = parseFloat(getComputedStyle(yearLabels[0]).top);
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
+                entry.target.classList.toggle('stuck', stuck);
+              }
+            },
+            { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
+          );
+          yearLabels.forEach((label) => observer.observe(label));
+        });
+        sizer.observe(yearLabels[0]);
       }
     </script>
 

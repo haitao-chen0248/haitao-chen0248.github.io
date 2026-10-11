@@ -132,35 +132,44 @@ const path = Astro.url.pathname;
     const initial = current;
     let active: HTMLElement | null = null;
 
-    function place(item: HTMLElement | null, animate = true) {
-      active = item;
-      if (!item) {
-        lens!.classList.remove('shown');
-        return;
-      }
-      // Start from the item itself when the lens is not on screen yet.
-      const jump = !animate || !lens!.classList.contains('shown');
+    // How the lens reaches an item: it glides on a spring, jumps there
+    // (fading in if it was hidden), or is simply there with no transition.
+    type Move = 'glide' | 'jump' | 'still';
+    type Spot = { x: number; y: number; w: number; h: number };
+
+    // Layout is always read before any style is changed, so a read never
+    // makes the browser lay out the page again partway through a script.
+    function measure(item: HTMLElement): Spot {
       const box = item.getBoundingClientRect();
       const base = bar!.getBoundingClientRect();
       const pad = item.matches('nav a') ? parseFloat(getComputedStyle(bar!).getPropertyValue('--lens-pad')) : 0;
       const height = Math.max(box.height, 30);
-      lens!.classList.toggle('instant', jump);
-      lens!.style.setProperty('--lx', `${box.left - base.left - pad}px`);
-      lens!.style.setProperty('--ly', `${box.top - base.top - (height - box.height) / 2}px`);
-      lens!.style.setProperty('--lw', `${box.width + pad * 2}px`);
-      lens!.style.setProperty('--lh', `${height}px`);
-      if (jump) void lens!.offsetWidth;
-      lens!.classList.remove('instant');
+      return { x: box.left - base.left - pad, y: box.top - base.top - (height - box.height) / 2, w: box.width + pad * 2, h: height };
+    }
+
+    let settling = 0;
+    function apply(spot: Spot, move: Move) {
+      // Start from the item itself when the lens is not on screen yet.
+      if (move === 'glide' && !lens!.classList.contains('shown')) move = 'jump';
+      if (move !== 'glide') {
+        lens!.classList.add(move === 'still' ? 'still' : 'instant');
+        // Transitions come back once a frame has been drawn in place.
+        cancelAnimationFrame(settling);
+        settling = requestAnimationFrame(() => {
+          settling = requestAnimationFrame(() => lens!.classList.remove('instant', 'still'));
+        });
+      }
+      lens!.style.setProperty('--lx', `${spot.x}px`);
+      lens!.style.setProperty('--ly', `${spot.y}px`);
+      lens!.style.setProperty('--lw', `${spot.w}px`);
+      lens!.style.setProperty('--lh', `${spot.h}px`);
       lens!.classList.add('shown');
     }
 
-    // On arrival the lens is simply there, without fading in, so during a page
-    // change it carries straight over from the previous page's menu.
-    function placeNow(item: HTMLElement | null) {
-      lens!.style.transition = 'none';
-      place(item, false);
-      void lens!.offsetWidth;
-      lens!.style.removeProperty('transition');
+    function place(item: HTMLElement | null, move: Move = 'glide') {
+      active = item;
+      if (item) apply(measure(item), move);
+      else lens!.classList.remove('shown');
     }
 
     for (const item of bar.querySelectorAll<HTMLElement>('nav a, .theme-toggle')) {
@@ -191,10 +200,10 @@ const path = Astro.url.pathname;
     for (const link of bar.querySelectorAll<HTMLAnchorElement>('nav a')) {
       link.addEventListener('click', (event) => {
         if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        place(link);
         current?.classList.remove('chosen');
         current = link;
         link.classList.add('chosen');
-        place(link);
       });
     }
 
@@ -202,19 +211,27 @@ const path = Astro.url.pathname;
     // put the lens back on this page's own item.
     addEventListener('pageshow', (event) => {
       if (!event.persisted) return;
+      place(initial, 'still');
       current?.classList.remove('chosen');
       current = initial;
-      placeNow(current);
     });
 
-    // The first call comes right after the page's first layout, so placing the
-    // lens there reads sizes without forcing an extra layout, and it still
-    // shows in the first frame. Later calls follow size changes.
-    let placed = false;
+    // The first layout and later size changes are measured in a
+    // ResizeObserver callback, which comes right after layout, so measuring
+    // there costs nothing; the lens moves in the next frame. On arrival it is
+    // simply there, without fading in, so during a page change it carries
+    // straight over from the previous page's menu.
+    let arrived = false;
     new ResizeObserver(() => {
-      if (placed) place(active, false);
-      else placeNow(current);
-      placed = true;
+      const item = arrived ? active : current;
+      const move: Move = arrived ? 'jump' : 'still';
+      arrived = true;
+      if (!item) return;
+      const spot = measure(item);
+      requestAnimationFrame(() => {
+        active = item;
+        apply(spot, move);
+      });
     }).observe(bar);
   }
 </script>
@@ -364,6 +381,10 @@ const path = Astro.url.pathname;
 
   .lens.instant {
     transition: opacity 0.25s;
+  }
+
+  .lens.still {
+    transition: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
