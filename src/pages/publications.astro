@@ -26,7 +26,7 @@ const scholar = links.find((l) => l.label === 'Google Scholar')?.href;
     {
       groups.map((group) => (
         <section class="group" aria-labelledby={`y${group.year}`}>
-          <h2 class="year" id={`y${group.year}`}>
+          <h2 class="year sticky-year" id={`y${group.year}`}>
             {group.year}
           </h2>
           <div class="items">

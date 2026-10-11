@@ -120,7 +120,7 @@ function initials(org: string): string {
   <!-- Selected publications -->
   <section class="section" id="publications">
     <div class="container">
-      <SectionHead title="Selected publications" ghost="Publications" href="/publications/" linkLabel="All publications" />
+      <SectionHead title="Selected publications" href="/publications/" linkLabel="All publications" />
       <div class="pub-list">
         {featured.map((pub) => <PublicationItem pub={pub} compact />)}
       </div>
@@ -130,7 +130,7 @@ function initials(org: string): string {
   <!-- Recent news -->
   <section class="section" id="news">
     <div class="container">
-      <SectionHead title="Recent news" ghost="News" href="/news/" linkLabel="All news" />
+      <SectionHead title="Recent news" href="/news/" linkLabel="All news" />
       <div class="tiles">
         {
           recent.map((item) => (
@@ -161,7 +161,7 @@ function initials(org: string): string {
   <!-- Education & experience -->
   <section class="section" id="education">
     <div class="container">
-      <SectionHead title="Education & experience" ghost="Education" />
+      <SectionHead title="Education & experience" />
       <ol class="edu">
         {
           education.map(({ id, data }) => {
@@ -277,7 +277,7 @@ function initials(org: string): string {
   }
 
   h1 {
-    font-size: clamp(40px, 5.6vw, 58px);
+    font-size: clamp(44px, 6.4vw, 68px);
     letter-spacing: -0.035em;
     line-height: 1.05;
   }
@@ -476,7 +476,7 @@ function initials(org: string): string {
   /* Phone type scale */
   @media (max-width: 600px) {
     h1 {
-      font-size: clamp(30px, 8.6vw, 38px);
+      font-size: clamp(32px, 9.6vw, 42px);
     }
 
     .role {

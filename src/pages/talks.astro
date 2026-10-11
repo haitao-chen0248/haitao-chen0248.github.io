@@ -27,7 +27,7 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
     {
       groups.map((group) => (
         <section class="year-group" aria-labelledby={`y${group.year}`}>
-          <h2 class="year" id={`y${group.year}`}>
+          <h2 class="year sticky-year" id={`y${group.year}`}>
             {group.year}
           </h2>
 

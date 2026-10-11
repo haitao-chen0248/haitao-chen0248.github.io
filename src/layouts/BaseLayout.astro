@@ -3,6 +3,9 @@
 // Geist for all text; Geist Mono for small labels such as dates and venues.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
+// The Latin file covers all of the site's text. Preloading it lets the first
+// paint use Geist instead of swapping in from a fallback font.
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import '@/styles/global.css';
 
 import { getImage } from 'astro:assets';
@@ -54,6 +57,7 @@ const personSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
@@ -74,6 +78,20 @@ const personSchema = {
         document.documentElement.dataset.theme = theme;
         document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#ffffff' : '#000000';
       })();
+    </script>
+
+    <!-- Arriving from another page: the content gets its own view transition
+         layer, so it can fade in over a background that stays still (see
+         "Page changes" in global.css). The name is only set for the length
+         of the change. The link holds the first paint until <main> exists. -->
+    <link rel="expect" href="#main" blocking="render" />
+    <script is:inline>
+      addEventListener('pagereveal', (event) => {
+        const main = document.getElementById('main');
+        if (!event.viewTransition || !main) return;
+        main.style.viewTransitionName = 'page';
+        event.viewTransition.finished.finally(() => main.style.removeProperty('view-transition-name'));
+      });
     </script>
     <meta name="generator" content={Astro.generator} />
     {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
@@ -110,6 +128,28 @@ const personSchema = {
       <slot />
     </main>
     <Footer />
+
+    <script>
+      // Sticky year labels: mark a label as stuck while it rides below the
+      // header, which shows its capsule (see .sticky-year in global.css). The
+      // observed area starts 1px below the stuck position, so a stuck label is
+      // cut off at the top, while one entering from below is cut off at the
+      // bottom.
+      const yearLabels = document.querySelectorAll<HTMLElement>('.sticky-year');
+      if (yearLabels.length) {
+        const top = parseFloat(getComputedStyle(yearLabels[0]).top);
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
+              entry.target.classList.toggle('stuck', stuck);
+            }
+          },
+          { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
+        );
+        yearLabels.forEach((label) => observer.observe(label));
+      }
+    </script>
 
     <script>
       // Pointer light: glass surfaces and cards catch a soft highlight where the
