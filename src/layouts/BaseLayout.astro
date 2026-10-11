@@ -240,6 +240,28 @@ const personSchema = {
         });
       }
     </script>
+
+    <script>
+      // Content already on screen when the page opens is shown in full; the
+      // scroll-in fades are for what scrolls into view later. Otherwise a card
+      // or section title at the bottom edge would sit half faded until the
+      // reader scrolls. Positions are read in a ResizeObserver callback, after
+      // layout and before the first paint. This observer is created after the
+      // others, so its class changes come after all of their measurements.
+      const fading = document.querySelectorAll<HTMLElement>('.reveal, .section-head');
+      if (fading.length) {
+        const firstView = new ResizeObserver(() => {
+          firstView.disconnect();
+          // A card that has not finished fading in still sits up to 36px low
+          // (see reveal-up in global.css).
+          const onScreen = [...fading].filter(
+            (el) => el.getBoundingClientRect().top < innerHeight + (el.classList.contains('reveal') ? 40 : 0),
+          );
+          onScreen.forEach((el) => el.classList.add('first-view'));
+        });
+        firstView.observe(document.documentElement);
+      }
+    </script>
   </body>
 </html>
 
