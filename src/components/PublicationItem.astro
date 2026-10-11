@@ -320,6 +320,10 @@ const citeId = `cite-${pub.id}`;
       border-radius: var(--radius-lg);
       background: var(--tile);
       scroll-snap-align: start;
+      /* Full-width figure from the first paint. The grid layout's
+         align-items: start would size it to the image, which is 0 wide until
+         the image starts loading, and the text below would jump down. */
+      align-items: stretch;
       /* The cards scroll sideways, so skip the scroll-driven reveal */
       animation: none;
     }
