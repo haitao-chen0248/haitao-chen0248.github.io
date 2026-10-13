@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
@@ -13,9 +14,36 @@ const pubs = (await getCollection('publications')).sort(byFileOrder);
 const groups = groupByYear(pubs, (p) => p.data.year);
 
 const scholar = links.find((l) => l.label === 'Google Scholar')?.href;
+
+// Structured data, so search engines can show each paper as a scholarly
+// article. Authors come from the list shown on the page ("..." is skipped);
+// the site owner is linked to the Person in BaseLayout.
+const person = new URL('/#person', Astro.site).toString();
+const articles = await Promise.all(
+  pubs.map(async ({ data }) => {
+    const figure = await getImage({ src: data.image, width: 640 });
+    const doi = data.links.find((l) => l.url.includes('doi.org/'))?.url;
+    return {
+      '@type': 'ScholarlyArticle',
+      headline: data.title,
+      author: data.authors
+        .split(',')
+        .map((name) => name.trim().replace(/\*$/, ''))
+        .filter((name) => name && name !== '...')
+        .map((name) => (name === site.name ? { '@id': person } : { '@type': 'Person', name })),
+      datePublished: String(data.year),
+      isPartOf: { '@type': 'Periodical', name: data.venue },
+      url: data.links[0]?.url,
+      ...(doi && doi !== data.links[0]?.url && { sameAs: doi }),
+      image: new URL(figure.src, Astro.site).toString(),
+    };
+  }),
+);
+const articlesSchema = { '@context': 'https://schema.org', '@graph': articles };
 ---
 
 <BaseLayout title="Publications" description={`Peer-reviewed publications by ${site.name}.`}>
+  <script type="application/ld+json" set:html={JSON.stringify(articlesSchema)} />
   <PageHeader title="Publications">
     <p>
       Full list on <a href={scholar} target="_blank" rel="noopener">Google Scholar</a>. * Co-first author.
