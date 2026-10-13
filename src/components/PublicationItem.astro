@@ -43,7 +43,7 @@ const citeId = `cite-${pub.id}`;
     <h3 class="title">
       {
         primary ? (
-          <a href={primary} target="_blank" rel="noopener" set:html={wrapFriendly(title)} />
+          <a class="title-link" href={primary} target="_blank" rel="noopener" set:html={wrapFriendly(title)} />
         ) : (
           <Fragment set:html={wrapFriendly(title)} />
         )
@@ -168,20 +168,6 @@ const citeId = `cite-${pub.id}`;
     font-size: 17.5px;
     line-height: 1.38;
     letter-spacing: -0.014em;
-  }
-
-  .title a {
-    transition: color 0.2s;
-  }
-
-  .title a:active {
-    color: var(--accent);
-  }
-
-  @media (hover: hover) {
-    .title a:hover {
-      color: var(--accent);
-    }
   }
 
   .authors {
