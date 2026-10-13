@@ -1,7 +1,7 @@
 ---
 // One publication: figure on the left, venue, title, authors, and links on the right.
 import type { CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
+import Photo from './Photo.astro';
 import { splitAuthors, wrapFriendly } from '@/utils/format';
 
 interface Props {
@@ -24,7 +24,7 @@ const citeId = `cite-${pub.id}`;
 <article class:list={['pub', 'reveal', { compact }]}>
   <div class="media">
     <a class="frame frame--figure sheen lift" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-      <Image
+      <Photo
         src={image}
         alt={imageAlt}
         widths={[320, 480, 560, 640]}

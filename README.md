@@ -30,8 +30,8 @@ npm run check     # type-check code and validate content (the deploy runs it fir
 | `src/pages/` | Pages; `index.astro` holds the intro |
 | `src/layouts/` | Page shell: `<head>` metadata and structured data, header, footer, page-change and pointer-light scripts |
 | `src/content/` | Publications, talks, news, education, teaching |
-| `src/assets/images/` | Headshot and figures, converted to WebP at build time |
-| `src/components/` | Header, footer, page and section titles, publication entry, photo slideshow, video embed, icons |
+| `src/assets/images/` | Headshot, photos, and figures, converted at build time to AVIF with a WebP fallback (school logos: WebP) |
+| `src/components/` | Header, footer, page and section titles, publication entry, photo slideshow, responsive photo (`Photo`), video embed, icons |
 | `src/utils/` | Shared helpers: dates, sorting, author lists, line breaking, profile links, share card version |
 | `src/styles/global.css` | Color, type, and spacing tokens for both themes |
 | `public/` | Files served as-is: favicons, `robots.txt`, and `cv.pdf` once added |

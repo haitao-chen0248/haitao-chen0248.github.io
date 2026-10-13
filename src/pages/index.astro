@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icon from '@/components/Icon.astro';
 import Letters from '@/components/Letters.astro';
+import Photo from '@/components/Photo.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
 import SectionDock from '@/components/SectionDock.astro';
 import SectionHead from '@/components/SectionHead.astro';
@@ -87,7 +88,7 @@ function initials(org: string): string {
     <!-- The slot fades in with the hero; the photo inside tilts (script below) -->
     <div class="portrait-slot enter" style="--i: 1">
       <div class="portrait sheen">
-        <Image
+        <Photo
           src={headshot}
           alt={`Portrait of ${site.name}`}
           widths={[220, 440, 600]}
@@ -140,7 +141,7 @@ function initials(org: string): string {
             <a class="news-tile sheen lift reveal" href={`/news/#${item.id}`}>
               {item.data.images[0] && (
                 <div class="frame media">
-                  <Image
+                  <Photo
                     src={item.data.images[0].src}
                     alt={item.data.images[0].alt}
                     widths={[192, 288, 360, 540, 720]}
