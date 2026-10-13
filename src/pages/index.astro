@@ -84,14 +84,17 @@ function initials(org: string): string {
       }
     </div>
 
-    <div class="portrait enter" style="--i: 1">
-      <Image
-        src={headshot}
-        alt={`Portrait of ${site.name}`}
-        widths={[220, 440, 600]}
-        sizes="(max-width: 760px) 112px, 220px"
-        priority
-      />
+    <!-- The slot fades in with the hero; the photo inside tilts (script below) -->
+    <div class="portrait-slot enter" style="--i: 1">
+      <div class="portrait sheen">
+        <Image
+          src={headshot}
+          alt={`Portrait of ${site.name}`}
+          widths={[220, 440, 600]}
+          sizes="(max-width: 760px) 112px, 220px"
+          priority
+        />
+      </div>
     </div>
 
     <div class="hero-meta">
@@ -221,6 +224,55 @@ function initials(org: string): string {
   <SectionDock sections={sections} />
 </BaseLayout>
 
+<script>
+  // Portrait tilt: the photo leans away from wherever the pointer is (mouse)
+  // or a finger presses (touch), up to 5 degrees, and springs back when the
+  // pointer leaves or the finger lifts. A scroll that starts on the photo
+  // takes over the touch and also lets it go. Not with reduced motion.
+  const portrait = document.querySelector<HTMLElement>('.portrait');
+  if (portrait && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const max = 5;
+    let touching = false;
+
+    // offsetX/Y are in the photo's own, untilted coordinates.
+    function lean(event: PointerEvent) {
+      const x = event.offsetX / portrait!.clientWidth - 0.5;
+      const y = event.offsetY / portrait!.clientHeight - 0.5;
+      portrait!.style.setProperty('--tilt-x', `${(-y * 2 * max).toFixed(2)}deg`);
+      portrait!.style.setProperty('--tilt-y', `${(x * 2 * max).toFixed(2)}deg`);
+    }
+
+    function settle() {
+      touching = false;
+      portrait!.classList.remove('tilting', 'pressed');
+      portrait!.style.removeProperty('--tilt-x');
+      portrait!.style.removeProperty('--tilt-y');
+    }
+
+    portrait.addEventListener('pointerenter', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      portrait.classList.add('tilting');
+      lean(event);
+    });
+    portrait.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse') return;
+      touching = true;
+      portrait.classList.add('tilting', 'pressed');
+      lean(event);
+    });
+    portrait.addEventListener('pointermove', (event) => {
+      if (event.pointerType === 'mouse' || touching) lean(event);
+    });
+    portrait.addEventListener('pointerleave', (event) => {
+      if (event.pointerType === 'mouse') settle();
+    });
+    portrait.addEventListener('pointerup', (event) => {
+      if (event.pointerType !== 'mouse') settle();
+    });
+    portrait.addEventListener('pointercancel', settle);
+  }
+</script>
+
 <style>
   /* Hero
      ======================================================================== */
@@ -267,7 +319,7 @@ function initials(org: string): string {
     grid-area: text;
   }
 
-  .portrait {
+  .portrait-slot {
     grid-area: portrait;
   }
 
@@ -428,12 +480,30 @@ function initials(org: string): string {
     }
   }
 
+  /* Leans away from the pointer, or from a finger pressing it, as if
+     pushed at that spot (the script below sets the angles), and springs
+     back when left */
   .portrait {
     width: 220px;
     aspect-ratio: 1;
     overflow: hidden;
     border-radius: 22px;
     background: var(--tile);
+    transform: perspective(600px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition:
+      transform 0.8s var(--spring),
+      scale 0.6s var(--spring);
+  }
+
+  .portrait.tilting {
+    transition:
+      transform 0.25s var(--ease-out),
+      scale 0.15s var(--ease-out);
+  }
+
+  /* A finger also presses it in a little */
+  .portrait.pressed {
+    scale: 0.97;
   }
 
   .portrait :global(img) {
@@ -478,9 +548,12 @@ function initials(org: string): string {
       justify-self: start;
     }
 
+    .portrait-slot {
+      align-self: center;
+    }
+
     .portrait {
       width: clamp(84px, 25vw, 132px);
-      align-self: center;
       border-radius: 18px;
     }
   }
