@@ -7,7 +7,7 @@
 // On touch screens, the first slideshow to come into view nudges its photo
 // 20px aside once, to show that it can be swiped.
 import type { ImageMetadata } from 'astro';
-import { Image } from 'astro:assets';
+import Photo from './Photo.astro';
 
 interface Props {
   images: { src: ImageMetadata; alt: string }[];
@@ -43,10 +43,10 @@ const multiple = images.length > 1;
           aria-hidden={i === 0 ? undefined : 'true'}
         >
           {i === 0 ? (
-            <Image src={img.src} alt={img.alt} widths={[360, 540, 720]} sizes={sizes} priority={priority} />
+            <Photo src={img.src} alt={img.alt} widths={[360, 540, 720]} sizes={sizes} priority={priority} />
           ) : (
             // Hidden until its turn, so it waits for the photos on show
-            <Image src={img.src} alt={img.alt} widths={[360, 540, 720]} sizes={sizes} fetchpriority="low" />
+            <Photo src={img.src} alt={img.alt} widths={[360, 540, 720]} sizes={sizes} fetchpriority="low" />
           )}
         </div>
       ))

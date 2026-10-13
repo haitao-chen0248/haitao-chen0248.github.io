@@ -43,6 +43,8 @@ const shareCardUrl = new URL(`/og.png?v=${shareCardVersion()}`, Astro.site);
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  // Other structured data (the papers on /publications/) refers to this id.
+  '@id': new URL('/#person', Astro.site).toString(),
   name: site.name,
   url: Astro.site?.toString(),
   image: portraitUrl.toString(),

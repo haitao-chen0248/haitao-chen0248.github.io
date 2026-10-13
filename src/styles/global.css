@@ -274,6 +274,12 @@ iframe {
   max-width: 100%;
 }
 
+/* <picture> only offers the browser a smaller format (Photo.astro); the
+   <img> inside lays out as if it stood alone */
+picture {
+  display: contents;
+}
+
 img {
   height: auto;
 }
@@ -363,6 +369,21 @@ a.text-link:active {
 .prose strong {
   color: var(--text);
   font-weight: 600;
+}
+
+/* A paper, talk, or course title that links to it */
+a.title-link {
+  transition: color 0.2s;
+}
+
+a.title-link:active {
+  color: var(--accent);
+}
+
+@media (hover: hover) {
+  a.title-link:hover {
+    color: var(--accent);
+  }
 }
 
 /* Quiet navigation link, e.g. "All publications →" */
@@ -553,11 +574,29 @@ a.text-link:active {
    stay exactly as they were.
    ========================================================================== */
 
+/* A year's entries, below a hairline */
+.year-group {
+  padding-block: 20px 40px;
+  border-top: 1px solid var(--line);
+}
+
 .sticky-year {
   position: sticky;
   top: calc(var(--header-h) + 14px);
   z-index: 3;
   width: fit-content;
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+
+@media (max-width: 600px) {
+  .sticky-year {
+    font-size: 13px;
+  }
 }
 
 .sticky-year::before {

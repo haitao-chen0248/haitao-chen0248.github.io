@@ -30,7 +30,7 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
     {
       groups.map((group) => (
         <section class="year-group" aria-labelledby={`y${group.year}`}>
-          <h2 class="year sticky-year" id={`y${group.year}`}>
+          <h2 class="sticky-year" id={`y${group.year}`}>
             {group.year}
           </h2>
 
@@ -52,7 +52,7 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
                   </p>
                   <h3>
                     {talk.primary ? (
-                      <a href={talk.primary} target="_blank" rel="noopener" set:html={wrapFriendly(talk.title)} />
+                      <a class="title-link" href={talk.primary} target="_blank" rel="noopener" set:html={wrapFriendly(talk.title)} />
                     ) : (
                       <Fragment set:html={wrapFriendly(talk.title)} />
                     )}
@@ -92,20 +92,6 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
 </BaseLayout>
 
 <style>
-  .year-group {
-    padding-block: 20px 40px;
-    border-top: 1px solid var(--line);
-  }
-
-  .year {
-    margin-bottom: 20px;
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0;
-    color: var(--text-2);
-  }
-
   .items {
     display: grid;
     gap: clamp(28px, 4vw, 40px);
@@ -134,20 +120,6 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
     font-size: 19px;
     line-height: 1.35;
     letter-spacing: -0.016em;
-  }
-
-  h3 a {
-    transition: color 0.2s;
-  }
-
-  h3 a:active {
-    color: var(--accent);
-  }
-
-  @media (hover: hover) {
-    h3 a:hover {
-      color: var(--accent);
-    }
   }
 
   .location {
@@ -179,10 +151,6 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
 
   /* Phone type scale */
   @media (max-width: 600px) {
-    .year {
-      font-size: 13px;
-    }
-
     h3 {
       font-size: 16.5px;
     }

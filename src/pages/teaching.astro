@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
+import Photo from '@/components/Photo.astro';
 import { site } from '@/config';
 import { byFileOrder, wrapFriendly } from '@/utils/format';
 
@@ -26,7 +26,7 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
         return (
           <article class="course reveal">
             <Media class:list={['logo', 'frame', { sheen: !!href, lift: !!href }]} {...linkProps}>
-              <Image src={data.image} alt={data.imageAlt} widths={[140, 280, 420]} sizes="140px" />
+              <Photo src={data.image} alt={data.imageAlt} widths={[140, 280, 420]} sizes="140px" />
             </Media>
 
             <div class="body">
@@ -35,7 +35,13 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
               </p>
               <h2>
                 {href ? (
-                  <a href={href} target="_blank" rel="noopener" set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
+                  <a
+                    class="title-link"
+                    href={href}
+                    target="_blank"
+                    rel="noopener"
+                    set:html={wrapFriendly(`${data.course}: ${data.title}`, true)}
+                  />
                 ) : (
                   <Fragment set:html={wrapFriendly(`${data.course}: ${data.title}`, true)} />
                 )}
@@ -102,20 +108,6 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     margin-top: 4px;
     font-size: 19px;
     letter-spacing: -0.018em;
-  }
-
-  h2 a {
-    transition: color 0.2s;
-  }
-
-  h2 a:active {
-    color: var(--accent);
-  }
-
-  @media (hover: hover) {
-    h2 a:hover {
-      color: var(--accent);
-    }
   }
 
   .body {
