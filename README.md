@@ -95,6 +95,8 @@ Full text in Markdown.
 
 **Menu**: `nav` in `src/config.ts`. Home is the first item; the logo also links home.
 
+**Link check**: on the 1st of each month a GitHub Action builds the site and checks every link in it; if any is broken, it opens an issue listing them (`.github/workflows/links.yml`). It can also be run by hand from the Actions tab.
+
 ## License
 
 Code is MIT licensed (see [LICENSE](LICENSE)). Site content and images © Haitao Chen, all rights reserved.

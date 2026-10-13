@@ -1,0 +1,51 @@
+# Once a month, build the site and check every link in it: papers, press
+# coverage, videos, profiles, and the site's own pages. If any link is broken,
+# open an issue listing them. Email links are not checked (lychee skips them
+# by default). Run it by hand from the Actions tab at any time.
+name: Check links
+
+on:
+  schedule:
+    - cron: '17 3 1 * *' # 03:17 UTC on the 1st of each month
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Many publishers and profile sites refuse automated requests (403, 406,
+      # 429; LinkedIn answers 999) while working fine in a browser, so those
+      # codes count as alive. A dead link shows up as 404, 410, or an
+      # address that no longer resolves.
+      - id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --max-retries 3
+            --timeout 30
+            --accept '200..=299,403,406,429,999'
+            --root-dir "${{ github.workspace }}/dist"
+            'dist/**/*.html'
+          output: lychee/report.md
+          fail: false
+
+      - if: steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Broken links on the site
+          content-filepath: lychee/report.md
