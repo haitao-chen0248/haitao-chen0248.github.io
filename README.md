@@ -28,11 +28,11 @@ npm run check     # type-check code and validate content (the deploy runs it fir
 | --- | --- |
 | `src/config.ts` | Name, role, home page title and description, research interests, profile links, menu |
 | `src/pages/` | Pages; `index.astro` holds the intro |
-| `src/layouts/` | Page shell: `<head>` metadata, header, footer |
+| `src/layouts/` | Page shell: `<head>` metadata and structured data, header, footer, page-change and pointer-light scripts |
 | `src/content/` | Publications, talks, news, education, teaching |
 | `src/assets/images/` | Headshot and figures, converted to WebP at build time |
-| `src/components/` | Header, footer, publication entry, icons, video embed |
-| `src/utils/` | Shared helpers: dates, sorting, profile links, share card version |
+| `src/components/` | Header, footer, page and section titles, publication entry, photo slideshow, video embed, icons |
+| `src/utils/` | Shared helpers: dates, sorting, author lists, line breaking, profile links, share card version |
 | `src/styles/global.css` | Color, type, and spacing tokens for both themes |
 | `public/` | Files served as-is: favicons, `robots.txt`, and `cv.pdf` once added |
 
@@ -62,7 +62,9 @@ In the YAML files, entries appear in file order, so put new ones at the top. New
     @article{...}
 ```
 
-**News**: one Markdown file per item in `src/content/news/`, named `YYYY-MM-name.md`. The home page shows the three newest.
+**News**: one Markdown file per item in `src/content/news/`, named `YYYY-MM-name.md`. The home page shows the three newest. News titles are not links; put links in the text.
+
+The first photo of the newest item with photos loads first, as the page's largest image. Several photos play as a slideshow, which can also be swiped on phones.
 
 ```markdown
 ---
@@ -77,9 +79,9 @@ images:                                # optional, up to six; several play as a 
 Full text in Markdown.
 ```
 
-**Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link; `note` adds a badge, as on publications.
+**Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link; `note` adds a badge, as on publications. The title links to the video, or to the paper when there is no video.
 
-**Teaching** (`teaching.yaml`): course code, title, term, role, description, instructor, an image with alt text, and optional links.
+**Teaching** (`teaching.yaml`): course code, title, term, role, description, instructor, an image with alt text, and optional links. The first link is also used for the title and image.
 
 **Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png` (or `.jpg`, `.webp`, `.svg`), with an optional `<id>-white` version for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` (or the initials) is shown until a logo exists.
 
@@ -88,6 +90,10 @@ Full text in Markdown.
 **Availability line**: `status` in `src/config.ts`; set it to `''` to hide it.
 
 **Share card**: `/og.png` is generated from the name, role, interests, and headshot, so it updates on its own.
+
+**Search engines**: every page describes the site owner as a person (`BaseLayout.astro`), and `/publications/` describes each paper as a scholarly article. Both are generated from `src/config.ts` and `publications.yaml`, so there is nothing to keep in sync by hand.
+
+**Menu**: `nav` in `src/config.ts`. Home is the first item; the logo also links home.
 
 ## License
 
