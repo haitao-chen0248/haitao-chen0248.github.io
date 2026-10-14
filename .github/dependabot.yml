@@ -1,0 +1,22 @@
+# Once a month, open pull requests that update the site's npm packages and
+# the GitHub Actions its workflows use. Minor and patch updates come grouped
+# into one pull request per ecosystem; a major update gets its own, since it
+# may need changes. Each pull request is built and checked before merging
+# (deploy.yml).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      npm:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        update-types: [minor, patch]
