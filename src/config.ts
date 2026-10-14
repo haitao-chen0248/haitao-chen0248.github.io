@@ -19,7 +19,8 @@ export const site = {
     'Computational Imaging',
     'Machine Learning',
     'Differentiable Optics',
-    'Inverse Problems'
+    'Inverse Problems',
+    'Optical System Design',
   ],
 } as const;
 
