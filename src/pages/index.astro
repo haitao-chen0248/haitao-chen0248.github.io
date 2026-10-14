@@ -474,10 +474,35 @@ function initials(org: string): string {
     }
   }
 
+  /* Between phone and desktop widths the tags wrap onto two or three lines:
+     each line stretches its tags to the full width, so the block keeps
+     straight edges (desktop has them all on one line, as they are) */
+  @media (max-width: 899px) {
+    .tags li {
+      flex: 1 1 auto;
+      text-align: center;
+    }
+  }
+
   @media (max-width: 480px) {
     .tags li {
       padding: 4px 10px;
       font-size: 12.5px;
+    }
+  }
+
+  /* Phones: two tags fit on a line, so the tags sit in two equal columns,
+     with an odd last one across the full width, which keeps the block's
+     edges straight instead of ragged. Below 360px a column is too narrow
+     for the longer tags, which then keep the stretched lines above. */
+  @media (min-width: 360px) and (max-width: 480px) {
+    .tags {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .tags li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
   }
 
