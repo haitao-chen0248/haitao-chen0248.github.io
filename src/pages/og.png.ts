@@ -79,6 +79,8 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
         { style: { marginTop: 22, fontSize: 32, fontWeight: 500, color: '#a1a1a6', lineHeight: 1.3, textWrap: 'balance' } },
         site.role,
       ),
+      // Interests in two equal columns; an odd last tag spans both, as on
+      // the home page on phones.
       h(
         'div',
         { style: { display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 40 } },
@@ -88,6 +90,9 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
             {
               style: {
                 display: 'flex',
+                flexGrow: 1,
+                flexBasis: '40%',
+                justifyContent: 'center',
                 padding: '8px 16px',
                 borderRadius: 10,
                 border: '1px solid rgba(127, 196, 255, 0.4)',
