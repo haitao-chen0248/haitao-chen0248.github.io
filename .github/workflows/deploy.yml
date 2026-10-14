@@ -1,21 +1,18 @@
 # Build the Astro site and publish it to GitHub Pages on every push to master.
+# Pull requests into master (such as Dependabot's updates) are built and
+# checked the same way, but not published.
 # One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-# Allow one deployment at a time; let an in-progress deploy finish.
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -32,13 +29,22 @@ jobs:
       - run: npm run check
       - run: npm run build
 
-      - uses: actions/upload-pages-artifact@v4
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # Allow one deployment at a time; let an in-progress deploy finish.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
