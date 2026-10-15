@@ -62,6 +62,13 @@
   --glass-hi: rgb(255 255 255 / 0.2);
   --glass-drop: 0 8px 24px rgb(0 0 0 / 0.35);
   --glass-light: rgb(255 255 255 / 0.16);
+  /* Rim light: brightest at the top left, where the light falls, faint along
+     the sides, with a softer reflection at the bottom right; plus a faint
+     glow inside the edge */
+  --glass-rim: rgb(255 255 255 / 0.5);
+  --glass-rim-side: rgb(255 255 255 / 0.06);
+  --glass-rim-back: rgb(255 255 255 / 0.22);
+  --glass-glow: rgb(255 255 255 / 0.06);
 
   /* Ambient light at the top of each page */
   --glow-1: rgb(64 140 255 / 0.3);
@@ -112,12 +119,16 @@
   --tag-bg: rgb(255 255 255 / 0.6);
   --tag-border: rgb(0 0 0 / 0.14);
 
-  --glass-fill: rgb(255 255 255 / 0.6);
-  --glass-fill-hover: rgb(255 255 255 / 0.85);
+  --glass-fill: rgb(255 255 255 / 0.3);
+  --glass-fill-hover: rgb(255 255 255 / 0.6);
   --glass-edge: rgb(0 0 0 / 0.07);
   --glass-hi: rgb(255 255 255 / 0.9);
   --glass-drop: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 18px rgb(0 0 0 / 0.06);
   --glass-light: rgb(255 255 255 / 0.9);
+  --glass-rim: rgb(255 255 255 / 1);
+  --glass-rim-side: rgb(0 0 0 / 0.06);
+  --glass-rim-back: rgb(0 0 0 / 0.16);
+  --glass-glow: rgb(255 255 255 / 0.55);
 
   --glow-1: rgb(31 111 235 / 0.13);
   --glow-2: rgb(0 170 190 / 0.1);
@@ -606,7 +617,7 @@ a.title-link:active {
   z-index: -1;
   border-radius: 999px;
   background: color-mix(in srgb, var(--bg) 85%, transparent);
-  backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(6px) saturate(180%);
   box-shadow:
     inset 0 0 0 1px var(--glass-edge),
     inset 0 1px 0 var(--glass-hi),
@@ -705,8 +716,34 @@ a.title-link:active {
   isolation: isolate;
   border: 1px solid var(--glass-edge);
   background: var(--glass-fill);
-  box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-drop);
-  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-hi),
+    inset 0 0 12px var(--glass-glow),
+    var(--glass-drop);
+  /* Chrome frosts less, not more, when the blur is large next to the
+     surface's height, so these thin surfaces use small radii */
+  backdrop-filter: blur(6px) saturate(180%);
+}
+
+/* Rim light, drawn over the border */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: linear-gradient(
+      135deg,
+      var(--glass-rim),
+      var(--glass-rim-side) 35%,
+      var(--glass-rim-side) 65%,
+      var(--glass-rim-back)
+    )
+    border-box;
+  mask:
+    linear-gradient(#000 0 0) padding-box exclude,
+    linear-gradient(#000 0 0) border-box;
+  pointer-events: none;
 }
 
 .glass::after {

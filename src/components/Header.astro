@@ -248,7 +248,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     height: var(--header-h);
     background: var(--header-bg);
     border-bottom: 1px solid var(--line);
-    backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: blur(8px) saturate(180%);
     /* Keep the header still while pages cross-fade. */
     view-transition-name: site-header;
   }
