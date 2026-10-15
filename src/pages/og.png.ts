@@ -12,6 +12,13 @@ import { site } from '@/config';
 
 const WIDTH = 1200;
 const HEIGHT = 630;
+const PADDING = 80;
+const GAP = 64;
+const PORTRAIT = 300;
+// Sizes are in pixels, not percentages, so the layout does not depend on how
+// a satori version resolves them.
+const TEXT_WIDTH = WIDTH - 2 * PADDING - GAP - PORTRAIT;
+const TAG_GAP = 12;
 
 type Node = { type: string; props: Record<string, unknown> & { children?: unknown } };
 
@@ -51,8 +58,8 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
         height: HEIGHT,
         display: 'flex',
         alignItems: 'center',
-        padding: '0 80px',
-        gap: 64,
+        padding: `0 ${PADDING}px`,
+        gap: GAP,
         backgroundColor: '#000',
         backgroundImage: 'radial-gradient(circle at 85% 15%, rgba(77, 141, 255, 0.22), rgba(0, 0, 0, 0) 55%)',
         fontFamily: 'Geist',
@@ -62,7 +69,7 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
     // Text column
     h(
       'div',
-      { style: { display: 'flex', flexDirection: 'column', flex: 1 } },
+      { style: { display: 'flex', flexDirection: 'column', width: TEXT_WIDTH } },
       h(
         'div',
         { style: { display: 'flex', alignItems: 'center', gap: 14, fontSize: 24, color: '#a1a1a6', fontWeight: 500 } },
@@ -83,15 +90,15 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
       // the home page on phones.
       h(
         'div',
-        { style: { display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 40 } },
-        ...site.interests.map((tag) =>
+        { style: { display: 'flex', flexWrap: 'wrap', gap: TAG_GAP, marginTop: 40 } },
+        ...site.interests.map((tag, i, all) =>
           h(
             'div',
             {
               style: {
                 display: 'flex',
-                flexGrow: 1,
-                flexBasis: '40%',
+                boxSizing: 'border-box',
+                width: i === all.length - 1 && i % 2 === 0 ? TEXT_WIDTH : (TEXT_WIDTH - TAG_GAP) / 2,
                 justifyContent: 'center',
                 padding: '8px 16px',
                 borderRadius: 10,
@@ -109,9 +116,9 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
     // Portrait
     h('img', {
       src: portraitUri,
-      width: 300,
-      height: 300,
-      style: { borderRadius: 36, objectFit: 'cover' },
+      width: PORTRAIT,
+      height: PORTRAIT,
+      style: { flexShrink: 0, borderRadius: 36, objectFit: 'cover' },
     }),
   );
 
