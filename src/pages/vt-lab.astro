@@ -21,8 +21,9 @@ const lines = Array.from({ length: 80 }, (_, i) => i + 1);
       <button type="button" data-variant="B">B</button>
       <button type="button" data-variant="C">C</button>
       <button type="button" data-variant="D">D</button>
+      <button type="button" data-variant="E">E</button>
     </div>
-    <pre class="log" aria-live="polite">A: as the site does it now · B: toolbar color changes after the sweep · C: top bar gets its own snapshot · D: no animation</pre>
+    <pre class="log" aria-live="polite">A: as the site does it now · B: toolbar color changes after the sweep · C: top bar gets its own snapshot · D: no animation · E: sticky bars pinned in place (the fix)</pre>
   </div>
 </BaseLayout>
 
@@ -32,6 +33,27 @@ const lines = Array.from({ length: 80 }, (_, i) => i + 1);
   const header = document.querySelector<HTMLElement>('.site-header')!;
   const log = document.querySelector<HTMLElement>('.log')!;
   const toolbar = (theme: string) => meta?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
+
+  // Same as pinSticky() in Header.astro
+  function pin() {
+    const sticky = [...document.querySelectorAll<HTMLElement>('.site-header, .sticky-year')];
+    const shifts = sticky.map((el) => {
+      const now = el.getBoundingClientRect().top;
+      el.style.position = 'static';
+      const rest = el.getBoundingClientRect().top;
+      el.style.removeProperty('position');
+      return now - rest;
+    });
+    sticky.forEach((el, i) => {
+      el.style.position = 'relative';
+      el.style.top = `${shifts[i]}px`;
+    });
+    return () =>
+      sticky.forEach((el) => {
+        el.style.removeProperty('position');
+        el.style.removeProperty('top');
+      });
+  }
 
   function lvh() {
     const probe = document.createElement('div');
@@ -80,12 +102,14 @@ const lines = Array.from({ length: 80 }, (_, i) => i + 1);
       const height = Math.max(innerHeight, start.lvh);
       const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, height - y) + (height - innerHeight)) + 24;
       let done: Promise<unknown> = Promise.resolve();
+      let unpin = () => {};
 
       if (variant === 'D' || !document.startViewTransition) {
         root.dataset.theme = next;
         toolbar(next);
       } else {
         if (variant === 'C') header.style.viewTransitionName = 'lab-header';
+        if (variant === 'E') unpin = pin();
         root.classList.add('theme-switch');
         const t = document.startViewTransition(() => {
           root.dataset.theme = next;
@@ -109,6 +133,7 @@ const lines = Array.from({ length: 80 }, (_, i) => i + 1);
           root.classList.remove('theme-switch');
           header.style.removeProperty('view-transition-name');
           if (variant === 'B') toolbar(next);
+          unpin();
         });
       }
 
