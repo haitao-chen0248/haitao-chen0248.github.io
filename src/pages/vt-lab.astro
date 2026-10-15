@@ -1,0 +1,185 @@
+---
+// Temporary test page for the theme switch on phones (not linked, not indexed,
+// left out of the sitemap). Each button switches the theme a different way
+// and records the viewport while it runs, to find why the header vanishes
+// during the circle sweep on Android Chrome when the page is scrolled.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const lines = Array.from({ length: 80 }, (_, i) => i + 1);
+---
+
+<BaseLayout title="Theme switch test" noindex>
+  <section class="container lab">
+    <h1>Theme switch test</h1>
+    <p>Scroll down a little, then tap A, B, C and D in turn. For each, note whether the top bar stays on screen while the colors change.</p>
+    {lines.map((n) => <p class="line">Line {n}. Filler text so the page can scroll under the top bar.</p>)}
+  </section>
+
+  <div class="panel">
+    <div class="buttons">
+      <button type="button" data-variant="A">A</button>
+      <button type="button" data-variant="B">B</button>
+      <button type="button" data-variant="C">C</button>
+      <button type="button" data-variant="D">D</button>
+    </div>
+    <pre class="log" aria-live="polite">A: as the site does it now · B: toolbar color changes after the sweep · C: top bar gets its own snapshot · D: no animation</pre>
+  </div>
+</BaseLayout>
+
+<script>
+  const root = document.documentElement;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const header = document.querySelector<HTMLElement>('.site-header')!;
+  const log = document.querySelector<HTMLElement>('.log')!;
+  const toolbar = (theme: string) => meta?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
+
+  function lvh() {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;height:100lvh;visibility:hidden;pointer-events:none';
+    document.body.append(probe);
+    const h = probe.offsetHeight;
+    probe.remove();
+    return h;
+  }
+
+  function state() {
+    const vv = visualViewport;
+    return {
+      inner: innerHeight,
+      vv: vv ? Math.round(vv.height) : 0,
+      vvTop: vv ? Math.round(vv.offsetTop) : 0,
+      head: Math.round(header.getBoundingClientRect().top),
+      scroll: Math.round(scrollY),
+    };
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-variant]').forEach((button) =>
+    button.addEventListener('click', async () => {
+      const variant = button.dataset.variant!;
+      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      const start = { ...state(), lvh: lvh() };
+      const seen = { innerMin: start.inner, innerMax: start.inner, vvTopMax: start.vvTop, headMin: start.head, headMax: start.head, resizes: 0 };
+      const onResize = () => seen.resizes++;
+      addEventListener('resize', onResize);
+      visualViewport?.addEventListener('resize', onResize);
+      let watching = true;
+      const watch = () => {
+        const s = state();
+        seen.innerMin = Math.min(seen.innerMin, s.inner);
+        seen.innerMax = Math.max(seen.innerMax, s.inner);
+        seen.vvTopMax = Math.max(seen.vvTopMax, s.vvTop);
+        seen.headMin = Math.min(seen.headMin, s.head);
+        seen.headMax = Math.max(seen.headMax, s.head);
+        if (watching) requestAnimationFrame(watch);
+      };
+      requestAnimationFrame(watch);
+
+      const box = document.querySelector('.theme-toggle')!.getBoundingClientRect();
+      const x = box.left + box.width / 2;
+      const y = box.top + box.height / 2;
+      const height = Math.max(innerHeight, start.lvh);
+      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, height - y) + (height - innerHeight)) + 24;
+      let done: Promise<unknown> = Promise.resolve();
+
+      if (variant === 'D' || !document.startViewTransition) {
+        root.dataset.theme = next;
+        toolbar(next);
+      } else {
+        if (variant === 'C') header.style.viewTransitionName = 'lab-header';
+        root.classList.add('theme-switch');
+        const t = document.startViewTransition(() => {
+          root.dataset.theme = next;
+          if (variant !== 'B') toolbar(next);
+        });
+        t.ready
+          .then(() => {
+            const sweep = (name: string, cx: number, cy: number) =>
+              root.animate(
+                { clipPath: [`circle(0px at ${cx}px ${cy}px)`, `circle(${radius}px at ${cx}px ${cy}px)`] },
+                { duration: 600, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: `::view-transition-new(${name})` },
+              );
+            sweep('root', x, y);
+            if (variant === 'C') {
+              const r = header.getBoundingClientRect();
+              sweep('lab-header', x - r.left, y - r.top);
+            }
+          })
+          .catch(() => {});
+        done = t.finished.finally(() => {
+          root.classList.remove('theme-switch');
+          header.style.removeProperty('view-transition-name');
+          if (variant === 'B') toolbar(next);
+        });
+      }
+
+      await done;
+      await new Promise((r) => setTimeout(r, 300));
+      watching = false;
+      removeEventListener('resize', onResize);
+      visualViewport?.removeEventListener('resize', onResize);
+      const end = state();
+      log.textContent =
+        `${variant}  start: inner ${start.inner}, lvh ${start.lvh}, vv ${start.vv}, vvTop ${start.vvTop}, header ${start.head}, scroll ${start.scroll}\n` +
+        `   during: inner ${seen.innerMin}-${seen.innerMax}, vvTop max ${seen.vvTopMax}, header ${seen.headMin}-${seen.headMax}, resizes ${seen.resizes}\n` +
+        `   end: inner ${end.inner}, vv ${end.vv}, header ${end.head}, scroll ${end.scroll}\n` +
+        navigator.userAgent.replace(/^Mozilla\/5\.0 /, '');
+    }),
+  );
+</script>
+
+<style>
+  /* Variant C: the header's own snapshot is swept like the page, not faded */
+  :global(.theme-switch::view-transition-old(lab-header)),
+  :global(.theme-switch::view-transition-new(lab-header)) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  .lab {
+    padding-block: 32px 280px;
+  }
+
+  .lab h1 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .line {
+    color: var(--text-2);
+    margin-top: 14px;
+  }
+
+  .panel {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    z-index: 60;
+    padding: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    background: var(--bg);
+  }
+
+  .buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .buttons button {
+    flex: 1;
+    padding: 10px 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .log {
+    margin-top: 8px;
+    font: 11px/1.4 var(--font-mono, monospace);
+    white-space: pre-wrap;
+    color: var(--text-2);
+  }
+</style>
