@@ -964,9 +964,11 @@ a.title-link:active {
 }
 
 /* Theme switch: the new theme is revealed by a circle the header script
-   animates, so the default cross-fade is turned off. */
-.theme-switch::view-transition-old(root),
-.theme-switch::view-transition-new(root) {
+   animates over the page and over each bar that stays put while scrolling,
+   so the default cross-fade, and any movement of those bars, is turned off. */
+.theme-switch::view-transition-group(*),
+.theme-switch::view-transition-old(*),
+.theme-switch::view-transition-new(*) {
   animation: none;
   mix-blend-mode: normal;
 }
