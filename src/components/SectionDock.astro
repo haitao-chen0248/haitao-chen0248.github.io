@@ -12,7 +12,7 @@ interface Props {
 const { sections } = Astro.props;
 ---
 
-<nav class="dock glass" data-refract aria-label="On this page">
+<nav class="dock glass" aria-label="On this page">
   <span class="lens" aria-hidden="true"></span>
   {
     sections.map((s) => (
@@ -109,8 +109,8 @@ const { sections } = Astro.props;
     border-radius: 999px;
     /* Nearly opaque, unlike other glass: text scrolls right under it and
        must never compete with the labels, even where blur is unavailable */
-    background: color-mix(in srgb, var(--bg) var(--dock-fill, 88%), transparent);
-    backdrop-filter: blur(8px) var(--refract,) saturate(180%);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px) saturate(180%);
     box-shadow:
       inset 0 1px 0 var(--glass-hi),
       0 12px 32px rgb(0 0 0 / 0.14);

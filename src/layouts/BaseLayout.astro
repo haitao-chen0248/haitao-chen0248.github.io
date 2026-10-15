@@ -14,7 +14,6 @@ import { getImage } from 'astro:assets';
 import Analytics from '@/components/Analytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
-import Refraction from '@/components/Refraction.astro';
 import headshot from '@/assets/images/headshot.jpg';
 import { googleSiteVerification, links, site } from '@/config';
 import { shareCardVersion } from '@/utils/og';
@@ -158,7 +157,6 @@ const personSchema = {
       <slot />
     </main>
     <Footer />
-    <Refraction />
 
     <script>
       // Sticky year labels: mark a label as stuck while it rides below the

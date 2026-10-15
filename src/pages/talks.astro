@@ -30,7 +30,7 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
     {
       groups.map((group) => (
         <section class="year-group" aria-labelledby={`y${group.year}`}>
-          <h2 class="sticky-year" data-refract="before" id={`y${group.year}`}>
+          <h2 class="sticky-year" id={`y${group.year}`}>
             {group.year}
           </h2>
 
