@@ -97,7 +97,7 @@ Full text in Markdown.
 
 **Link check**: on the 1st of each month a GitHub Action builds the site and checks every link in it; if any is broken, it opens an issue listing them (`.github/workflows/links.yml`). It can also be run by hand from the Actions tab.
 
-**Dependency updates**: on the 1st of each month Dependabot opens pull requests that update the npm packages and the GitHub Actions (`.github/dependabot.yml`). Each one is built and checked automatically; merge it once the check passes, and the site redeploys.
+**Dependency updates**: on the 1st of each month Dependabot opens pull requests that update the npm packages and the GitHub Actions (`.github/dependabot.yml`). Each one is built and checked automatically; merge it once the check passes, and the site redeploys. TypeScript major updates are skipped until `@astrojs/check` supports TypeScript 7 (see the note in `dependabot.yml`).
 
 **Pinned fflate**: `overrides` in `package.json` raises `fflate` to 0.7.5, which fixes a security issue ([GHSA-px8p-9vwx-vf98](https://github.com/advisories/GHSA-px8p-9vwx-vf98)), because `satori` (which draws the share card) pins the vulnerable 0.7.3. Once `npm view satori dependencies.fflate` shows 0.7.5 or later, delete the `overrides` entry and run `npm install`.
 
