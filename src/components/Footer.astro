@@ -107,8 +107,17 @@ const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.co
   }
 
   .links a {
+    position: relative;
     color: var(--text-2);
     transition: color 0.2s;
+  }
+
+  /* The links are small text; their tap areas reach into the footer's
+     padding and halfway across the gaps */
+  .links a::after {
+    content: '';
+    position: absolute;
+    inset: -12px -9px;
   }
 
   .links a:active {

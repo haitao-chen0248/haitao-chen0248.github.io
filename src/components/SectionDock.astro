@@ -144,6 +144,13 @@ const { sections } = Astro.props;
     translate: -50% 0;
   }
 
+  /* Tap areas fill the dock's height */
+  .dock a::after {
+    content: '';
+    position: absolute;
+    inset: -5px -1px;
+  }
+
   .dock a {
     position: relative;
     z-index: 1;
