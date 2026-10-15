@@ -113,12 +113,12 @@ const personSchema = {
       addEventListener('pagereveal', (event) => {
         const main = document.getElementById('main');
         if (!event.viewTransition || !main) return;
-        const live = [document.documentElement, document.querySelector('.site-header')].filter(Boolean);
+        const root = document.documentElement;
         main.style.viewTransitionName = 'page';
-        live.forEach((el) => (el.style.viewTransitionName = 'none'));
+        root.style.viewTransitionName = 'none';
         event.viewTransition.finished.finally(() => {
           main.style.removeProperty('view-transition-name');
-          live.forEach((el) => el.style.removeProperty('view-transition-name'));
+          root.style.removeProperty('view-transition-name');
         });
       });
     </script>
