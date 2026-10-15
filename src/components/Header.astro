@@ -88,6 +88,30 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     return height;
   }
 
+  // Android Chrome places sticky elements as if the address bar were hidden
+  // while a view transition runs, so a stuck header slid up out of sight for
+  // the length of the theme sweep. Each sticky element is held where it is,
+  // by relative positioning, until the transition ends. Returns the undo.
+  function pinSticky(): () => void {
+    const sticky = [...document.querySelectorAll<HTMLElement>('.site-header, .sticky-year')];
+    const shifts = sticky.map((el) => {
+      const now = el.getBoundingClientRect().top;
+      el.style.position = 'static';
+      const rest = el.getBoundingClientRect().top;
+      el.style.removeProperty('position');
+      return now - rest;
+    });
+    sticky.forEach((el, i) => {
+      el.style.position = 'relative';
+      el.style.top = `${shifts[i]}px`;
+    });
+    return () =>
+      sticky.forEach((el) => {
+        el.style.removeProperty('position');
+        el.style.removeProperty('top');
+      });
+  }
+
   const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
   toggle?.addEventListener('click', () => {
     const next = root.dataset.theme === 'light' ? 'dark' : 'light';
@@ -107,6 +131,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     const height = Math.max(innerHeight, largeViewportHeight());
     const bars = height - innerHeight;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, height - y) + bars) + 24;
+    const unpin = pinSticky();
     root.classList.add('theme-switch');
     const transition = document.startViewTransition(() => apply(next));
     transition.ready
@@ -117,7 +142,10 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
         ),
       )
       .catch(() => {});
-    transition.finished.finally(() => root.classList.remove('theme-switch'));
+    transition.finished.finally(() => {
+      root.classList.remove('theme-switch');
+      unpin();
+    });
   });
 
   // Follow live system changes unless the visitor picked a theme.
