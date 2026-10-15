@@ -107,45 +107,17 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     const height = Math.max(innerHeight, largeViewportHeight());
     const bars = height - innerHeight;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, height - y) + bars) + 24;
-    // Bars that stay put while the page scrolls (the header, a stuck year
-    // label, the section dock) get snapshots of their own, swept by the same
-    // circle. In the page snapshot Safari draws a sticky bar where it would
-    // sit if the page were not scrolled, so the header vanished for the
-    // length of the sweep everywhere but at the top of the page.
-    const still = [...document.querySelectorAll<HTMLElement>('.site-header, .sticky-year.stuck, .dock.shown')];
-    const layers = still.map((bar, i) => {
-      bar.style.viewTransitionName = `theme-bar-${i}`;
-      const rect = bar.getBoundingClientRect();
-      return { name: `theme-bar-${i}`, x: x - rect.left, y: y - rect.top };
-    });
     root.classList.add('theme-switch');
     const transition = document.startViewTransition(() => apply(next));
-    const timing = { duration: 600, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' };
-    const sweep = (name: string, cx: number, cy: number) =>
-      root.animate(
-        { clipPath: [`circle(0px at ${cx}px ${cy}px)`, `circle(${radius}px at ${cx}px ${cy}px)`] },
-        { ...timing, pseudoElement: `::view-transition-new(${name})` },
-      );
-    // The bars are see-through, so the old one would show through the new
-    // one; the same circle is cut out of it as a hole.
-    const hole = (cx: number, cy: number, r: number) =>
-      `path(evenodd, "M-9999 -9999H9999V9999H-9999Z M${cx - r} ${cy}A${r} ${r} 0 1 0 ${cx + r} ${cy}A${r} ${r} 0 1 0 ${cx - r} ${cy}Z")`;
     transition.ready
-      .then(() => {
-        sweep('root', x, y);
-        layers.forEach((layer) => {
-          sweep(layer.name, layer.x, layer.y);
-          root.animate(
-            { clipPath: [hole(layer.x, layer.y, 0.01), hole(layer.x, layer.y, radius)] },
-            { ...timing, pseudoElement: `::view-transition-old(${layer.name})` },
-          );
-        });
-      })
+      .then(() =>
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 600, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
+        ),
+      )
       .catch(() => {});
-    transition.finished.finally(() => {
-      root.classList.remove('theme-switch');
-      still.forEach((bar) => bar.style.removeProperty('view-transition-name'));
-    });
+    transition.finished.finally(() => root.classList.remove('theme-switch'));
   });
 
   // Follow live system changes unless the visitor picked a theme.
@@ -279,6 +251,12 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     backdrop-filter: blur(8px) saturate(180%);
     /* Keep the header still while pages cross-fade. */
     view-transition-name: site-header;
+  }
+
+  /* While the theme switches, the header is part of the page so the new theme
+     sweeps over it too. */
+  :global(.theme-switch) .site-header {
+    view-transition-name: none;
   }
 
   /* The shorthand and the timeline sit in separate rules on purpose; see the
