@@ -4,7 +4,7 @@
 export const site = {
   name: 'Haitao Chen',
   // Home page title in browser tabs and search results. Other pages use "Page · name".
-  title: 'Haitao Chen · Computational Imaging',
+  title: 'Haitao Chen · Personal Website',
   // Home page summary in search results and link previews.
   description:
     'Optics and machine learning, designed as one. Building computational imaging systems that reveal the unseen dynamics of life.',
