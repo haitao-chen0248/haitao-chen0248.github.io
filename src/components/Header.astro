@@ -7,7 +7,7 @@ const path = Astro.url.pathname;
 const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 ---
 
-<header class="site-header">
+<header class="site-header" data-refract>
   <div class="container inner">
     <a href="/" class="brand" aria-label={`${site.name}, home`}>
       <AiryMark size={18} class="brand-mark" />
@@ -248,7 +248,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     height: var(--header-h);
     background: var(--header-bg);
     border-bottom: 1px solid var(--line);
-    backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: blur(8px) var(--refract,) saturate(180%);
     /* Keep the header still while pages cross-fade. */
     view-transition-name: site-header;
   }
