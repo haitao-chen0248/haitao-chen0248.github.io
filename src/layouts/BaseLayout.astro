@@ -173,6 +173,11 @@ const personSchema = {
           const top = parseFloat(getComputedStyle(yearLabels[0]).top);
           const observer = new IntersectionObserver(
             (entries) => {
+              // While the theme switches, Android Chrome measures against a
+              // shifted viewport (see pinSticky in Header.astro), so a stuck
+              // label would lose its capsule for the length of the sweep.
+              // Labels keep their state until the switch ends.
+              if (document.documentElement.classList.contains('theme-switch')) return;
               for (const entry of entries) {
                 const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
                 entry.target.classList.toggle('stuck', stuck);
