@@ -112,6 +112,16 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       });
   }
 
+  // Leaving for another page: the browser captures this page for the
+  // cross-fade. The sticky bars are held in place first, so Android Chrome
+  // captures them where they are and not out of sight. They are let go again
+  // if the page comes back from the back-forward cache.
+  addEventListener('pageswap', (event) => {
+    if (!(event as Event & { viewTransition?: unknown }).viewTransition) return;
+    const unpin = pinSticky();
+    addEventListener('pageshow', unpin, { once: true });
+  });
+
   const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
   toggle?.addEventListener('click', () => {
     const next = root.dataset.theme === 'light' ? 'dark' : 'light';
@@ -277,14 +287,6 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     background: var(--header-bg);
     border-bottom: 1px solid var(--line);
     backdrop-filter: blur(8px) saturate(180%);
-    /* Keep the header still while pages cross-fade. */
-    view-transition-name: site-header;
-  }
-
-  /* While the theme switches, the header is part of the page so the new theme
-     sweeps over it too. */
-  :global(.theme-switch) .site-header {
-    view-transition-name: none;
   }
 
   /* The shorthand and the timeline sit in separate rules on purpose; see the
@@ -347,6 +349,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   }
 
   .brand {
+    position: relative;
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -428,8 +431,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   }
 
   nav ul {
+    --gap: 24px;
     display: flex;
-    gap: 24px;
+    gap: var(--gap);
   }
 
   nav li {
@@ -437,9 +441,34 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   }
 
   nav a {
+    position: relative;
     font-size: 13.5px;
     color: var(--text-2);
     transition: color 0.2s;
+  }
+
+  /* Tap areas: the menu text is only about 17px tall, and a finger that
+     landed just above, below, or between items hit nothing, so a page
+     sometimes took two taps to open. Each item's area now fills the bar's
+     height and half the gap on either side; the logo and the theme switch
+     get at least 44px. Nothing moves visually. */
+  nav a::after,
+  .brand::after,
+  .theme-toggle::after {
+    content: '';
+    position: absolute;
+  }
+
+  nav a::after {
+    inset: -16px calc(var(--gap) / -2);
+  }
+
+  .brand::after {
+    inset: -13px -12px;
+  }
+
+  .theme-toggle::after {
+    inset: -7px;
   }
 
   nav a[aria-current='page'],
@@ -480,6 +509,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   }
 
   .theme-toggle {
+    position: relative;
     display: grid;
     place-items: center;
     width: 30px;
@@ -520,7 +550,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     }
 
     nav ul {
-      gap: 14px;
+      --gap: 14px;
     }
 
     nav a {
@@ -557,7 +587,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     }
 
     nav ul {
-      gap: 11px;
+      --gap: 11px;
     }
 
     nav a {

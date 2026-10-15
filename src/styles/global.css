@@ -919,10 +919,11 @@ a.title-link:active {
 /* Motion
    ========================================================================== */
 
-/* Page changes, in browsers that support view transitions: the header and
-   background stay still, the old page fades out where the reader left it,
-   and the new page's content (main, named "page" by BaseLayout for the
-   length of the change) fades in and rises a little. */
+/* Page changes, in browsers that support view transitions: the old page,
+   header included, fades out quickly where the reader left it, over the new
+   page's live header and background, and the new page's content (main,
+   named "page" by BaseLayout for the length of the change) fades in and
+   rises a little. */
 @view-transition {
   navigation: auto;
 }
