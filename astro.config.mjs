@@ -10,8 +10,7 @@ export default defineConfig({
   // Emit /publications/index.html style URLs so links keep a trailing slash.
   trailingSlash: 'always',
 
-  // The theme switch test page (src/pages/vt-lab.astro) stays out of the sitemap.
-  integrations: [sitemap({ filter: (page) => !page.includes('/vt-lab/') })],
+  integrations: [sitemap()],
 
   // Keep the old site's /about/ URL working.
   redirects: {
