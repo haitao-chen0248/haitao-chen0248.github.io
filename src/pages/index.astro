@@ -112,7 +112,8 @@ function initials(org: string): string {
             <li>
               <a class="glass" data-magnetic href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
                 <Icon name={link.icon} size={15} />
-                <span>{link.label}</span>
+                <span class="label">{link.label}</span>
+                <span class="hit" aria-hidden="true" />
               </a>
             </li>
           ))
@@ -440,6 +441,15 @@ function initials(org: string): string {
     background: var(--glass-fill-hover);
   }
 
+  /* A taller tap area than the pill itself (44px), reaching into half the
+     gap on either side. The pill's own ::before and ::after draw the glass,
+     so the area is an empty span. Its offsets count from inside the 1px
+     border. */
+  .pills .hit {
+    position: absolute;
+    inset: -6px -5px;
+  }
+
   @media (hover: hover) {
     .pills a:hover {
       background: var(--glass-fill-hover);
@@ -639,7 +649,7 @@ function initials(org: string): string {
       padding: 0;
     }
 
-    .pills a span {
+    .pills .label {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -651,6 +661,11 @@ function initials(org: string): string {
     .pills :global(svg) {
       width: 18px;
       height: 18px;
+    }
+
+    /* About 52px tall, and reaching into half the gap on either side */
+    .pills .hit {
+      inset: -5px -7px;
     }
   }
 
