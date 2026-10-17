@@ -79,7 +79,7 @@ images:                                # optional, up to six; several play as a 
 Full text in Markdown.
 ```
 
-**Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link; `note` adds a badge, as on publications. The title links to the video, or to the paper when there is no video.
+**Talk** (`talks.yaml`): `youtube` is the video ID; `paper` is a publication `id` and adds a Paper link; `note` adds a badge, as on publications. The title links to the video, or to the paper when there is no video. The video's poster is `src/assets/images/talks/<id>.jpg`, named after the talk `id` (save YouTube's from `https://i.ytimg.com/vi/<youtube>/maxresdefault.jpg`); stored with the site, it also shows where YouTube's images are blocked. Without one, YouTube's poster is used.
 
 **Teaching** (`teaching.yaml`): course code, title, term, role, description, instructor, an image with alt text, and optional links. The first link is also used for the title and image.
 

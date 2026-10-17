@@ -3,14 +3,21 @@
 // player only after a click, which keeps pages fast and avoids third-party
 // scripts until the visitor asks for them. Without JavaScript the poster
 // simply links to the video on YouTube.
+import Photo from './Photo.astro';
+
 interface Props {
   id: string;
   title: string;
+  /** Poster stored with the site. It shows where YouTube's images are
+      blocked, and is much smaller. Without one, YouTube's is used. */
+  poster?: ImageMetadata;
+  /** Load the poster right away (the first one on a page) */
+  priority?: boolean;
 }
 
-const { id, title } = Astro.props;
+const { id, title, poster, priority = false } = Astro.props;
 const watchUrl = `https://www.youtube.com/watch?v=${id}`;
-const poster = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+const remotePoster = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
 // Older uploads may lack a max-resolution poster, so fall back to the HQ one.
 // If that fails too (e.g. blocked by a network filter), hide the image and
 // let the gradient background show instead of a broken-image icon.
@@ -20,7 +27,13 @@ const fallback =
 
 <div class="yt" data-youtube-id={id} data-youtube-title={title}>
   <a class="poster sheen" href={watchUrl} target="_blank" rel="noopener">
-    <img src={poster} alt="" loading="lazy" decoding="async" width="1280" height="720" onerror={fallback} />
+    {
+      poster ? (
+        <Photo src={poster} alt="" widths={[340, 680, 1020, 1280]} sizes="(max-width: 760px) 100vw, 340px" priority={priority} />
+      ) : (
+        <img src={remotePoster} alt="" loading="lazy" decoding="async" width="1280" height="720" onerror={fallback} />
+      )
+    }
     <span class="play" aria-hidden="true">
       <svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 5.5v13l11-6.5z" fill="currentColor"></path></svg>
     </span>
@@ -97,7 +110,7 @@ const fallback =
     border: 0;
   }
 
-  .poster img {
+  .poster :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -105,7 +118,7 @@ const fallback =
   }
 
   @media (hover: hover) {
-    .poster:hover img {
+    .poster:hover :global(img) {
       transform: scale(1.03);
     }
   }
