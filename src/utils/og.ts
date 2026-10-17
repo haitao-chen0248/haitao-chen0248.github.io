@@ -13,7 +13,7 @@ export function shareCardVersion(): string {
   const hash = createHash('sha1');
   hash.update(JSON.stringify({ name: site.name, role: site.role, interests: site.interests }));
   hash.update(readFileSync(path.join(root, 'src/assets/images/headshot.jpg')));
-  hash.update(readFileSync(path.join(root, 'src/pages/og.png.ts')));
+  hash.update(readFileSync(path.join(root, 'src/pages/og.jpg.ts')));
   hash.update(readFileSync(path.join(root, 'node_modules/satori/package.json')));
   return hash.digest('hex').slice(0, 10);
 }

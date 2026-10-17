@@ -1030,6 +1030,12 @@ a.title-link:active {
   }
 }
 
+/* A page rendered ahead of a press holds its entrance until it is opened,
+   or it would have played out unseen (BaseLayout). */
+.prerendering :is(.letter, .enter) {
+  animation-play-state: paused;
+}
+
 /* Reveal content as it scrolls into view (progressive enhancement).
    The shorthand and the timeline sit in separate rules on purpose: the CSS
    minifier would otherwise merge them into one "animation" shorthand that
