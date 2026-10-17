@@ -35,9 +35,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const portrait = await getImage({ src: headshot, width: 600, format: 'jpg' });
 const portraitUrl = new URL(portrait.src, Astro.site);
 
-// Social share card, rendered at build time by src/pages/og.png.ts. The version
+// Social share card, rendered at build time by src/pages/og.jpg.ts. The version
 // query changes with the card's content so platforms fetch the new image.
-const shareCardUrl = new URL(`/og.png?v=${shareCardVersion()}`, Astro.site);
+const shareCardUrl = new URL(`/og.jpg?v=${shareCardVersion()}`, Astro.site);
+
+// Links to the site's own pages, for the speculation rules in <head>.
+const ownPages = { and: [{ href_matches: '/*' }, { not: { selector_matches: '[target=_blank]' } }] };
 
 // Structured data so search engines can identify the person behind the site.
 const personSchema = {
@@ -63,18 +66,16 @@ const personSchema = {
     <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={geistMonoLatin} as="font" type="font/woff2" crossorigin />
 
-    <!-- Fetch a page in the background when its link is hovered or pressed,
-         so it opens at once. Browsers without speculation rules ignore this. -->
+    <!-- Fetch a page in the background when its link is hovered, and render
+         it in full once the link is pressed, so it is ready by the time the
+         press ends and opens at once. Browsers without speculation rules
+         ignore this. -->
     <script
       is:inline
       type="speculationrules"
       set:html={JSON.stringify({
-        prefetch: [
-          {
-            where: { and: [{ href_matches: '/*' }, { not: { selector_matches: '[target=_blank]' } }] },
-            eagerness: 'moderate',
-          },
-        ],
+        prefetch: [{ where: ownPages, eagerness: 'moderate' }],
+        prerender: [{ where: ownPages, eagerness: 'conservative' }],
       })}
     />
     <title>{pageTitle}</title>
@@ -84,18 +85,37 @@ const personSchema = {
     <meta name="color-scheme" content="dark light" />
 
     <!-- Pick the theme before the first paint to avoid a flash:
-         the visitor's saved choice, otherwise the system setting. -->
+         the visitor's saved choice, otherwise the system setting.
+         A page rendered ahead of a press (see the speculation rules above)
+         waits to be opened: its entrance animations hold still until then
+         (see .prerendering in global.css), and the theme is picked again
+         then, in case the visitor switched it in the meantime. -->
     <script is:inline>
       (() => {
-        let theme = null;
-        try {
-          theme = localStorage.getItem('theme');
-        } catch {}
-        if (theme !== 'light' && theme !== 'dark') {
-          theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        const root = document.documentElement;
+        const pickTheme = () => {
+          let theme = null;
+          try {
+            theme = localStorage.getItem('theme');
+          } catch {}
+          if (theme !== 'light' && theme !== 'dark') {
+            theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          root.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#ffffff' : '#000000';
+        };
+        pickTheme();
+        if (document.prerendering) {
+          root.classList.add('prerendering');
+          document.addEventListener(
+            'prerenderingchange',
+            () => {
+              pickTheme();
+              root.classList.remove('prerendering');
+            },
+            { once: true },
+          );
         }
-        document.documentElement.dataset.theme = theme;
-        document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#ffffff' : '#000000';
       })();
     </script>
 

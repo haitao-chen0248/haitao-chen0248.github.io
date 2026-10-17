@@ -89,7 +89,7 @@ Full text in Markdown.
 
 **Availability line**: `status` in `src/config.ts`; set it to `''` to hide it.
 
-**Share card**: `/og.png` is generated from the name, role, interests, and headshot, so it updates on its own.
+**Share card**: `/og.jpg` is generated from the name, role, interests, and headshot, so it updates on its own.
 
 **Search engines**: every page describes the site owner as a person (`BaseLayout.astro`), and `/publications/` describes each paper as a scholarly article. Both are generated from `src/config.ts` and `publications.yaml`, so there is nothing to keep in sync by hand.
 

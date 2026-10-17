@@ -1,6 +1,6 @@
-// Social share card (Open Graph image), rendered at build time and served at /og.png.
+// Social share card (Open Graph image), rendered at build time and served at /og.jpg.
 // Layout is written as plain objects for satori (no React needed); satori turns it
-// into SVG with text as paths, and sharp rasterizes it to PNG.
+// into SVG with text as paths, and sharp rasterizes it to JPEG.
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -132,6 +132,10 @@ export const GET: APIRoute = async ({ site: siteUrl }) => {
     ],
   });
 
-  const png = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();
-  return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
+  // JPEG is about a quarter the size of PNG here (the photo and the soft
+  // gradient), so link previews load sooner. Full color resolution
+  // (4:4:4) keeps the thin tag borders crisp. A PNG with a reduced palette
+  // would be as small, but bands the gradient into rings.
+  const jpeg = await sharp(Buffer.from(svg)).jpeg({ quality: 85, mozjpeg: true, chromaSubsampling: '4:4:4' }).toBuffer();
+  return new Response(new Uint8Array(jpeg), { headers: { 'Content-Type': 'image/jpeg' } });
 };
