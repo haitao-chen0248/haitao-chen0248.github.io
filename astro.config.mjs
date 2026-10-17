@@ -17,11 +17,16 @@ export default defineConfig({
     '/about': '/',
   },
 
-  // Browsers the CSS is built for. Knowing them, the minifier adds the vendor
-  // prefixes older Safari needs, such as -webkit-backdrop-filter.
   vite: {
     build: {
+      // Browsers the CSS is built for. Knowing them, the minifier adds the
+      // vendor prefixes older Safari needs, such as -webkit-backdrop-filter.
       cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
+
+      // Put the page scripts inside the pages too, up to 8 KB each (the
+      // header's is just over Vite's 4 KB default), so no page fetches a
+      // separate script file. Everything else keeps the default limit.
+      assetsInlineLimit: (filePath, content) => (filePath.endsWith('.js') && content.length < 8192 ? true : undefined),
     },
   },
 
