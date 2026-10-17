@@ -7,6 +7,16 @@ import YouTube from '@/components/YouTube.astro';
 import { site } from '@/config';
 import { byFileOrder, formatMonth, groupByYear, isoMonth, wrapFriendly } from '@/utils/format';
 
+// Video posters: files in src/assets/images/talks/ named after the talk id are
+// picked up automatically; without one, the poster comes from YouTube.
+const posterFiles = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/talks/*.{png,jpg,jpeg,webp}', {
+  eager: true,
+});
+function posterFor(id: string): ImageMetadata | undefined {
+  const match = Object.entries(posterFiles).find(([path]) => path.split('/').pop()?.replace(/\.[^.]+$/, '') === id);
+  return match?.[1].default;
+}
+
 // Shown in the order they appear in talks.yaml (newest first), grouped by year.
 const talks = await Promise.all(
   (await getCollection('talks')).sort(byFileOrder).map(async (talk) => {
@@ -15,7 +25,7 @@ const talks = await Promise.all(
     const videoUrl = talk.data.youtube && `https://www.youtube.com/watch?v=${talk.data.youtube}`;
     const paperUrl = paper?.data.links[0]?.url;
     // The title links to the recording, or else the paper, as a paper's title does.
-    return { ...talk.data, videoUrl, paperUrl, primary: videoUrl || paperUrl };
+    return { ...talk.data, poster: posterFor(talk.id), videoUrl, paperUrl, primary: videoUrl || paperUrl };
   }),
 );
 const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
@@ -28,18 +38,18 @@ const groups = groupByYear(talks, (t) => t.date.slice(0, 4));
 
   <div class="container">
     {
-      groups.map((group) => (
+      groups.map((group, g) => (
         <section class="year-group" aria-labelledby={`y${group.year}`}>
           <h2 class="sticky-year" id={`y${group.year}`}>
             {group.year}
           </h2>
 
           <div class="items">
-            {group.items.map((talk) => (
+            {group.items.map((talk, i) => (
               <article class:list={['talk', 'reveal', { 'no-media': !talk.youtube }]}>
                 {talk.youtube && (
                   <div class="media">
-                    <YouTube id={talk.youtube} title={talk.title} />
+                    <YouTube id={talk.youtube} title={talk.title} poster={talk.poster} priority={g === 0 && i === 0} />
                   </div>
                 )}
 
