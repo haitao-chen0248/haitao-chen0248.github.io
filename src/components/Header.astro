@@ -187,8 +187,13 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       return { x: box.left - base.left - pad, y: box.top - base.top - (height - box.height) / 2, w: box.width + pad * 2, h: height };
     }
 
+    // After a jump or a still placement, "then" runs once the lens has been
+    // drawn in place and its transitions are back.
     let settling = 0;
-    function apply(spot: Spot, move: Move) {
+    function apply(spot: Spot, move: Move, then?: () => void) {
+      // Only the arriving glide waits (see arrive below); a glide already
+      // under way keeps its delay.
+      lens!.classList.remove('arriving');
       // Start from the item itself when the lens is not on screen yet.
       if (move === 'glide' && !lens!.classList.contains('shown')) move = 'jump';
       if (move !== 'glide') {
@@ -196,7 +201,10 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
         // Transitions come back once a frame has been drawn in place.
         cancelAnimationFrame(settling);
         settling = requestAnimationFrame(() => {
-          settling = requestAnimationFrame(() => lens!.classList.remove('instant', 'still'));
+          settling = requestAnimationFrame(() => {
+            lens!.classList.remove('instant', 'still');
+            then?.();
+          });
         });
       }
       lens!.style.setProperty('--lx', `${spot.x}px`);
@@ -213,17 +221,21 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     }
 
     // A finger tapping a menu item is about to open another page. The lens
-    // goes straight there, with no glide or squeeze, and stays put until the
-    // click: the page change freezes the old page mid-animation, and a
-    // cut-off spring, or the lens heading back as the finger lifts (which
-    // counts as leaving the bar), looked jerky.
+    // stays where it is, with no squeeze, and the next page glides it over
+    // (see the arrival below): with pages opening at once, the old page is
+    // replaced as soon as the finger lifts, and a move started there was
+    // cut off mid-spring, or skipped.
     const tapsPage = (event: PointerEvent) =>
       event.pointerType !== 'mouse' && !!(event.target as Element).closest('nav a');
     let tapping = false;
 
     for (const item of bar.querySelectorAll<HTMLElement>('nav a, .theme-toggle')) {
-      item.addEventListener('pointerenter', (event) => place(item, tapsPage(event) ? 'jump' : 'glide'));
-      item.addEventListener('focus', () => place(item, tapping ? 'jump' : 'glide'));
+      item.addEventListener('pointerenter', (event) => {
+        if (!tapsPage(event)) place(item);
+      });
+      item.addEventListener('focus', () => {
+        if (!tapping) place(item);
+      });
       item.addEventListener('blur', () => place(current));
     }
     bar.addEventListener('pointerleave', () => {
@@ -259,7 +271,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     for (const link of bar.querySelectorAll<HTMLAnchorElement>('nav a')) {
       link.addEventListener('click', (event) => {
         if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        place(link, tapping ? 'jump' : 'glide');
+        if (!tapping) place(link);
         tapping = false;
         current?.classList.remove('chosen');
         current = link;
@@ -267,31 +279,79 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       });
     }
 
+    // Leaving for another page of the site: note which item the lens is on,
+    // so the next page's lens can start there.
+    const HANDOFF = 'lens-handoff';
+    addEventListener('pageswap', (event) => {
+      const to = event.activation?.entry.url;
+      if (!to) return;
+      const from = active?.matches('nav a') && lens.classList.contains('shown') ? active.getAttribute('href') : null;
+      try {
+        sessionStorage.setItem(HANDOFF, JSON.stringify({ to, from }));
+      } catch {}
+    });
+
+    // The item the lens was on in the page just left, if this page was
+    // opened from there and the lens was on another item.
+    function cameFrom(): HTMLElement | null {
+      let note: { to?: string; from?: string | null } | null = null;
+      try {
+        note = JSON.parse(sessionStorage.getItem(HANDOFF) ?? 'null');
+        sessionStorage.removeItem(HANDOFF);
+      } catch {}
+      const href = note?.to === location.href ? note.from : null;
+      const item = href ? [...bar!.querySelectorAll<HTMLElement>('nav a')].find((a) => a.getAttribute('href') === href) : null;
+      return item && item !== current ? item : null;
+    }
+
+    // On arrival the lens is simply there, without fading in, so during a
+    // page change it carries straight over from the previous page's menu.
+    // When it rested on another item there, it starts on that item and
+    // glides over to this page's as the content fades in. The glide waits
+    // for the old page to fade out first (see .lens.arriving), so it is
+    // seen whole and not under the old page's lens.
+    function arrive() {
+      const item = current;
+      if (!item) return;
+      const start = cameFrom();
+      const from = start && measure(start);
+      const to = measure(item);
+      requestAnimationFrame(() => {
+        active = item;
+        if (from) {
+          apply(from, 'still', () => {
+            apply(to, 'glide');
+            lens!.classList.add('arriving');
+          });
+        } else apply(to, 'still');
+      });
+    }
+
     // Coming back with the Back button can restore this page as it was left;
-    // put the lens back on this page's own item.
+    // the lens arrives on this page's own item again.
     addEventListener('pageshow', (event) => {
       if (!event.persisted) return;
-      place(initial, 'still');
       current?.classList.remove('chosen');
       current = initial;
+      arrive();
     });
 
     // The first layout and later size changes are measured in a
     // ResizeObserver callback, which comes right after layout, so measuring
-    // there costs nothing; the lens moves in the next frame. On arrival it is
-    // simply there, without fading in, so during a page change it carries
-    // straight over from the previous page's menu.
+    // there costs nothing; the lens moves in the next frame. A page rendered
+    // ahead of a press arrives once it is opened.
     let arrived = false;
     new ResizeObserver(() => {
-      const item = arrived ? active : current;
-      const move: Move = arrived ? 'jump' : 'still';
-      arrived = true;
-      if (!item) return;
-      const spot = measure(item);
-      requestAnimationFrame(() => {
-        active = item;
-        apply(spot, move);
-      });
+      if (!arrived) {
+        arrived = true;
+        if ((document as Document & { prerendering?: boolean }).prerendering) {
+          document.addEventListener('prerenderingchange', arrive, { once: true });
+        } else arrive();
+        return;
+      }
+      if (!active) return;
+      const spot = measure(active);
+      requestAnimationFrame(() => apply(spot, 'jump'));
     }).observe(bar);
   }
 </script>
@@ -437,6 +497,12 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 
   .lens.instant {
     transition: opacity 0.25s;
+  }
+
+  /* Arriving from another page, the glide starts once the old page has
+     mostly faded out, together with the content (page-in in global.css). */
+  .lens.arriving {
+    transition-delay: 0s, 0.12s, 0.12s, 0.12s;
   }
 
   .lens.still {
