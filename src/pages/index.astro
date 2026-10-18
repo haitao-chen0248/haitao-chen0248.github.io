@@ -508,6 +508,19 @@ function initials(org: string): string {
     }
   }
 
+  /* Narrow desktops: the six tags fit on one line from 1100px; below that
+     they sit in two even rows of three, not five and one. */
+  @media (min-width: 900px) and (max-width: 1099px) {
+    .tags {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .tags li {
+      text-align: center;
+    }
+  }
+
   @media (max-width: 480px) {
     .tags li {
       padding: 4px 10px;
@@ -517,9 +530,8 @@ function initials(org: string): string {
 
   /* Phones: two tags fit on a line, so the tags sit in two equal columns,
      with an odd last one across the full width, which keeps the block's
-     edges straight instead of ragged. Below 360px a column is too narrow
-     for the longer tags, which then keep the stretched lines above. */
-  @media (min-width: 360px) and (max-width: 480px) {
+     edges straight instead of ragged. */
+  @media (max-width: 480px) {
     .tags {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -527,6 +539,15 @@ function initials(org: string): string {
 
     .tags li:last-child:nth-child(odd) {
       grid-column: 1 / -1;
+    }
+  }
+
+  /* The narrowest phones: the tags get a little smaller, so the longest
+     ones still fit two to a line. */
+  @media (max-width: 359px) {
+    .tags li {
+      padding-inline: 7px;
+      font-size: min(12.5px, 3.3vw);
     }
   }
 
