@@ -13,4 +13,4 @@ images:
     alt: The full award certificate
 ---
 
-Back in San Francisco for **SPIE Photonics West**, where I gave two talks, on curvature-adaptive gigapixel microscopy ([watch](https://www.youtube.com/watch?v=WSLuhnqptSg)) and high-throughput 3D zebrafish profiling ([watch](https://www.youtube.com/watch?v=IXfsqg_8Y6I)). The zebrafish talk received the **BaySpec Best Presentation Award**. Another highlight of the week was meeting **Prof. Joseph Goodman**.
+Back in San Francisco for **SPIE Photonics West**, where I gave two talks, on curvature-adaptive gigapixel microscopy ([watch](https://www.youtube.com/watch?v=WSLuhnqptSg)) and high-throughput 3D zebrafish profiling ([watch](https://www.youtube.com/watch?v=IXfsqg_8Y6I)). The zebrafish talk received the **BaySpec Best Presentation Award** ([SPIE's list of winners](https://spie.org/conferences-and-exhibitions/photonics-west/program/conferences/awards)). Another highlight of the week was meeting **Prof. Joseph Goodman**.
