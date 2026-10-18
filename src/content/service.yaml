@@ -2,7 +2,8 @@
 # "groups" are the venues by publisher, each shown as a card under the
 # publisher's logo: src/assets/images/publishers/<logo>.svg (or .png). Until
 # a logo file exists, the card shows the publisher's name instead. logoScale
-# (0 to 1) shrinks a visually heavy logo.
+# (0 to 1) shrinks a visually heavy logo. Each item is a journal or conference
+# with an optional url, its home page.
 # Publishers as listed by Crossref.
 
 - id: peer-review
@@ -14,20 +15,27 @@
       logo: optica
       logoScale: 0.8
       items:
-        - Photonics Research
-        - Optics Letters
-        - Biomedical Optics Express
+        - name: Photonics Research
+          url: https://opg.optica.org/prj/home.cfm
+        - name: Optics Letters
+          url: https://opg.optica.org/ol/home.cfm
+        - name: Biomedical Optics Express
+          url: https://opg.optica.org/boe/home.cfm
     - label: American Chemical Society
       logo: acs
       items:
-        - ACS Photonics
+        - name: ACS Photonics
+          url: https://pubs.acs.org/journal/apchd5
     - label: SPIE
       logo: spie
       logoScale: 0.85
       items:
-        - Journal of Biomedical Optics
+        - name: Journal of Biomedical Optics
+          url: https://www.spiedigitallibrary.org/journals/journal-of-biomedical-optics
     - label: IEEE
       logo: ieee
       items:
-        - IEEE Transactions on Industrial Informatics
-        - IEEE-EMBS BHI 2025 (conference)
+        - name: IEEE Transactions on Industrial Informatics
+          url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=9424
+        - name: IEEE-EMBS BHI 2025 (conference)
+          url: https://bhi.embs.org/2025/
