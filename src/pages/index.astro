@@ -663,6 +663,23 @@ function initials(org: string): string {
     }
   }
 
+  /* Small tablets: the labelled buttons sit a little closer and slimmer,
+     so all seven (with the CV) still fit on one line; the tap areas reach
+     into half the narrower gap. */
+  @media (min-width: 761px) and (max-width: 899px) {
+    .pills {
+      gap: 6px;
+    }
+
+    .pills a {
+      padding: 0 9px;
+    }
+
+    .pills .hit {
+      inset: -6px -4px;
+    }
+  }
+
   /* Phones and small tablets: the profile links are a row of round icon
      buttons (names kept for screen readers) */
   @media (max-width: 760px) {
