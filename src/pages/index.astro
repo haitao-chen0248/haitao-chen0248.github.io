@@ -345,15 +345,26 @@ function initials(org: string): string {
     text-wrap: balance;
   }
 
-  /* About as wide as the role line above it, so no line of the intro
-     reaches past that; with the current text, the first sentence ends its
-     line and the lines below stay inside it. */
+  /* Wide enough for the intro to fill three lines on wide screens, rather
+     than leave "standard microscopy." alone on a fourth. Narrower screens
+     balance the lines instead, so the last one is never a short stub. The
+     lab and the advisor's name are never split across lines. */
   .lead {
-    max-width: 577px;
+    max-width: 672px;
     margin-top: 20px;
     font-size: 16.5px;
     line-height: 1.6;
     color: var(--text-2);
+  }
+
+  .lead a {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1023px) {
+    .lead {
+      text-wrap: balance;
+    }
   }
 
   /* Availability line: green dot, short sentence, contact link */
