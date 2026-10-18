@@ -31,6 +31,7 @@ const sections = [
   { id: 'publications', label: 'Publications' },
   { id: 'news', label: 'News' },
   { id: 'education', label: 'Education' },
+  { id: 'service', label: 'Service' },
 ];
 
 // School logos: files in src/assets/images/logos/ named after the entry id are
@@ -235,6 +236,22 @@ function initials(org: string): string {
             <li class="reveal">
               <h3>{data.role}</h3>
               <p class="service-desc" set:html={wrapFriendly(data.description)} />
+              {data.groups.length > 0 && (
+                <dl class="venues">
+                  {data.groups.map((group) => (
+                    <div>
+                      <dt>{group.label}</dt>
+                      <dd>
+                        <ul>
+                          {group.items.map((item) => (
+                            <li>{item}</li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
               <p class="service-years">{data.years}</p>
             </li>
           ))
@@ -978,23 +995,88 @@ function initials(org: string): string {
     white-space: nowrap;
   }
 
-  /* Service: set like the education entries, without a logo */
-  .service li {
+  /* Service: set like the education entries, without a logo. The venues
+     are tags under a small label, like the research interests, which reads
+     more easily than a long sentence of names. */
+  .service > li {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       'role years'
-      'desc years';
+      'desc desc'
+      'venues venues';
     column-gap: 20px;
     padding-block: 22px;
   }
 
-  .service li:first-child {
+  .service > li:first-child {
     padding-top: 0;
   }
 
-  .service li + li {
+  .service > li + li {
     border-top: 1px solid var(--line);
+  }
+
+  .venues {
+    grid-area: venues;
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .venues div {
+    display: grid;
+    gap: 8px;
+  }
+
+  .venues dt {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .venues ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .venues li {
+    padding: 4px 9px;
+    border: 1px solid var(--tag-border);
+    border-radius: 8px;
+    background: var(--tag-bg);
+    font-size: 12.5px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--text-2);
+  }
+
+  /* The six journals fit on one line from 1100px. Narrower screens set
+     them in even rows, three or two across, as long as the longest name
+     fits a column; phones let each line of a list stretch to the full
+     width instead, so the block keeps straight edges. */
+  @media (min-width: 900px) and (max-width: 1099px) {
+    .venues ul {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 600px) and (max-width: 899px) {
+    .venues ul {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 599px) {
+    .venues ul:has(li + li) li {
+      flex: 1 1 auto;
+    }
   }
 
   .service h3 {
@@ -1080,13 +1162,22 @@ function initials(org: string): string {
     }
 
     /* Service entries follow suit: years above the role, then the
-       description */
-    .service li {
+       description and the venues */
+    .service > li {
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
         'years'
         'role'
-        'desc';
+        'desc'
+        'venues';
+    }
+
+    .venues {
+      margin-top: 14px;
+    }
+
+    .venues dt {
+      font-size: 11px;
     }
 
     .service h3 {
