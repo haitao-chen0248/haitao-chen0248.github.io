@@ -85,7 +85,7 @@ Full text in Markdown.
 
 **Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png` (or `.jpg`, `.webp`, `.svg`), with an optional `<id>-white` version for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` (or the initials) is shown until a logo exists.
 
-**Service** (`service.yaml`): a role, its years, and a description for each entry, listed under Service at the bottom of the home page.
+**Service** (`service.yaml`): a role, its years, and a description for each entry, listed under Service at the bottom of the home page. Venues are grouped by publisher, a card each; put the publisher's logo at `src/assets/images/publishers/<logo>.svg` (or `.png`), or the card shows the publisher's name. The Optica logo is from optica.org, the ACS logo from Wikipedia, and the IEEE mark from Simple Icons, in IEEE blue.
 
 **CV**: put the PDF at `public/HaitaoChen_CV.pdf` (the name is `cv.file` in `src/config.ts`) and a CV link appears last among the links on the home page and in the footer.
 
