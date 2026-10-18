@@ -257,7 +257,7 @@ function initials(org: string): string {
                     const logo = publisherLogo(group.logo);
                     return (
                       <li class="venue">
-                        <div class="venue-logo">
+                        <div class:list={['venue-logo', { 'no-white': logo && !logo.dark }]}>
                           {logo ? (
                             [logo.light, logo.dark].map(
                               (file, i) =>
@@ -272,7 +272,7 @@ function initials(org: string): string {
                                     src={file.src}
                                     width={file.width}
                                     height={file.height}
-                                    alt={group.label}
+                                    alt=""
                                     loading="lazy"
                                   />
                                 ),
@@ -585,19 +585,10 @@ function initials(org: string): string {
     }
   }
 
-  /* Between phone and desktop widths the tags wrap onto two or three lines:
-     each line stretches its tags to the full width, so the block keeps
-     straight edges (desktop has them all on one line, as they are) */
-  @media (max-width: 899px) {
-    .tags li {
-      flex: 1 1 auto;
-      text-align: center;
-    }
-  }
-
-  /* Narrow desktops: the six tags fit on one line from 1100px; below that
-     they sit in two even rows of three, not five and one. */
-  @media (min-width: 900px) and (max-width: 1099px) {
+  /* The six tags fit on one line from 1100px. Below that they sit in even
+     columns, so the block keeps straight edges: three from 620px, where the
+     longest tag fits a third of the width with room to spare, and two below. */
+  @media (max-width: 1099px) {
     .tags {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -615,12 +606,9 @@ function initials(org: string): string {
     }
   }
 
-  /* Phones: two tags fit on a line, so the tags sit in two equal columns,
-     with an odd last one across the full width, which keeps the block's
-     edges straight instead of ragged. */
-  @media (max-width: 480px) {
+  /* Two equal columns, with an odd last tag across the full width */
+  @media (max-width: 619px) {
     .tags {
-      display: grid;
       grid-template-columns: 1fr 1fr;
     }
 
@@ -849,6 +837,14 @@ function initials(org: string): string {
     }
   }
 
+  /* The narrowest phones: the intro one size smaller keeps it to six lines,
+     the most that balancing evens out, so its last word is not left alone */
+  @media (max-width: 339px) {
+    .lead {
+      font-size: 14px;
+    }
+  }
+
   /* Publications
      ======================================================================== */
 
@@ -1069,7 +1065,7 @@ function initials(org: string): string {
   /* Venues, a card per publisher: the publisher's logo on a plate (white
      with the logo in color in light mode; in dark mode a step above the
      card, with the logo in white), then its name and the journals
-     reviewed for */
+     reviewed for. The logo is decorative: the name is right below it. */
   .venues {
     grid-area: venues;
     display: grid;
@@ -1094,6 +1090,13 @@ function initials(org: string): string {
     box-shadow: inset 0 -1px 0 var(--logo-plate-edge);
   }
 
+  /* No white version of the logo yet: it stays on a white plate in dark
+     mode too, where it can be seen */
+  .venue-logo.no-white {
+    background: var(--figure-bg);
+    box-shadow: inset 0 -1px 0 var(--figure-edge);
+  }
+
   /* Wordmarks and squarer emblems at about the same visual weight;
      logoScale in service.yaml shrinks a heavy one */
   .venue-logo img {
@@ -1114,8 +1117,10 @@ function initials(org: string): string {
     color: var(--text);
   }
 
+  /* Balanced lines, so no word is left alone at the end of a name */
   .venue-body {
     padding: 14px 16px 16px;
+    text-wrap: balance;
   }
 
   .venue-publisher {
@@ -1129,15 +1134,15 @@ function initials(org: string): string {
 
   .venue-body ul {
     display: grid;
-    gap: 4px;
+    gap: 6px;
     margin-top: 8px;
     font-size: 14px;
     line-height: 1.4;
     color: var(--text-2);
   }
 
-  /* Each journal links to its home page; the tap area reaches into the
-     gaps between them */
+  /* Each journal links to its home page; the tap area reaches halfway
+     into the gaps between them, at least 24px tall */
   .venue-body a {
     position: relative;
     display: inline-block;
@@ -1146,7 +1151,7 @@ function initials(org: string): string {
   .venue-body a::after {
     content: '';
     position: absolute;
-    inset: -2px -4px;
+    inset: -3px -4px;
   }
 
   /* Two cards across on tablets and phones */

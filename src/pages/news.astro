@@ -10,7 +10,15 @@ const items = (await getCollection('news')).sort(byNewest);
 
 // Each Markdown body as HTML (the bodies hold text, links, and emphasis
 // only), with hyphenated words kept whole, then grouped by year (newest first).
-const entries = items.map((item) => ({ item, body: keepCompoundsWhole(item.rendered?.html ?? '') }));
+// Photos go under images: a Markdown image in the body would not be
+// processed here, so it stops the build rather than show up broken.
+const entries = items.map((item) => {
+  const html = item.rendered?.html ?? '';
+  if (html.includes('__ASTRO_IMAGE_')) {
+    throw new Error(`News "${item.id}": put photos under images:, not in the text`);
+  }
+  return { item, body: keepCompoundsWhole(html) };
+});
 const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
 // The first photo on the page loads right away (see priority in Slideshow).
 const lead = items.find((item) => item.data.images.length > 0)?.id;

@@ -116,6 +116,11 @@ const personSchema = {
             { once: true },
           );
         }
+        // A page restored by Back or Forward keeps the theme it was left
+        // with; the visitor may have switched it on another page since
+        addEventListener('pageshow', (event) => {
+          if (event.persisted) pickTheme();
+        });
       })();
     </script>
 

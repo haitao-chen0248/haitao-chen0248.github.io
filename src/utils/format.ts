@@ -34,9 +34,10 @@ export function splitAuthors(authors: string, self: string = site.name): AuthorP
 
 const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-// A hyphenated word ("high-throughput") and the markup that keeps it whole
+// A hyphenated word ("high-throughput") and the markup that keeps it whole.
+// A web address is left free to break, or it could run off a phone screen.
 const COMPOUND = /[^\s-]+(?:-[^\s-]+)+/g;
-const NOWRAP = '<span class="nowrap">$&</span>';
+const NOWRAP = (word: string) => (word.includes('://') ? word : `<span class="nowrap">${word}</span>`);
 
 /**
  * HTML for short display text that should break lines at natural points:
@@ -54,9 +55,18 @@ export function wrapFriendly(text: string, phrases = false): string {
 }
 
 /** The same for rendered Markdown (the news entries): hyphenated words in the
- *  text between tags stay whole. */
+ *  text between tags stay whole. A tag ends at the first ">" outside quotes,
+ *  as attribute values may contain one; code is left as written. */
 export function keepCompoundsWhole(html: string): string {
-  return html.replace(/(<[^>]*>)|[^<]+/g, (part, tag?: string) => tag ?? part.replace(COMPOUND, NOWRAP));
+  let inCode = 0;
+  return html.replace(/(<(?:[^>"']|"[^"]*"|'[^']*')*>)|[^<]+/g, (part, tag?: string) => {
+    if (tag) {
+      const code = /^<(\/?)(?:code|pre|script|style)\b/i.exec(tag);
+      if (code) inCode = Math.max(0, inCode + (code[1] ? -1 : 1));
+      return tag;
+    }
+    return inCode ? part : part.replace(COMPOUND, NOWRAP);
+  });
 }
 
 /** Sort by position in the source YAML file (see orderedYaml in content.config.ts). */
