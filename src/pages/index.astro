@@ -23,10 +23,6 @@ const recent = (await getCollection('news')).sort(byNewest).slice(0, 3);
 
 const education = (await getCollection('education')).sort(byFileOrder);
 
-// The site's tagline, shown large between the intro and the papers, one span
-// per word so the words can light up in turn.
-const taglineWords = site.description.split(' ');
-
 // Sections listed in the "On this page" dock.
 const sections = [
   { id: 'about', label: 'About' },
@@ -125,19 +121,6 @@ function initials(org: string): string {
       </ul>
     </div>
   </section>
-
-  <!-- Tagline -->
-  <div class="container statement">
-    <p style={`--n: ${taglineWords.length}`}>
-      {
-        taglineWords.map((word, i) => (
-          <>
-            <span style={`--i: ${i}`}>{word}</span>{' '}
-          </>
-        ))
-      }
-    </p>
-  </div>
 
   <!-- Selected publications -->
   <section class="section" id="publications">
@@ -738,54 +721,6 @@ function initials(org: string): string {
     .status {
       padding-inline: 12px;
       font-size: 12px;
-    }
-  }
-
-  /* Tagline
-     ======================================================================== */
-
-  /* The tagline, set large. As it scrolls up the screen its words light up
-     in reading order, the last one by the time it reaches the middle.
-     Without scroll-driven animations, or with reduced motion, it is simply
-     shown in full. */
-  .statement {
-    padding-block: clamp(56px, 11vw, 150px);
-  }
-
-  .statement p {
-    max-width: 21ch;
-    font-size: clamp(34px, 5.6vw, 72px);
-    font-weight: 600;
-    line-height: 1.08;
-    letter-spacing: -0.035em;
-    color: var(--text);
-    text-wrap: balance;
-  }
-
-  @keyframes light-up {
-    from {
-      opacity: 0.18;
-    }
-  }
-
-  /* The shorthand and the timeline sit in separate rules on purpose; see
-     the note on .reveal in global.css. */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .statement p {
-        view-timeline: --statement;
-      }
-
-      :where(.statement span) {
-        animation: light-up linear both;
-      }
-
-      .statement span {
-        animation-timeline: --statement;
-        animation-range:
-          cover calc(15% + var(--i) / var(--n) * 30%)
-          cover calc(20% + var(--i) / var(--n) * 30%);
-      }
     }
   }
 
