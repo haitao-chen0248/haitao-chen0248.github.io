@@ -14,13 +14,15 @@ export const site = {
   jobTitle: 'Ph.D. Candidate in Biomedical Engineering',
   affiliation: 'Duke University',
   email: 'haitao.chen@duke.edu',
-  // Research interests, shown as tags on the home page.
+  // Research interests, shown as tags on the home page: the field, then the
+  // systems, then the computation.
   interests: [
     'Computational Imaging',
-    'Machine Learning',
+    'Gigapixel Microscopy',
+    'Optical System Design',
     'Differentiable Optics',
     'Inverse Problems',
-    'Optical System Design',
+    'Machine Learning',
   ],
 } as const;
 
