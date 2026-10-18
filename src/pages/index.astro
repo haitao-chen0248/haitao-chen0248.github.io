@@ -345,8 +345,11 @@ function initials(org: string): string {
     text-wrap: balance;
   }
 
+  /* About as wide as the role line above it, so no line of the intro
+     reaches past that; with the current text, the first sentence ends its
+     line and the lines below stay inside it. */
   .lead {
-    max-width: 600px;
+    max-width: 577px;
     margin-top: 20px;
     font-size: 16.5px;
     line-height: 1.6;
