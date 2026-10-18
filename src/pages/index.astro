@@ -256,7 +256,7 @@ function initials(org: string): string {
                   {data.groups.map((group) => {
                     const logo = publisherLogo(group.logo);
                     return (
-                      <li class="venue">
+                      <li class="venue sheen lift">
                         <div class:list={['venue-logo', { 'no-white': logo && !logo.dark }]}>
                           {logo ? (
                             [logo.light, logo.dark].map(
@@ -1109,6 +1109,24 @@ function initials(org: string): string {
   .venue-logo.no-white {
     background: var(--figure-bg);
     box-shadow: inset 0 -1px 0 var(--figure-edge);
+  }
+
+  /* The card rises on hover and catches the pointer light, as the paper
+     figures and news photos do, and its logo grows a little */
+  .venue-logo > * {
+    transition: transform 0.8s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .venue:hover .venue-logo > * {
+      transform: scale(1.05);
+    }
+  }
+
+  /* On the white plates of light mode the light cannot show, so it shows
+     as a soft falloff around the pointer instead, as on the paper figures */
+  :global([data-theme='light']) .venue.sheen::after {
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), transparent, rgb(0 0 0 / 0.07));
   }
 
   /* Wordmarks and squarer emblems at about the same visual weight;
