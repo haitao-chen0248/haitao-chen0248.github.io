@@ -26,14 +26,18 @@ const education = (await getCollection('education')).sort(byFileOrder);
 const service = (await getCollection('service')).sort(byFileOrder);
 
 // Publisher logos for the service cards, picked up by file name like the
-// school logos.
+// school logos: "<logo>.svg" in light mode, an optional "<logo>-white.svg"
+// in dark mode.
 const publisherLogos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/publishers/*.{png,svg}', {
   eager: true,
 });
-function publisherLogo(name?: string): ImageMetadata | undefined {
-  if (!name) return undefined;
+function findPublisherLogo(name: string): ImageMetadata | undefined {
   const match = Object.entries(publisherLogos).find(([path]) => path.split('/').pop()?.replace(/\.[^.]+$/, '') === name);
   return match?.[1].default;
+}
+function publisherLogo(name?: string): { light: ImageMetadata; dark?: ImageMetadata } | undefined {
+  const light = name ? findPublisherLogo(name) : undefined;
+  return light ? { light, dark: findPublisherLogo(`${name}-white`) } : undefined;
 }
 
 // Sections listed in the "On this page" dock.
@@ -255,15 +259,24 @@ function initials(org: string): string {
                       <li class="venue">
                         <div class="venue-logo">
                           {logo ? (
-                            <img
-                              class:list={{ emblem: logo.width / logo.height < 1.6 }}
-                              style={group.logoScale ? `--logo-scale: ${group.logoScale}` : undefined}
-                              src={logo.src}
-                              width={logo.width}
-                              height={logo.height}
-                              alt={group.label}
-                              loading="lazy"
-                            />
+                            [logo.light, logo.dark].map(
+                              (file, i) =>
+                                file && (
+                                  <img
+                                    class:list={{
+                                      emblem: file.width / file.height < 1.6,
+                                      'only-light': i === 0 && logo.dark,
+                                      'only-dark': i === 1,
+                                    }}
+                                    style={group.logoScale ? `--logo-scale: ${group.logoScale}` : undefined}
+                                    src={file.src}
+                                    width={file.width}
+                                    height={file.height}
+                                    alt={group.label}
+                                    loading="lazy"
+                                  />
+                                ),
+                            )
                           ) : (
                             <span>{group.label}</span>
                           )}
@@ -1045,9 +1058,10 @@ function initials(org: string): string {
     border-top: 1px solid var(--line);
   }
 
-  /* Venues, a card per publisher: the publisher's logo on a white plate
-     (as the paper figures sit on one, so the logos keep their colors in
-     both themes), then its name and the journals reviewed for */
+  /* Venues, a card per publisher: the publisher's logo on a plate (white
+     with the logo in color in light mode; in dark mode a step above the
+     card, with the logo in white), then its name and the journals
+     reviewed for */
   .venues {
     grid-area: venues;
     display: grid;
@@ -1068,8 +1082,8 @@ function initials(org: string): string {
     place-items: center;
     height: 84px;
     padding: 0 22px;
-    background: var(--figure-bg);
-    box-shadow: inset 0 -1px 0 var(--figure-edge);
+    background: var(--logo-plate);
+    box-shadow: inset 0 -1px 0 var(--logo-plate-edge);
   }
 
   /* Wordmarks and squarer emblems at about the same visual weight;
@@ -1089,7 +1103,7 @@ function initials(org: string): string {
     font-size: 15px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: #1d1d1f;
+    color: var(--text);
   }
 
   .venue-body {
