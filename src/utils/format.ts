@@ -34,19 +34,29 @@ export function splitAuthors(authors: string, self: string = site.name): AuthorP
 
 const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+// A hyphenated word ("high-throughput") and the markup that keeps it whole
+const COMPOUND = /[^\s-]+(?:-[^\s-]+)+/g;
+const NOWRAP = '<span class="nowrap">$&</span>';
+
 /**
- * HTML for short display text that should break lines at natural points on
- * phones: hyphenated words ("high-throughput") stay whole, and with `phrases`,
- * a phrase such as "at Duke University" moves to the next line as a unit.
- * The .nowrap and .phrase classes are styled in global.css.
+ * HTML for short display text that should break lines at natural points:
+ * hyphenated words ("high-throughput") stay whole, and with `phrases`, a
+ * phrase such as "at Duke University" moves to the next line as a unit on
+ * phones. The .nowrap and .phrase classes are styled in global.css.
  */
 export function wrapFriendly(text: string, phrases = false): string {
-  const words = (s: string) => escapeHtml(s).replace(/[^\s-]+(?:-[^\s-]+)+/g, '<span class="nowrap">$&</span>');
+  const words = (s: string) => escapeHtml(s).replace(COMPOUND, NOWRAP);
   if (!phrases) return words(text);
   return text
     .split(/(?<=:) | (?=(?:in|at|for|of|and|with|on|to|from|by) )/)
     .map((phrase) => `<span class="phrase">${words(phrase)}</span>`)
     .join(' ');
+}
+
+/** The same for rendered Markdown (the news entries): hyphenated words in the
+ *  text between tags stay whole. */
+export function keepCompoundsWhole(html: string): string {
+  return html.replace(/(<[^>]*>)|[^<]+/g, (part, tag?: string) => tag ?? part.replace(COMPOUND, NOWRAP));
 }
 
 /** Sort by position in the source YAML file (see orderedYaml in content.config.ts). */

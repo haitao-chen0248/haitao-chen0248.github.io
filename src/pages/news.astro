@@ -1,15 +1,16 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import Slideshow from '@/components/Slideshow.astro';
 import { site } from '@/config';
-import { byNewest, formatMonth, groupByYear, isoMonth, wrapFriendly } from '@/utils/format';
+import { byNewest, formatMonth, groupByYear, isoMonth, keepCompoundsWhole, wrapFriendly } from '@/utils/format';
 
 const items = (await getCollection('news')).sort(byNewest);
 
-// Render each Markdown body ahead of time, then group by year (newest first).
-const entries = await Promise.all(items.map(async (item) => ({ item, ...(await render(item)) })));
+// Each Markdown body as HTML (the bodies hold text, links, and emphasis
+// only), with hyphenated words kept whole, then grouped by year (newest first).
+const entries = items.map((item) => ({ item, body: keepCompoundsWhole(item.rendered?.html ?? '') }));
 const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
 // The first photo on the page loads right away (see priority in Slideshow).
 const lead = items.find((item) => item.data.images.length > 0)?.id;
@@ -29,7 +30,7 @@ const lead = items.find((item) => item.data.images.length > 0)?.id;
           </h2>
 
           <ol class="entries">
-            {group.items.map(({ item, Content }) => {
+            {group.items.map(({ item, body }) => {
               const images = item.data.images;
               return (
                 <li id={item.id} class:list={['entry', 'reveal', { 'no-media': images.length === 0 }]}>
@@ -49,9 +50,7 @@ const lead = items.find((item) => item.data.images.length > 0)?.id;
                       <time datetime={isoMonth(item.data.date)}>{formatMonth(item.data.date)}</time>
                     </p>
                     <h3 class="headline" set:html={wrapFriendly(item.data.title)} />
-                    <div class="prose body">
-                      <Content />
-                    </div>
+                    <div class="prose body" set:html={body} />
                   </div>
                 </li>
               );

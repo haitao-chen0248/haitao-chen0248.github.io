@@ -575,12 +575,14 @@ a.title-link:active {
   transform: none;
 }
 
-/* Line breaks on phones: see wrapFriendly() in src/utils/format.ts */
-@media (max-width: 760px) {
-  .nowrap {
-    white-space: nowrap;
-  }
+/* Line breaks (see wrapFriendly() in src/utils/format.ts): hyphenated words
+   stay whole at every width, and on phones a phrase moves to the next line
+   as a unit. */
+.nowrap {
+  white-space: nowrap;
+}
 
+@media (max-width: 760px) {
   .phrase {
     display: inline-block;
   }
