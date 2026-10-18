@@ -23,6 +23,7 @@
         - ACS Photonics
     - label: SPIE
       logo: spie
+      logoScale: 0.85
       items:
         - Journal of Biomedical Optics
     - label: IEEE
