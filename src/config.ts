@@ -40,11 +40,12 @@ export const links = [
   { label: 'ResearchGate', icon: 'researchgate', href: 'https://www.researchgate.net/profile/Haitao-Chen-15', secondary: true },
 ] as const;
 
-// CV: put the PDF in public/ under this file name (e.g. public/cv.pdf).
+// CV: put the PDF in public/ under this file name, which is also the name a
+// downloaded copy gets (public/HaitaoChen_CV.pdf).
 // A "CV" button then appears on the home page and in the footer; until the
 // file exists, nothing is shown.
 export const cv = {
-  file: 'cv.pdf',
+  file: 'HaitaoChen_CV.pdf',
   label: 'CV',
 };
 

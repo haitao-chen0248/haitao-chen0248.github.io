@@ -87,7 +87,7 @@ Full text in Markdown.
 
 **Service** (`service.yaml`): a role, its years, and a description for each entry, listed under Service at the bottom of the home page.
 
-**CV**: put the PDF at `public/cv.pdf` and a CV link appears last among the links on the home page and in the footer.
+**CV**: put the PDF at `public/HaitaoChen_CV.pdf` (the name is `cv.file` in `src/config.ts`) and a CV link appears last among the links on the home page and in the footer.
 
 **Availability line**: `status` in `src/config.ts`; set it to `''` to hide it.
 

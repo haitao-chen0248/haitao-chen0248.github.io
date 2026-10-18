@@ -1,6 +1,19 @@
 # Professional service, shown under "Service" on the home page, in display order.
+# "groups" list venues as tags under a small label.
 
 - id: peer-review
   role: Peer Reviewer
   years: 2025 – Present
-  description: Independent reviewer for journals including Photonics Research, ACS Photonics, Optics Letters, IEEE Transactions on Industrial Informatics, Biomedical Optics Express, and Journal of Biomedical Optics, and for the IEEE-EMBS International Conference on Biomedical and Health Informatics (BHI 2025).
+  description: Independent reviewer for the journals and conference below.
+  groups:
+    - label: Journals
+      items:
+        - Photonics Research
+        - ACS Photonics
+        - Optics Letters
+        - Biomedical Optics Express
+        - Journal of Biomedical Optics
+        - IEEE Transactions on Industrial Informatics
+    - label: Conference
+      items:
+        - IEEE-EMBS BHI 2025

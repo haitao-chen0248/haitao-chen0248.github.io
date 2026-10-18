@@ -89,6 +89,8 @@ const service = defineCollection({
     role: z.string(),
     years: z.string(),
     description: z.string(),
+    // Venues, shown as tags under a small label each
+    groups: z.array(z.object({ label: z.string(), items: z.array(z.string()) })).default([]),
     order: z.number(),
   }),
 });
