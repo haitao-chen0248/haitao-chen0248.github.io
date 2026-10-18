@@ -1,4 +1,4 @@
-// Profile links with the CV prepended when public/<cv.file> exists.
+// Profile links, with the CV added last when public/<cv.file> exists.
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
@@ -23,7 +23,7 @@ export function profileLinks(): ProfileLink[] {
     secondary: 'secondary' in l && l.secondary,
   }));
   if (existsSync(path.join(process.cwd(), 'public', cv.file))) {
-    list.unshift({ label: cv.label, icon: 'cv', href: `/${cv.file}`, newTab: true, secondary: false });
+    list.push({ label: cv.label, icon: 'cv', href: `/${cv.file}`, newTab: true, secondary: false });
   }
   return list;
 }

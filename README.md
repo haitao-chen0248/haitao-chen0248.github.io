@@ -29,7 +29,7 @@ npm run check     # type-check code and validate content (the deploy runs it fir
 | `src/config.ts` | Name, role, home page title and description, research interests, profile links, menu |
 | `src/pages/` | Pages; `index.astro` holds the intro |
 | `src/layouts/` | Page shell: `<head>` metadata and structured data, header, footer, page-change and pointer-light scripts |
-| `src/content/` | Publications, talks, news, education, teaching |
+| `src/content/` | Publications, talks, news, education, service, teaching |
 | `src/assets/images/` | Headshot, photos, and figures, converted at build time to AVIF with a WebP fallback (school logos: WebP) |
 | `src/components/` | Header, footer, page and section titles, publication entry, photo slideshow, responsive photo (`Photo`), video embed, icons |
 | `src/utils/` | Shared helpers: dates, sorting, author lists, line breaking, profile links, share card version |
@@ -85,7 +85,9 @@ Full text in Markdown.
 
 **Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png` (or `.jpg`, `.webp`, `.svg`), with an optional `<id>-white` version for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` (or the initials) is shown until a logo exists.
 
-**CV**: put the PDF at `public/cv.pdf` and a CV link appears on the home page and in the footer.
+**Service** (`service.yaml`): a role, its years, and a description for each entry, listed under Service at the bottom of the home page.
+
+**CV**: put the PDF at `public/cv.pdf` and a CV link appears last among the links on the home page and in the footer.
 
 **Availability line**: `status` in `src/config.ts`; set it to `''` to hide it.
 
