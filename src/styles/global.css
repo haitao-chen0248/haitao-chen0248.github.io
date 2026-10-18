@@ -47,6 +47,11 @@
   --figure-bg: #fff;
   --figure-edge: transparent;
 
+  /* Publisher logos on the service cards sit on a plate a step above the
+     card, white in light mode */
+  --logo-plate: #1d1d1f;
+  --logo-plate-edge: var(--line);
+
   /* Hairline around cards; only needed in light mode, where white media meets a white page */
   --card-edge: transparent;
 
@@ -115,6 +120,9 @@
 
   --figure-edge: rgb(0 0 0 / 0.08);
   --card-edge: rgb(0 0 0 / 0.08);
+
+  --logo-plate: #fff;
+  --logo-plate-edge: rgb(0 0 0 / 0.08);
 
   --tag-bg: rgb(255 255 255 / 0.6);
   --tag-border: rgb(0 0 0 / 0.14);

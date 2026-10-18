@@ -1,19 +1,33 @@
 # Professional service, shown under "Service" on the home page, in display order.
-# "groups" list venues as tags under a small label.
+# "groups" are the venues by publisher, each shown as a card under the
+# publisher's logo: src/assets/images/publishers/<logo>.svg (or .png). Until
+# a logo file exists, the card shows the publisher's name instead. logoScale
+# (0 to 1) shrinks a visually heavy logo.
+# Publishers as listed by Crossref.
 
 - id: peer-review
   role: Peer Reviewer
   years: 2025 – Present
   description: Independent reviewer for the journals and conference below.
   groups:
-    - label: Journals
+    - label: Optica Publishing Group
+      logo: optica
+      logoScale: 0.8
       items:
         - Photonics Research
-        - ACS Photonics
         - Optics Letters
         - Biomedical Optics Express
-        - Journal of Biomedical Optics
-        - IEEE Transactions on Industrial Informatics
-    - label: Conference
+    - label: American Chemical Society
+      logo: acs
       items:
-        - IEEE-EMBS BHI 2025
+        - ACS Photonics
+    - label: SPIE
+      logo: spie
+      logoScale: 0.85
+      items:
+        - Journal of Biomedical Optics
+    - label: IEEE
+      logo: ieee
+      items:
+        - IEEE Transactions on Industrial Informatics
+        - IEEE-EMBS BHI 2025 (conference)

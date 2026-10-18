@@ -89,8 +89,18 @@ const service = defineCollection({
     role: z.string(),
     years: z.string(),
     description: z.string(),
-    // Venues, shown as tags under a small label each
-    groups: z.array(z.object({ label: z.string(), items: z.array(z.string()) })).default([]),
+    // Venues by publisher: a card each, under the publisher's logo
+    groups: z
+      .array(
+        z.object({
+          label: z.string(),
+          logo: z.string().optional(),
+          // Shrinks a visually heavy logo, as for the school logos
+          logoScale: z.number().positive().max(1).optional(),
+          items: z.array(z.string()),
+        }),
+      )
+      .default([]),
     order: z.number(),
   }),
 });
