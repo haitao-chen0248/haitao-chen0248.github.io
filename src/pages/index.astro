@@ -837,6 +837,20 @@ function initials(org: string): string {
     }
   }
 
+  /* The narrowest phones: a little smaller and tighter still, scaling with
+     the screen, so the contact link stays on the line down to 320px */
+  @media (max-width: 349px) {
+    .status {
+      gap: 4px 6px;
+      padding-inline: 10px;
+      font-size: min(12px, 3.5vw);
+    }
+
+    .status a {
+      padding-left: 4px;
+    }
+  }
+
   /* The narrowest phones: the intro one size smaller keeps it to six lines,
      the most that balancing evens out, so its last word is not left alone */
   @media (max-width: 339px) {
