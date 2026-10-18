@@ -285,7 +285,15 @@ function initials(org: string): string {
                           <p class="venue-publisher">{group.label}</p>
                           <ul>
                             {group.items.map((item) => (
-                              <li>{item}</li>
+                              <li>
+                                {item.url ? (
+                                  <a class="text-link" href={item.url} target="_blank" rel="noopener">
+                                    {item.name}
+                                  </a>
+                                ) : (
+                                  item.name
+                                )}
+                              </li>
                             ))}
                           </ul>
                         </div>
@@ -1126,6 +1134,19 @@ function initials(org: string): string {
     font-size: 14px;
     line-height: 1.4;
     color: var(--text-2);
+  }
+
+  /* Each journal links to its home page; the tap area reaches into the
+     gaps between them */
+  .venue-body a {
+    position: relative;
+    display: inline-block;
+  }
+
+  .venue-body a::after {
+    content: '';
+    position: absolute;
+    inset: -2px -4px;
   }
 
   /* Two cards across on tablets and phones */

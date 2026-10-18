@@ -43,9 +43,11 @@
   --honor-soft: rgb(220 192 138 / 0.12);
   --honor-line: rgb(220 192 138 / 0.32);
 
-  /* Paper figures sit on a white plate in both themes */
+  /* Paper figures sit on a white plate in both themes, dimmed a little in
+     dark mode so it does not glare */
   --figure-bg: #fff;
   --figure-edge: transparent;
+  --figure-dim: brightness(0.9);
 
   /* Publisher logos on the service cards sit on a plate a step above the
      card, white in light mode */
@@ -119,6 +121,7 @@
   --honor-line: rgb(176 138 69 / 0.35);
 
   --figure-edge: rgb(0 0 0 / 0.08);
+  --figure-dim: none;
   --card-edge: rgb(0 0 0 / 0.08);
 
   --logo-plate: #fff;
@@ -716,11 +719,13 @@ a.title-link:active {
 }
 
 /* Paper figures have white backgrounds: show them whole on a white plate,
-   with a hairline edge in light mode so the plate does not melt into the page. */
+   with a hairline edge in light mode so the plate does not melt into the
+   page. In dark mode the plate and figure are dimmed together. */
 .frame--figure {
   background: var(--figure-bg);
   outline: 1px solid var(--figure-edge);
   outline-offset: -1px;
+  filter: var(--figure-dim);
 }
 
 .frame--figure img {

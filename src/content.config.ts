@@ -97,7 +97,8 @@ const service = defineCollection({
           logo: z.string().optional(),
           // Shrinks a visually heavy logo, as for the school logos
           logoScale: z.number().positive().max(1).optional(),
-          items: z.array(z.string()),
+          // Journals and conferences, each linked to its home page if url is set
+          items: z.array(z.object({ name: z.string(), url: z.url().optional() })),
         }),
       )
       .default([]),
