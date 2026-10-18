@@ -164,7 +164,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   });
 
   // Menu lens: a glass capsule that rests behind the current page's menu item
-  // and glides to whichever item the pointer or keyboard focus is on.
+  // and glides to whichever menu item the pointer or keyboard focus is on.
+  // It stays with the menu: on the theme switch it rests on the current item,
+  // so switching the theme does not send it back and forth.
   const bar = document.querySelector<HTMLElement>('.site-header .right');
   const lens = bar?.querySelector<HTMLElement>('.lens');
   if (bar && lens) {
@@ -229,7 +231,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       event.pointerType !== 'mouse' && !!(event.target as Element).closest('nav a');
     let tapping = false;
 
-    for (const item of bar.querySelectorAll<HTMLElement>('nav a, .theme-toggle')) {
+    for (const item of bar.querySelectorAll<HTMLElement>('nav a')) {
       item.addEventListener('pointerenter', (event) => {
         if (!tapsPage(event)) place(item);
       });
@@ -238,6 +240,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       });
       item.addEventListener('blur', () => place(current));
     }
+    const themeSwitch = bar.querySelector<HTMLElement>('.theme-toggle');
+    themeSwitch?.addEventListener('pointerenter', () => place(current));
+    themeSwitch?.addEventListener('focus', () => place(current));
     bar.addEventListener('pointerleave', () => {
       if (!tapping) place(current);
     });
@@ -248,15 +253,15 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       place(current);
     });
 
-    // Pressing an item squeezes it and the lens a little; letting go springs
-    // them back.
+    // Pressing an item squeezes it a little, and the lens with a menu item;
+    // letting go springs them back.
     let pressed: Element | null = null;
     bar.addEventListener('pointerdown', (event) => {
       tapping = tapsPage(event);
       if (tapping) return;
       pressed = (event.target as Element).closest('nav li, .theme-toggle');
       pressed?.classList.add('pressed');
-      lens.classList.add('pressed');
+      if (pressed?.matches('nav li')) lens.classList.add('pressed');
     });
     const release = () => {
       pressed?.classList.remove('pressed');
