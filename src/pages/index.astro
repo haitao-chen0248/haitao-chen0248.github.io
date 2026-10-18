@@ -191,10 +191,7 @@ function initials(org: string): string {
             const logo = logoFor(id);
             return (
               <li class="reveal">
-                <div
-                  class:list={['edu-logo', 'sheen', 'lift', { 'no-white': logo && !logo.dark }]}
-                  style={data.logoScale ? `--logo-scale: ${data.logoScale}` : undefined}
-                >
+                <div class="edu-logo" style={data.logoScale ? `--logo-scale: ${data.logoScale}` : undefined}>
                   {logo ? (
                     <>
                       <Image
@@ -989,7 +986,7 @@ function initials(org: string): string {
 
   .edu li {
     display: grid;
-    grid-template-columns: 88px minmax(0, 1fr) auto;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
     gap: 20px;
     align-items: start;
     padding-block: 22px;
@@ -1005,24 +1002,12 @@ function initials(org: string): string {
     border-top: 1px solid var(--line);
   }
 
-  /* School logo on a plate, as the publisher logos below: white with the
-     logo in color in light mode, a step above the page with the white logo
-     in dark mode (white still without one). Wordmarks and emblems both fit.
-     It rises on hover and catches the pointer light, as the paper figures
-     and news photos do, and the logo grows a little. */
+  /* School logo, shown without a frame. Wordmarks and emblems both fit the box. */
   .edu-logo {
     display: grid;
     place-items: center;
-    width: 88px;
-    height: 64px;
-    padding: 8px 10px;
-    border: 1px solid var(--card-edge);
-    border-radius: var(--radius-sm);
-    background: var(--logo-plate);
-  }
-
-  .edu-logo.no-white {
-    background: var(--figure-bg);
+    width: 72px;
+    height: 48px;
   }
 
   .edu-logo :global(img) {
@@ -1127,23 +1112,19 @@ function initials(org: string): string {
   }
 
   /* The card rises on hover and catches the pointer light, as the paper
-     figures and news photos do, and its logo grows a little (so does a
-     school logo) */
-  .edu-logo > :global(*),
-  .venue-logo > :global(*) {
+     figures and news photos do, and its logo grows a little */
+  .venue-logo > * {
     transition: transform 0.8s var(--ease-out);
   }
 
   @media (hover: hover) {
-    .edu-logo:hover > :global(*),
-    .venue:hover .venue-logo > :global(*) {
+    .venue:hover .venue-logo > * {
       transform: scale(1.05);
     }
   }
 
   /* On the white plates of light mode the light cannot show, so it shows
      as a soft falloff around the pointer instead, as on the paper figures */
-  :global([data-theme='light']) .edu-logo.sheen::after,
   :global([data-theme='light']) .venue.sheen::after {
     background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), transparent, rgb(0 0 0 / 0.07));
   }
@@ -1239,7 +1220,7 @@ function initials(org: string): string {
      advisor use the full width below */
   @media (max-width: 640px) {
     .edu li {
-      grid-template-columns: 64px minmax(0, 1fr);
+      grid-template-columns: 56px minmax(0, 1fr);
       grid-template-areas:
         'logo years'
         'logo org'
@@ -1253,9 +1234,8 @@ function initials(org: string): string {
     .edu-logo {
       grid-area: logo;
       align-self: center;
-      width: 64px;
-      height: 48px;
-      padding: 6px 7px;
+      width: 56px;
+      height: 40px;
     }
 
     .edu-main {
