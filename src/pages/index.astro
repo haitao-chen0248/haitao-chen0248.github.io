@@ -23,6 +23,8 @@ const recent = (await getCollection('news')).sort(byNewest).slice(0, 3);
 
 const education = (await getCollection('education')).sort(byFileOrder);
 
+const service = (await getCollection('service')).sort(byFileOrder);
+
 // Sections listed in the "On this page" dock.
 const sections = [
   { id: 'about', label: 'About' },
@@ -218,6 +220,24 @@ function initials(org: string): string {
               </li>
             );
           })
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Service -->
+  <section class="section" id="service">
+    <div class="container">
+      <SectionHead title="Service" />
+      <ol class="service">
+        {
+          service.map(({ data }) => (
+            <li class="reveal">
+              <h3>{data.role}</h3>
+              <p class="service-desc" set:html={wrapFriendly(data.description)} />
+              <p class="service-years">{data.years}</p>
+            </li>
+          ))
         }
       </ol>
     </div>
@@ -958,6 +978,48 @@ function initials(org: string): string {
     white-space: nowrap;
   }
 
+  /* Service: set like the education entries, without a logo */
+  .service li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'role years'
+      'desc years';
+    column-gap: 20px;
+    padding-block: 22px;
+  }
+
+  .service li:first-child {
+    padding-top: 0;
+  }
+
+  .service li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .service h3 {
+    grid-area: role;
+    font-size: 17.5px;
+    letter-spacing: -0.015em;
+  }
+
+  .service-desc {
+    grid-area: desc;
+    max-width: 640px;
+    margin-top: 8px;
+    font-size: 14.5px;
+    color: var(--text-3);
+  }
+
+  .service-years {
+    grid-area: years;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+
   /* Phones: logo beside the years, school, and degree; the description and
      advisor use the full width below */
   @media (max-width: 640px) {
@@ -1015,6 +1077,31 @@ function initials(org: string): string {
     .edu-desc,
     .edu-advisor {
       font-size: 13.5px;
+    }
+
+    /* Service entries follow suit: years above the role, then the
+       description */
+    .service li {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'years'
+        'role'
+        'desc';
+    }
+
+    .service h3 {
+      font-size: 16px;
+    }
+
+    .service-desc {
+      margin-top: 10px;
+      font-size: 13.5px;
+    }
+
+    .service-years {
+      margin-bottom: 2px;
+      font-size: 11.5px;
+      color: var(--text-3);
     }
   }
 </style>

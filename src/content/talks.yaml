@@ -2,7 +2,7 @@
 # "note" is an optional badge, e.g. an award.
 
 - id: pw26-gigapixel
-  title: Curvature-adaptive gigapixel microscopy at submicron resolution and centimeter scale
+  title: Centimeter-scale gigapixel microscopy with curvature-adaptive focusing and submicron resolution
   event: SPIE Photonics West 2026
   location: San Francisco, CA
   date: 2026-01
@@ -10,7 +10,7 @@
   paper: curvature-adaptive-gigapixel
 
 - id: pw26-zebrafish
-  title: Automated 3D behavioral profiling of zebrafish larvae at high throughput
+  title: High-throughput automated 3D behavioral profiling of freely swimming zebrafish larvae using a multi-camera array microscope
   event: SPIE Photonics West 2026
   location: San Francisco, CA
   date: 2026-01

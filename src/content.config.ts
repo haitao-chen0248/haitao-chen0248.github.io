@@ -83,6 +83,16 @@ const education = defineCollection({
   }),
 });
 
+const service = defineCollection({
+  loader: orderedYaml('src/content/service.yaml'),
+  schema: z.object({
+    role: z.string(),
+    years: z.string(),
+    description: z.string(),
+    order: z.number(),
+  }),
+});
+
 const teaching = defineCollection({
   loader: orderedYaml('src/content/teaching.yaml'),
   schema: ({ image }) =>
@@ -117,4 +127,4 @@ const news = defineCollection({
     }),
 });
 
-export const collections = { publications, talks, education, teaching, news };
+export const collections = { publications, talks, education, service, teaching, news };
