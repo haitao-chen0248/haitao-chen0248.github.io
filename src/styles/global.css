@@ -44,7 +44,7 @@
   --honor-line: rgb(220 192 138 / 0.32);
 
   /* Paper figures sit on a white plate in both themes, dimmed a little in
-     dark mode so it does not glare */
+     dark mode so it does not glare (talk posters too) */
   --figure-bg: #fff;
   --figure-edge: transparent;
   --figure-dim: brightness(0.9);

@@ -30,11 +30,11 @@ npm run check     # type-check code and validate content (the deploy runs it fir
 | `src/pages/` | Pages; `index.astro` holds the intro |
 | `src/layouts/` | Page shell: `<head>` metadata and structured data, header, footer, page-change and pointer-light scripts |
 | `src/content/` | Publications, talks, news, education, service, teaching |
-| `src/assets/images/` | Headshot, photos, and figures, converted at build time to AVIF with a WebP fallback (school logos: WebP) |
+| `src/assets/images/` | Headshot, photos, and figures, converted at build time to AVIF with a WebP fallback (school logos: WebP; publisher logos: SVG, as they are) |
 | `src/components/` | Header, footer, page and section titles, publication entry, photo slideshow, responsive photo (`Photo`), video embed, icons |
 | `src/utils/` | Shared helpers: dates, sorting, author lists, line breaking, profile links, share card version |
 | `src/styles/global.css` | Color, type, and spacing tokens for both themes |
-| `public/` | Files served as-is: favicons, `robots.txt`, and `cv.pdf` once added |
+| `public/` | Files served as-is: favicons, `robots.txt`, and the CV (`HaitaoChen_CV.pdf`) |
 
 Content is validated against `src/content.config.ts`, so a missing field or a bad date fails the build.
 
@@ -62,7 +62,7 @@ In the YAML files, entries appear in file order, so put new ones at the top. New
     @article{...}
 ```
 
-**News**: one Markdown file per item in `src/content/news/`, named `YYYY-MM-name.md`. The home page shows the three newest. News titles are not links; put links in the text.
+**News**: one Markdown file per item in `src/content/news/`, named `YYYY-MM-name.md`. The home page shows the three newest. News titles are not links; put links in the text. Photos go under `images:`; an image in the text stops the build, as it would not be processed.
 
 The first photo of the newest item with photos loads first, as the page's largest image. Several photos play as a slideshow, which can also be swiped on phones.
 
@@ -85,7 +85,21 @@ Full text in Markdown.
 
 **Education** (`education.yaml`): put the logo at `src/assets/images/logos/<id>.png` (or `.jpg`, `.webp`, `.svg`), with an optional `<id>-white` version for dark mode. `logoScale` (0 to 1) shrinks a heavy logo; `abbr` (or the initials) is shown until a logo exists.
 
-**Service** (`service.yaml`): a role, its years, and a description for each entry, listed under Service at the bottom of the home page. Venues are grouped by publisher, a card each, and each journal or conference links to its home page (`url`); put the publisher's logo at `src/assets/images/publishers/<logo>.svg` (or `.png`), or the card shows the publisher's name. In dark mode the logo sits on a dark plate, so add a white version as `<logo>-white.svg` (the dark-text parts recolored to `#f5f5f7`). The Optica logo is from optica.org. The ACS (2026), SPIE, and IEEE logos are SVG files the site owner supplied, stripped of editor metadata; the IEEE one is cropped above its tagline, which is unreadable at card size.
+**Service** (`service.yaml`): a role, its years, and a description for each entry, listed under Service at the bottom of the home page. Venues are grouped by publisher, a card each, and each journal or conference links to its home page (`url`); put the publisher's logo at `src/assets/images/publishers/<logo>.svg` (or `.png`), or the card shows the publisher's name. In dark mode the logo sits on a dark plate if it has a white version, `<logo>-white.svg` (the dark-text parts recolored to `#f5f5f7`); without one it stays on a white plate. The Optica logo is from optica.org. The ACS (2026), SPIE, and IEEE logos are SVG files the site owner supplied, stripped of editor metadata; the IEEE one is cropped above its tagline, which is unreadable at card size.
+
+```yaml
+- id: peer-review
+  role: Peer Reviewer
+  years: 2025 – Present
+  description: Independent reviewer for the journals and conference below.
+  groups:                              # optional: a card per publisher
+    - label: Optica Publishing Group
+      logo: optica                     # optional: src/assets/images/publishers/optica.svg
+      logoScale: 0.8                   # optional, 0 to 1: shrinks a heavy logo
+      items:
+        - name: Optics Letters
+          url: https://opg.optica.org/ol/home.cfm   # optional
+```
 
 **CV**: put the PDF at `public/HaitaoChen_CV.pdf` (the name is `cv.file` in `src/config.ts`) and a CV link appears last among the links on the home page and in the footer.
 

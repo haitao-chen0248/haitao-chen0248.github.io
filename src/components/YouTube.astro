@@ -110,10 +110,13 @@ const fallback =
     border: 0;
   }
 
+  /* Dimmed a little in dark mode, as the paper figures are: most posters
+     are bright slides */
   .poster :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: var(--figure-dim);
     transition: transform 0.8s var(--ease-out);
   }
 
