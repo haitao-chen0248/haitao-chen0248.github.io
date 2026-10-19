@@ -387,11 +387,15 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     }
   }
 
+  /* Clear means no frosting either: the frost's saturation boost deepened
+     the dark theme's blue light behind the bar, which showed a line along
+     its bottom edge at the top of the page */
   @keyframes header-clear {
     from {
       background-color: transparent;
       border-bottom-color: transparent;
       box-shadow: inset 0 14px 10px -10px transparent;
+      backdrop-filter: none;
     }
   }
 
