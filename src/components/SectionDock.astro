@@ -52,10 +52,13 @@ const { sections } = Astro.props;
     function stretch(distance: number) {
       if (still.matches || distance < 8) return;
       const k = Math.min(distance / 300, 1) * 0.12;
+      // A glide that starts while another is stretching picks up from the
+      // lens's shape at that moment, so it never snaps back first.
+      const now = stretching?.playState === 'running' ? getComputedStyle(lens!).scale : 'none';
       stretching?.cancel();
       stretching = lens!.animate(
         [
-          { scale: '1 1' },
+          { scale: now === 'none' ? '1 1' : now },
           { scale: `${1 + k} ${1 - k * 0.4}`, offset: 0.25 },
           { scale: `${1 - k * 0.3} ${1 + k * 0.2}`, offset: 0.5 },
           { scale: `${1 + k * 0.08} ${1 - k * 0.04}`, offset: 0.75 },
@@ -78,6 +81,9 @@ const { sections } = Astro.props;
       if (!spot) return;
       active = link;
       lean(0);
+      // To a section at either end, the lens eases in without overshooting:
+      // it would run into the dock's rounded end
+      lens!.classList.toggle('edge', link === links[0] || link === links[links.length - 1]);
       if (animate && last) stretch(Math.abs(spot.x - last.x));
       last = spot;
       if (!animate) {
@@ -117,18 +123,68 @@ const { sections } = Astro.props;
     if (footer) new IntersectionObserver(([entry]) => ((footerShown = entry.isIntersecting), update())).observe(footer);
 
     // The section crossing the middle of the screen is the current one.
+    // After a tap on the dock, the page scrolls to that section: those it
+    // passes on the way are not marked, or the lens would swing back and
+    // forth across the dock. Marking resumes once the scroll stops.
+    let heading: string | null = null;
+    let settle = 0;
     const watcher = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) if (entry.isIntersecting) mark(entry.target.id);
+        for (const entry of entries) {
+          if (entry.isIntersecting && (!heading || entry.target.id === heading)) mark(entry.target.id);
+        }
       },
       { rootMargin: '-45% 0px -50% 0px' },
     );
     sections.forEach((s) => watcher.observe(s));
 
+    // The scroll has stopped. The tapped section stays marked if it is on
+    // screen (the last one may never reach the middle, at the bottom of the
+    // page); otherwise mark the section crossing the middle, as the watcher
+    // would have.
+    function arrived() {
+      const tapped = heading && document.getElementById(heading);
+      heading = null;
+      if (tapped) {
+        const box = tapped.getBoundingClientRect();
+        if (box.top < innerHeight * 0.9 && box.bottom > 0) return;
+      }
+      const line = innerHeight * 0.475;
+      const here = sections.find((s) => {
+        const box = s.getBoundingClientRect();
+        return box.top <= line && box.bottom > line;
+      });
+      if (here) mark(here.id);
+    }
+    function waitForStop(ms: number) {
+      clearTimeout(settle);
+      settle = window.setTimeout(arrived, ms);
+    }
+    // Browsers that report the end of a scroll (scrollend) are followed to
+    // it; others count a pause of 250ms in scrolling as the end.
+    const ends = 'onscrollend' in window;
+    addEventListener(
+      'scroll',
+      () => {
+        if (!heading) return;
+        if (ends) clearTimeout(settle);
+        else waitForStop(250);
+      },
+      { passive: true },
+    );
+    addEventListener('scrollend', () => {
+      if (heading) waitForStop(0);
+    });
+
     for (const link of links) {
       link.addEventListener('pointerenter', () => place(link));
       link.addEventListener('focus', () => place(link));
-      link.addEventListener('click', () => mark(link.dataset.section!));
+      link.addEventListener('click', () => {
+        heading = link.dataset.section!;
+        mark(heading);
+        // In case the page does not need to scroll at all
+        waitForStop(600);
+      });
     }
     dock.addEventListener('pointerleave', () => place(current));
     dock.addEventListener('pointermove', (event) => {
@@ -244,6 +300,13 @@ const { sections } = Astro.props;
     transition:
       translate 0.6s var(--spring),
       width 0.6s var(--spring),
+      transform 0.6s var(--spring);
+  }
+
+  .lens.edge {
+    transition:
+      translate 0.6s var(--ease-out),
+      width 0.6s var(--ease-out),
       transform 0.6s var(--spring);
   }
 

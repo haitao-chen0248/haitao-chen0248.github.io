@@ -245,10 +245,13 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       // Longest while it moves fastest, squeezed as it overshoots and stops,
       // in step with the glide's spring (0.6s)
       const k = Math.min(distance / 300, 1) * 0.12;
+      // A glide that starts while another is stretching picks up from the
+      // lens's shape at that moment, so it never snaps back first.
+      const now = stretching?.playState === 'running' ? getComputedStyle(lens!).scale : 'none';
       stretching?.cancel();
       stretching = lens!.animate(
         [
-          { scale: '1 1' },
+          { scale: now === 'none' ? '1 1' : now },
           { scale: `${1 + k} ${1 - k * 0.4}`, offset: 0.25 },
           { scale: `${1 - k * 0.3} ${1 + k * 0.2}`, offset: 0.5 },
           { scale: `${1 + k * 0.08} ${1 - k * 0.04}`, offset: 0.75 },
