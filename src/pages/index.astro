@@ -90,7 +90,7 @@ function initials(org: string): string {
 
       {
         status && (
-          <p class="status glass enter" style="--i: 3" data-liquid>
+          <p class="status glass enter" style="--i: 3">
             <span class="dot" aria-hidden="true" />
             <span>
               <Fragment set:html={wrapFriendly(status, true)} />{' '}
@@ -128,7 +128,7 @@ function initials(org: string): string {
         {
           profileLinks().map((link) => (
             <li>
-              <a class="glass" data-magnetic data-liquid href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              <a class="glass" data-magnetic href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
                 <Icon name={link.icon} size={15} />
                 <span class="label">{link.label}</span>
                 <span class="hit" aria-hidden="true" />
@@ -815,7 +815,7 @@ function initials(org: string): string {
       margin-top: 0;
     }
 
-    .status > span:not(.dot, .liquid-warp) {
+    .status > span:not(.dot) {
       display: contents;
     }
 

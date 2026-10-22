@@ -13,7 +13,7 @@ interface Props {
 const { sections } = Astro.props;
 ---
 
-<nav class="dock glass" aria-label="On this page" data-liquid>
+<nav class="dock glass" aria-label="On this page">
   <span class="track" aria-hidden="true"><span class="lens"></span></span>
   {
     sections.map((s) => (
@@ -221,14 +221,6 @@ const { sections } = Astro.props;
       opacity 0.4s var(--ease),
       translate 0.7s var(--spring),
       visibility 0.4s;
-  }
-
-  /* With liquid glass (Chromium), the fill and frost move to a layer that
-     bends the edges (see .liquid-warp in global.css); a little clearer, so
-     the bending shows, but still easy to read over text */
-  .dock {
-    --liquid-fill: color-mix(in srgb, var(--bg) 55%, transparent);
-    --liquid-blur: 4px;
   }
 
   /* Without the blur, sharp text behind would show through: nearly opaque */

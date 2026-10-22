@@ -55,7 +55,7 @@ const multiple = images.length > 1;
 
   {
     multiple && (
-      <div class="dots" data-liquid>
+      <div class="dots">
         {images.map((_, i) => (
           <button
             type="button"
@@ -351,9 +351,6 @@ const multiple = images.length > 1;
       0 2px 10px rgb(0 0 0 / 0.2);
     backdrop-filter: blur(4px) saturate(180%);
     transform: translateX(-50%);
-    /* Liquid glass (Chromium; see LiquidGlass.astro) */
-    --liquid-fill: rgb(0 0 0 / 0.28);
-    --liquid-blur: 4px;
   }
 
   .dot {
