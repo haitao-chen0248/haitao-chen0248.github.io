@@ -759,6 +759,24 @@ a.title-link:active {
   backdrop-filter: blur(6px) saturate(180%);
 }
 
+/* Liquid glass (LiquidGlass.astro, Chromium only): a surface marked
+   data-liquid hands its fill and frost to a layer behind its content, which
+   the filter bends near the edges */
+html.liquid [data-liquid] {
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.liquid-warp {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--liquid-fill, var(--glass-fill));
+  backdrop-filter: blur(var(--liquid-blur, 6px)) saturate(180%) var(--liquid-bend);
+  pointer-events: none;
+}
+
 /* Rim light, drawn over the border */
 .glass::before {
   content: '';

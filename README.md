@@ -107,6 +107,8 @@ Full text in Markdown.
 
 **Share card**: `/og.jpg` is generated from the name, role, interests, and headshot, so it updates on its own.
 
+**Liquid glass**: in Chrome, Edge, and other Chromium browsers, glass surfaces marked `data-liquid` (the "On this page" dock, the availability line, and the profile links) bend what lies behind them near their edges, with a slight color fringe (`src/components/LiquidGlass.astro`). The filter and its displacement map come from [liquid-glass-react](https://github.com/rdev/liquid-glass-react) (MIT; its license is in `src/assets/liquid/`). Other browsers show the plain frosted glass.
+
 **Search engines**: every page describes the site owner as a person (`BaseLayout.astro`), and `/publications/` describes each paper as a scholarly article. Both are generated from `src/config.ts` and `publications.yaml`, so there is nothing to keep in sync by hand.
 
 **Menu**: `nav` in `src/config.ts`. Home is the first item; the logo also links home.
