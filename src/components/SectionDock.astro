@@ -3,7 +3,8 @@
 // that lists the page's sections. It appears once the intro (the first
 // section) scrolls away and hides again over the footer. A glass lens rests
 // behind the section in the middle of the screen and glides to whichever
-// one the pointer is on, like the menu lens in the header.
+// one the pointer is on, like the menu lens in the header, stretching and
+// leaning like a drop as that one does.
 interface Props {
   /** Section ids on the page and their short labels, in page order. */
   sections: { id: string; label: string }[];
@@ -13,7 +14,7 @@ const { sections } = Astro.props;
 ---
 
 <nav class="dock glass" aria-label="On this page">
-  <span class="lens" aria-hidden="true"></span>
+  <span class="track" aria-hidden="true"><span class="lens"></span></span>
   {
     sections.map((s) => (
       <a href={`#${s.id}`} data-section={s.id}>
@@ -38,10 +39,47 @@ const { sections } = Astro.props;
     // makes the browser lay out the page again.
     const spots = new Map<HTMLAnchorElement, { x: number; w: number }>();
     let settling = 0;
+    let active: HTMLAnchorElement | null = null;
+    let last: { x: number; w: number } | null = null;
+
+    // Liquid, as the menu lens in the header: gliding to another section,
+    // the lens stretches along its path while it moves fastest, squeezes as
+    // it overshoots and stops, and settles, more for a longer glide. Resting
+    // under the pointer, it leans a few pixels toward it, stretching that
+    // way. Not with reduced motion.
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let stretching: Animation | null = null;
+    function stretch(distance: number) {
+      if (still.matches || distance < 8) return;
+      const k = Math.min(distance / 300, 1) * 0.12;
+      stretching?.cancel();
+      stretching = lens!.animate(
+        [
+          { scale: '1 1' },
+          { scale: `${1 + k} ${1 - k * 0.4}`, offset: 0.25 },
+          { scale: `${1 - k * 0.3} ${1 + k * 0.2}`, offset: 0.5 },
+          { scale: `${1 + k * 0.08} ${1 - k * 0.04}`, offset: 0.75 },
+          { scale: '1 1' },
+        ],
+        { duration: 650, easing: 'ease-in-out' },
+      );
+    }
+
+    // pull: where the pointer is across the section's label, from -1 to 1
+    function lean(pull: number) {
+      if (still.matches && pull) return;
+      lens!.style.setProperty('--lean', `${(pull * 4).toFixed(2)}px`);
+      lens!.style.setProperty('--sx', (1 + Math.abs(pull) * 0.06).toFixed(3));
+      lens!.style.setProperty('--sy', (1 - Math.abs(pull) * 0.03).toFixed(3));
+    }
 
     function place(link: HTMLAnchorElement | null, animate = true) {
       const spot = link && spots.get(link);
       if (!spot) return;
+      active = link;
+      lean(0);
+      if (animate && last) stretch(Math.abs(spot.x - last.x));
+      last = spot;
       if (!animate) {
         lens!.classList.add('instant');
         // Transitions come back once a frame has been drawn in place.
@@ -93,6 +131,11 @@ const { sections } = Astro.props;
       link.addEventListener('click', () => mark(link.dataset.section!));
     }
     dock.addEventListener('pointerleave', () => place(current));
+    dock.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse' || !active || !last) return;
+      const x = event.clientX - dock.getBoundingClientRect().left;
+      lean(Math.max(-1, Math.min(1, (x - last.x - last.w / 2) / (last.w / 2))));
+    });
     dock.addEventListener('focusout', () => place(current));
   }
 </script>
@@ -173,6 +216,17 @@ const { sections } = Astro.props;
     }
   }
 
+  /* The lens stays inside the dock: gliding to a section at either end,
+     its overshoot meets the dock's rounded end instead of poking out. The
+     dock itself cannot clip, as its glass rim sits just outside it. */
+  .track {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
   /* Moves on a spring, so it overshoots a little and settles */
   .lens {
     position: absolute;
@@ -183,10 +237,14 @@ const { sections } = Astro.props;
     border-radius: 999px;
     background: color-mix(in srgb, var(--text) 8%, transparent);
     box-shadow: inset 0 1px 0 var(--glass-hi);
-    translate: var(--lx, 0px) 0;
+    translate: calc(var(--lx, 0px) + var(--lean, 0px)) 0;
+    /* Leaning toward the pointer (--sx, --sy); the glide's stretch animates
+       scale */
+    transform: scale(var(--sx, 1), var(--sy, 1));
     transition:
       translate 0.6s var(--spring),
-      width 0.6s var(--spring);
+      width 0.6s var(--spring),
+      transform 0.6s var(--spring);
   }
 
   .lens.instant {

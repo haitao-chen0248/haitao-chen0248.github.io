@@ -219,8 +219,9 @@ const personSchema = {
     <script>
       // Pointer light: glass surfaces and cards catch a soft highlight where the
       // pointer is, and the ambient light leans gently toward it. Elements
-      // marked data-magnetic lean a few pixels toward the pointer too. Mouse
-      // and trackpad only; touch screens keep the static look.
+      // marked data-magnetic lean a few pixels toward the pointer too, and
+      // stretch that way a little, like a drop. Mouse and trackpad only; touch
+      // screens keep the static look.
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
         const field = document.querySelector<HTMLElement>('.ambient-field');
         const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -234,7 +235,10 @@ const personSchema = {
         const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
 
         function release() {
-          if (magnet) magnet.style.translate = '';
+          if (magnet) {
+            magnet.style.translate = '';
+            magnet.style.scale = '';
+          }
           magnet = null;
           pull = [0, 0];
         }
@@ -257,6 +261,11 @@ const personSchema = {
             const cy = box.top - pull[1] + box.height / 2;
             pull = [clamp((x - cx) * 0.3, 6), clamp((y - cy) * 0.3, 4)];
             magnet.style.translate = `${pull[0]}px ${pull[1]}px`;
+            // Longer along the pull, a little thinner across it
+            const along = [Math.abs(pull[0]) / 6, Math.abs(pull[1]) / 4];
+            const sx = 1 + along[0] * 0.05 - along[1] * 0.02;
+            const sy = 1 + along[1] * 0.05 - along[0] * 0.02;
+            magnet.style.scale = `${sx.toFixed(3)} ${sy.toFixed(3)}`;
           }
         }
 
