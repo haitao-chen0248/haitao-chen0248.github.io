@@ -7,7 +7,7 @@ const path = Astro.url.pathname;
 const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 ---
 
-<header class="site-header">
+<header class="site-header" data-liquid>
   <div class="container inner">
     <a href="/" class="brand" aria-label={`${site.name}, home`}>
       <AiryMark size={18} class="brand-mark" />
@@ -443,6 +443,47 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   /* Clear means no frosting either: the frost's saturation boost deepened
      the dark theme's blue light behind the bar, which showed a line along
      its bottom edge at the top of the page */
+  /* Liquid glass (Chromium; see LiquidGlass.astro): the bar's fill and
+     frost move to a layer that also bends what scrolls under it. That
+     layer fades in as the bar frosts over, so the top of the page stays
+     clear. */
+  .site-header {
+    --liquid-fill: var(--header-bg);
+    --liquid-blur: 8px;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    /* Global: the layer is made by a script, so it has no scoping attribute */
+    :global(:where(.site-header > .liquid-warp)) {
+      animation: header-warp linear both;
+    }
+
+    .site-header > :global(.liquid-warp) {
+      animation-timeline: scroll();
+      animation-range: 0 64px;
+    }
+  }
+
+  @keyframes header-warp {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* With the liquid layer the bar itself must not animate its own frost:
+     that would cut the layer off from what lies behind the bar */
+  :global(html.liquid) .site-header {
+    animation-name: header-clear-liquid;
+  }
+
+  @keyframes header-clear-liquid {
+    from {
+      background-color: transparent;
+      border-bottom-color: transparent;
+      box-shadow: inset 0 14px 10px -10px transparent;
+    }
+  }
+
   @keyframes header-clear {
     from {
       background-color: transparent;
@@ -699,6 +740,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
        edge, where Chrome's blur is weakest: a smaller radius frosts more
        evenly, and a soft fade of the page color covers that edge. */
     .site-header {
+      --liquid-blur: 5px;
       backdrop-filter: blur(5px) saturate(180%);
       box-shadow: inset 0 14px 10px -10px color-mix(in srgb, var(--bg) 85%, transparent);
     }

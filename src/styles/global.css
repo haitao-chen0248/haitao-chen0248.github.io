@@ -667,6 +667,41 @@ a.title-link:active {
   }
 }
 
+/* Liquid glass (Chromium; see LiquidGlass.astro): the capsule's fill and
+   frost move to a layer of the same shape and motion, under the capsule's
+   edges, which also bends what passes under it */
+.sticky-year {
+  --liquid-fill: color-mix(in srgb, var(--bg) 70%, transparent);
+  --liquid-blur: 4px;
+}
+
+html.liquid .sticky-year::before {
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.sticky-year > .liquid-warp {
+  inset: -4px -12px;
+  z-index: -2;
+  opacity: 0;
+  scale: 0.9;
+  transition:
+    opacity 0.25s,
+    scale 0.5s var(--spring);
+}
+
+.sticky-year.stuck > .liquid-warp {
+  opacity: 1;
+  scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-year > .liquid-warp {
+    scale: 1;
+    transition: opacity 0.25s;
+  }
+}
+
 /* Without the blur, sharp text behind would show through: nearly opaque */
 @supports not (backdrop-filter: blur(1px)) {
   .sticky-year::before {
