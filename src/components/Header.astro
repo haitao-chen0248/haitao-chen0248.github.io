@@ -173,6 +173,8 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     let current = bar.querySelector<HTMLElement>('nav a[aria-current="page"]');
     const initial = current;
     let active: HTMLElement | null = null;
+    // Where the lens was last placed
+    let last: Spot | null = null;
 
     // How the lens reaches an item: it glides on a spring, jumps there
     // (fading in if it was hidden), or is simply there with no transition.
@@ -198,6 +200,15 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       lens!.classList.remove('arriving');
       // Start from the item itself when the lens is not on screen yet.
       if (move === 'glide' && !lens!.classList.contains('shown')) move = 'jump';
+      const from = last;
+      last = spot;
+      // A glide stretches the lens; arrive() marks its own glide as
+      // arriving (delayed) right after this, so that is read once this task
+      // is done.
+      if (move === 'glide' && from) {
+        const distance = Math.abs(spot.x - from.x);
+        queueMicrotask(() => stretch(distance, lens!.classList.contains('arriving') ? 120 : 0));
+      }
       if (move !== 'glide') {
         lens!.classList.add(move === 'still' ? 'still' : 'instant');
         // Transitions come back once a frame has been drawn in place.
@@ -218,9 +229,48 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 
     function place(item: HTMLElement | null, move: Move = 'glide') {
       active = item;
+      lean(0);
       if (item) apply(measure(item), move);
       else lens!.classList.remove('shown');
     }
+
+    // Liquid: gliding to another item, the lens stretches along its path
+    // and settles back with a little wobble, as a drop would, more for a
+    // longer glide. Resting under the pointer, it leans a few pixels toward
+    // it, stretching that way. Not with reduced motion.
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let stretching: Animation | null = null;
+    function stretch(distance: number, delay: number) {
+      if (still.matches || distance < 8) return;
+      // Longest while it moves fastest, squeezed as it overshoots and stops,
+      // in step with the glide's spring (0.6s)
+      const k = Math.min(distance / 300, 1) * 0.12;
+      stretching?.cancel();
+      stretching = lens!.animate(
+        [
+          { scale: '1 1' },
+          { scale: `${1 + k} ${1 - k * 0.4}`, offset: 0.25 },
+          { scale: `${1 - k * 0.3} ${1 + k * 0.2}`, offset: 0.5 },
+          { scale: `${1 + k * 0.08} ${1 - k * 0.04}`, offset: 0.75 },
+          { scale: '1 1' },
+        ],
+        { duration: 650, delay, easing: 'ease-in-out' },
+      );
+    }
+
+    // pull: where the pointer is across the item, from -1 (left edge) to 1
+    function lean(pull: number) {
+      if (still.matches && pull) return;
+      lens!.style.setProperty('--lean', `${(pull * 4).toFixed(2)}px`);
+      lens!.style.setProperty('--sx', (1 + Math.abs(pull) * 0.06).toFixed(3));
+      lens!.style.setProperty('--sy', (1 - Math.abs(pull) * 0.03).toFixed(3));
+    }
+
+    bar.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse' || !last || !active?.matches('nav a')) return;
+      const x = event.clientX - bar.getBoundingClientRect().left;
+      lean(Math.max(-1, Math.min(1, (x - last.x - last.w / 2) / (last.w / 2))));
+    });
 
     // A finger tapping a menu item is about to open another page. The lens
     // stays where it is, with no squeeze, and the next page glides it over
@@ -482,7 +532,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     border-radius: 999px;
     backdrop-filter: none;
     opacity: 0;
-    transform: translate(var(--lx, 0px), var(--ly, 0px)) scale(var(--ls, 1));
+    /* --lean, --sx, and --sy lean it toward the pointer (script above) */
+    transform: translate(calc(var(--lx, 0px) + var(--lean, 0px)), var(--ly, 0px))
+      scale(calc(var(--ls, 1) * var(--sx, 1)), calc(var(--ls, 1) * var(--sy, 1)));
     transition:
       opacity 0.25s,
       transform 0.6s var(--spring),
