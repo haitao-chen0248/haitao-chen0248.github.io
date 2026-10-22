@@ -54,7 +54,7 @@ const articlesSchema = { '@context': 'https://schema.org', '@graph': articles };
     {
       groups.map((group, g) => (
         <section class="year-group" aria-labelledby={`y${group.year}`}>
-          <h2 class="sticky-year" data-liquid id={`y${group.year}`}>
+          <h2 class="sticky-year" id={`y${group.year}`}>
             {group.year}
           </h2>
           <div class="items">
