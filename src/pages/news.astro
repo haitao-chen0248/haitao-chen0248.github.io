@@ -33,7 +33,7 @@ const lead = items.find((item) => item.data.images.length > 0)?.id;
     {
       groups.map((group) => (
         <section class="year-group" aria-labelledby={`y${group.year}`}>
-          <h2 class="sticky-year" id={`y${group.year}`}>
+          <h2 class="sticky-year" data-liquid id={`y${group.year}`}>
             {group.year}
           </h2>
 
