@@ -2,9 +2,9 @@
 // Light field: the soft colored light behind the top of the page, drawn with
 // WebGL instead of CSS, over a faint lattice like a camera array's. Because
 // the page draws this light itself, glass that floats on it (elements marked
-// data-field-glass) can truly refract it: the shader bends the light and the
-// lattice near each glass edge, frosts them, and splits the colors a little,
-// all on the graphics card in one pass.
+// data-field-glass) can truly refract it: the shader enlarges the light and
+// the lattice behind each glass like a magnifier, bends them at its rim, and
+// splits the colors a little, all on the graphics card in one pass.
 //
 // For now only on devices with a mouse or trackpad, and not for visitors who
 // ask for less transparency. Elsewhere, or without WebGL, the CSS light and
@@ -35,16 +35,15 @@
       vec4 over(vec4 top, vec4 under) { return top + under * (1.0 - top.a); }
 
       // The light at p: three glows (blob: center and radius), then the
-      // lattice, brighter where the light falls. soft frosts the lattice's
-      // dots, spreading each over a wider disc as dim as it is wide.
-      vec4 light(vec2 p, float soft) {
+      // lattice, brighter where the light falls, and clearer still by
+      // reveal (seen through the glass).
+      vec4 light(vec2 p, float reveal) {
         vec4 c = vec4(0.0);
         for (int i = 0; i < 3; i++) {
           c = over(glow[i] * max(1.0 - length(p - blob[i].xy) / blob[i].z, 0.0), c);
         }
         vec2 cell = mod(p - lean * 0.5, 22.0) - 11.0;
-        float w = 1.0 + soft;
-        float a = dots.a * (0.35 + 4.0 * c.a) / (w * w) * (1.0 - smoothstep(0.7 * w, 1.5 * w, length(cell)));
+        float a = dots.a * reveal * (0.35 + 4.0 * c.a) * (1.0 - smoothstep(0.7, 1.5, length(cell)));
         c = over(vec4(dots.rgb * a, a), c);
         // Fades out down the page, as the CSS light's mask does
         return c * (1.0 - clamp((p.y - 270.0) / 630.0, 0.0, 1.0));
@@ -58,7 +57,7 @@
 
       void main() {
         vec2 p = vec2(gl_FragCoord.x, size.y * scale - gl_FragCoord.y) / scale;
-        vec4 c = light(p, 0.0);
+        vec4 c = light(p, 1.0);
         for (int i = 0; i < ${MAX}; i++) {
           if (i >= count) break;
           vec2 extent = rect[i].zw * 0.5;
@@ -66,19 +65,22 @@
           float r = min(shape[i].x, min(extent.x, extent.y));
           float d = box(q, extent, r);
           if (d > 1.0) continue;
-          // Like a lens, the glass shows what is behind it slightly enlarged,
-          // and near its edge takes its light from further in, so the light
-          // there is stretched toward the edge. That pull eases to nothing
-          // across the rim, never folding the light back on itself. Red,
-          // green, and blue bend a little apart.
+          // Like a magnifier, the glass shows what is behind it enlarged
+          // (1.4x), where the faint lattice comes out clearly, its fill
+          // allowed for. Near its edge, the rim takes its light from further
+          // in, so the light there is stretched toward the edge; that pull
+          // eases to nothing across the rim, never folding the light back on
+          // itself. Red, green, and blue bend a little apart.
           vec2 e = vec2(0.5, 0.0);
           vec2 n = normalize(vec2(box(q + e, extent, r) - box(q - e, extent, r), box(q + e.yx, extent, r) - box(q - e.yx, extent, r)) + 1e-6);
-          float rim = min(extent.y, 18.0);
+          float rim = min(extent.y * 0.6, 12.0);
           float k = 1.0 - clamp(-d / rim, 0.0, 1.0);
-          vec2 bend = -q * 0.12 - n * k * k * rim * 0.5;
-          vec4 g = light(p + bend, 0.35);
-          g.g = light(p + bend * 1.15, 0.35).g;
-          g.b = light(p + bend * 1.3, 0.35).b;
+          vec2 lens = -q * 0.3;
+          vec2 edge = -n * k * k * rim * 0.5;
+          float reveal = 3.0 / (1.0 - fill.a);
+          vec4 g = light(p + lens + edge, reveal);
+          g.g = light(p + lens * 1.03 + edge * 1.2, reveal).g;
+          g.b = light(p + lens * 1.06 + edge * 1.4, reveal).b;
           // Frosted glass saturates what is behind it, then adds its fill
           float grey = dot(g.rgb, vec3(0.2126, 0.7152, 0.0722));
           g.rgb = clamp(mix(vec3(grey), g.rgb, 1.8), 0.0, g.a);
