@@ -176,6 +176,8 @@ const personSchema = {
     <div class="ambient" aria-hidden="true">
       <div class="ambient-field"><span></span><span></span><span></span></div>
     </div>
+    <!-- A page may draw its own light here, in place of the one above -->
+    <slot name="backdrop" />
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main">
