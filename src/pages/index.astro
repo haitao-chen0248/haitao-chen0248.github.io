@@ -6,7 +6,6 @@ import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icon from '@/components/Icon.astro';
 import Letters from '@/components/Letters.astro';
-import LightField from '@/components/LightField.astro';
 import Photo from '@/components/Photo.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
 import SectionDock from '@/components/SectionDock.astro';
@@ -73,8 +72,6 @@ function initials(org: string): string {
 ---
 
 <BaseLayout>
-  <LightField slot="backdrop" />
-
   <!-- Hero: intro on the left, portrait on the right, interests and links below -->
   <section class="container hero" id="about">
     <div class="hero-text">
@@ -93,7 +90,7 @@ function initials(org: string): string {
 
       {
         status && (
-          <p class="status glass enter" style="--i: 3" data-field-glass>
+          <p class="status glass enter" style="--i: 3">
             <span class="dot" aria-hidden="true" />
             <span>
               <Fragment set:html={wrapFriendly(status, true)} />{' '}
@@ -131,7 +128,7 @@ function initials(org: string): string {
         {
           profileLinks().map((link) => (
             <li>
-              <a class="glass" data-magnetic data-field-glass href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              <a class="glass" data-magnetic href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
                 <Icon name={link.icon} size={15} />
                 <span class="label">{link.label}</span>
                 <span class="hit" aria-hidden="true" />
