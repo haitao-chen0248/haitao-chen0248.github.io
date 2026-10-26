@@ -27,9 +27,9 @@
   --text-3: #8e8e93;
 
   /* Accent: used sparingly for underlines, hovers, and tags. The second
-     accent (teal) only appears in gradients with the first. */
+     accent, a lighter blue, only appears in gradients with the first. */
   --accent: #7fc4ff;
-  --accent-2: #5fd6c8;
+  --accent-2: #b8dcff;
   --accent-soft: rgb(127 196 255 / 0.12);
   --accent-line: rgb(127 196 255 / 0.35);
 
@@ -79,8 +79,8 @@
 
   /* Ambient light at the top of each page */
   --glow-1: rgb(64 140 255 / 0.3);
-  --glow-2: rgb(0 190 200 / 0.16);
-  --glow-3: rgb(140 90 255 / 0.14);
+  --glow-2: rgb(40 110 235 / 0.16);
+  --glow-3: rgb(110 170 255 / 0.12);
 
   /* Theme toggle shows the sun in dark mode (click to go light) */
   --show-sun: block;
@@ -109,7 +109,7 @@
   --text-3: #6e6e73;
 
   --accent: #1f6feb;
-  --accent-2: #0fa3a3;
+  --accent-2: #5a9bff;
   --accent-soft: rgb(31 111 235 / 0.07);
   --accent-line: rgb(31 111 235 / 0.3);
 
@@ -142,8 +142,8 @@
   --glass-glow: rgb(255 255 255 / 0.55);
 
   --glow-1: rgb(31 111 235 / 0.13);
-  --glow-2: rgb(0 170 190 / 0.1);
-  --glow-3: rgb(130 80 255 / 0.09);
+  --glow-2: rgb(31 111 235 / 0.08);
+  --glow-3: rgb(90 150 245 / 0.08);
 
   --show-sun: none;
   --show-moon: block;
