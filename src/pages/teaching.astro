@@ -115,9 +115,7 @@ const courses = (await getCollection('teaching')).sort(byFileOrder);
     flex-direction: column;
   }
 
-  /* About 70 characters a line, easier to read than the card's full width */
   .desc {
-    max-width: 35em;
     margin-top: 8px;
     color: var(--text-2);
   }
