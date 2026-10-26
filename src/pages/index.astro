@@ -454,8 +454,11 @@ function initials(org: string): string {
     }
   }
 
-  /* Availability line: green dot, short sentence, contact link */
+  /* Availability line: green dot, short sentence, contact link. Glass in
+     look only: blur is kept for what floats over the page (the header, the
+     dock, pop-ups), not for content, which sits on the page itself. */
   .status {
+    backdrop-filter: none;
     display: inline-flex;
     align-items: flex-start;
     gap: 10px;
@@ -509,7 +512,6 @@ function initials(org: string): string {
     border: 1px solid var(--tag-border);
     border-radius: 8px;
     background: var(--tag-bg);
-    backdrop-filter: blur(6px) saturate(180%);
     font-size: 14px;
     font-weight: 500;
     color: var(--text);
@@ -522,8 +524,10 @@ function initials(org: string): string {
     margin-top: 28px;
   }
 
-  /* Glass pills (the border comes from .glass, so the padding is 1px less) */
+  /* Glass pills (the border comes from .glass, so the padding is 1px less),
+     without blur, as the status line */
   .pills a {
+    backdrop-filter: none;
     display: inline-flex;
     align-items: center;
     gap: 7px;
