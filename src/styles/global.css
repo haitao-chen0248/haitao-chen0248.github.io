@@ -216,7 +216,6 @@
   --radius-sm: 10px;
 
   /* Motion */
-  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   /* Damped spring with a slight overshoot, for things that move or resize */
   --spring: linear(0, 0.049, 0.166, 0.313, 0.466, 0.608, 0.73, 0.83, 0.906, 0.962, 0.999, 1.022, 1.034, 1.038, 1.037, 1.033, 1.028, 1.022, 1.017, 1.012, 1.008, 1.004, 1);
@@ -429,7 +428,7 @@ a.title-link:active {
 }
 
 .more-link .arrow {
-  transition: transform 0.25s var(--ease);
+  transition: transform 0.25s var(--ease-out);
 }
 
 .more-link:active .arrow {
@@ -507,7 +506,7 @@ a.title-link:active {
 .chip .arrow {
   font-size: 11px;
   opacity: 0.6;
-  transition: transform 0.2s var(--ease), opacity 0.2s;
+  transition: transform 0.2s var(--ease-out), opacity 0.2s;
 }
 
 .chip:active .arrow {
