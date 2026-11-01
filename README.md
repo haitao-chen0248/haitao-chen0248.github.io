@@ -111,7 +111,7 @@ Full text in Markdown.
 
 **Menu**: `nav` in `src/config.ts`. Home is the first item; the logo also links home.
 
-**Link check**: on the 1st of each month a GitHub Action builds the site and checks every link in it; if any is broken, it opens an issue listing them (`.github/workflows/links.yml`). It can also be run by hand from the Actions tab.
+**Link check**: on the 1st of each month a GitHub Action builds the site and checks every link in it; if any is broken, the run fails (GitHub sends a notice) and its summary lists them (`.github/workflows/links.yml`). Links to Optica's journals and DOIs and to SPIE's digital library are skipped, as their bot protection stalls requests from GitHub's servers. It can also be run by hand from the Actions tab.
 
 **Dependency updates**: on the 1st of each month Dependabot opens pull requests that update the npm packages and the GitHub Actions (`.github/dependabot.yml`). Each one is built and checked automatically; merge it once the check passes, and the site redeploys. TypeScript major updates are skipped until `@astrojs/check` supports TypeScript 7 (see the note in `dependabot.yml`).
 
