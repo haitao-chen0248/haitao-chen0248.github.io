@@ -28,8 +28,8 @@ jobs:
       - run: npm run build
 
       # Many publishers and profile sites refuse automated requests (403, 406,
-      # 429; LinkedIn answers 999) while working fine in a browser, so those
-      # codes count as alive. A dead link shows up as 404, 410, or an
+      # 429; IEEE Xplore sometimes answers 418, LinkedIn 999) while working
+      # fine in a browser, so those codes count as alive. A dead link shows up as 404, 410, or an
       # address that no longer resolves.
       # Optica's journals (and the DOIs that lead there) and SPIE's digital
       # library sit behind bot protection that stalls requests from GitHub's
@@ -41,7 +41,7 @@ jobs:
             --no-progress
             --max-retries 3
             --timeout 30
-            --accept '200..=299,403,406,429,999'
+            --accept '200..=299,403,406,418,429,999'
             --exclude '^https://doi\.org/10\.1364/'
             --exclude '^https://(opg|www)\.optica\.org/'
             --exclude '^https://www\.spiedigitallibrary\.org/'
