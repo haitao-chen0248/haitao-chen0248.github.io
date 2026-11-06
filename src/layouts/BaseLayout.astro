@@ -1,12 +1,10 @@
 ---
-// Shared page shell: <head> metadata, fonts, header, and footer.
-// Geist for all text; Geist Mono for small labels such as dates and venues.
+// Shared page shell: <head> metadata, font, header, and footer.
+// Geist for all text.
 import '@fontsource-variable/geist';
-import '@fontsource-variable/geist-mono';
-// The Latin files cover all of the site's text. Preloading them starts both
-// downloads with the page, instead of only once the styles ask for them.
+// The Latin file covers all of the site's text. Preloading it starts the
+// download with the page, instead of only once the styles ask for it.
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
-import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import '@/styles/global.css';
 
 import { getImage } from 'astro:assets';
@@ -64,7 +62,6 @@ const personSchema = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={geistMonoLatin} as="font" type="font/woff2" crossorigin />
 
     <!-- Fetch a page in the background when its link is hovered, and render
          it in full once the link is pressed, so it is ready by the time the
