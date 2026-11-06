@@ -153,12 +153,11 @@
 }
 
 /* Stand-ins for the moment before Geist arrives: local Arial (or its metric
-   twins on Linux) scaled to Geist's letter widths at each weight, and
-   Consolas (Windows) scaled to Geist Mono's. Text drawn in a stand-in takes
-   the same space, so nothing moves when the real font swaps in. The widths
-   were measured on the site's own text. Each covers only the characters in
-   the Latin font files, so any other character (such as →) falls back to the
-   system fonts as before. */
+   twins on Linux) scaled to Geist's letter widths at each weight. Text drawn
+   in a stand-in takes the same space, so nothing moves when the real font
+   swaps in. The widths were measured on the site's own text. Each covers
+   only the characters in the Latin font file, so any other character (such
+   as →) falls back to the system fonts as before. */
 @font-face {
   font-family: 'Geist Fallback';
   src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
@@ -192,20 +191,10 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-@font-face {
-  font-family: 'Geist Mono Fallback';
-  src: local('Consolas');
-  size-adjust: 109.13%;
-  ascent-override: 92.09%;
-  descent-override: 27.03%;
-  line-gap-override: 0%;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 :root {
-  /* Type: Geist everywhere, Geist Mono for small labels (dates, venues) */
+  /* Type: Geist for everything. Small labels (dates, venues, years) are the
+     same face, smaller and grayer. */
   --font: 'Geist Variable', 'Geist Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --mono: 'Geist Mono Variable', 'Geist Mono Fallback', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Layout */
   --container: 1024px;
@@ -618,10 +607,8 @@ a.title-link:active {
   z-index: 3;
   width: fit-content;
   margin-bottom: 20px;
-  font-family: var(--mono);
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0;
   color: var(--text-2);
 }
 
@@ -689,15 +676,14 @@ a.title-link:active {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 10px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0;
+  font-size: 12.5px;
+  font-weight: 500;
   color: var(--text-3);
 }
 
 @media (max-width: 600px) {
   .eyebrow {
-    font-size: 11.5px;
+    font-size: 12px;
   }
 }
 
