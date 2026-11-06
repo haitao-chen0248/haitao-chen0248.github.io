@@ -1,6 +1,8 @@
 ---
 // Text whose letters rise into place one after another when the page loads.
-// Each word stays in one piece so it never breaks across lines.
+// Each word stays in one piece so it never breaks across lines. Screen
+// readers get the text whole rather than letter by letter: the animated
+// letters are hidden from them and a hidden copy of the text is read instead.
 interface Props {
   text: string;
 }
@@ -10,17 +12,20 @@ let n = 0;
 const words = text.split(' ').map((word) => [...word].map((char) => ({ char, n: n++ })));
 ---
 
-{
-  words.map((word, w) => (
-    <>
-      <span class="word">
-        {word.map(({ char, n }) => (
-          <span class="letter" style={`--n: ${n}`}>
-            {char}
-          </span>
-        ))}
-      </span>
-      {w < words.length - 1 && ' '}
-    </>
-  ))
-}
+<span class="visually-hidden">{text}</span>
+<span aria-hidden="true">
+  {
+    words.map((word, w) => (
+      <>
+        <span class="word">
+          {word.map(({ char, n }) => (
+            <span class="letter" style={`--n: ${n}`}>
+              {char}
+            </span>
+          ))}
+        </span>
+        {w < words.length - 1 && ' '}
+      </>
+    ))
+  }
+</span>

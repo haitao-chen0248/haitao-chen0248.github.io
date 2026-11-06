@@ -86,15 +86,19 @@ const { title, id, href, linkLabel = 'View all' } = Astro.props;
         animation: rise linear both;
       }
 
+      /* Both finish within the first 200px of scrolling in, like the .reveal
+         entries, so the last title on a page shows in full even where the
+         page ends soon after it. A range that ended partway up the screen
+         left "Service" at the foot of the home page faded on tall displays. */
       .rule {
         animation-timeline: --head;
-        animation-range: entry 0% cover 40%;
+        animation-range: entry 0% entry 160px;
       }
 
       .title,
       .section-head > a {
         animation-timeline: --head;
-        animation-range: entry 30% cover 45%;
+        animation-range: entry 40px entry 200px;
       }
 
       /* Already on screen when the page opened (BaseLayout) */

@@ -2,6 +2,8 @@
 # Pull requests into master (such as Dependabot's updates) are built and
 # checked the same way, but not published.
 # One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# The site is also rebuilt once a year, on January 1, so the year in the
+# footer's copyright line stays right even when nothing else has changed.
 name: Deploy to GitHub Pages
 
 on:
@@ -9,6 +11,8 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  schedule:
+    - cron: '23 5 1 1 *' # 05:23 UTC on January 1
   workflow_dispatch:
 
 permissions:
