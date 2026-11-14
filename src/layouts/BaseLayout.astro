@@ -1,0 +1,321 @@
+---
+// Shared page shell: <head> metadata, font, header, and footer.
+// Geist for all text.
+import '@fontsource-variable/geist';
+// The Latin file covers all of the site's text. Preloading it starts the
+// download with the page, instead of only once the styles ask for it.
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import '@/styles/global.css';
+
+import { getImage } from 'astro:assets';
+
+import Analytics from '@/components/Analytics.astro';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import headshot from '@/assets/images/headshot.jpg';
+import { googleSiteVerification, links, site } from '@/config';
+import { shareCardVersion } from '@/utils/og';
+
+interface Props {
+  /** Page name. Omit on the home page. */
+  title?: string;
+  description?: string;
+  /** Keep this page out of search results (used by the 404 page). */
+  noindex?: boolean;
+}
+
+const { title, description = site.description, noindex = false } = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.name}` : site.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// Headshot URL for structured data.
+const portrait = await getImage({ src: headshot, width: 600, format: 'jpg' });
+const portraitUrl = new URL(portrait.src, Astro.site);
+
+// Social share card, rendered at build time by src/pages/og.jpg.ts. The version
+// query changes with the card's content so platforms fetch the new image.
+const shareCardUrl = new URL(`/og.jpg?v=${shareCardVersion()}`, Astro.site);
+
+// Links to the site's own pages, for the speculation rules in <head>.
+const ownPages = { and: [{ href_matches: '/*' }, { not: { selector_matches: '[target=_blank]' } }] };
+
+// Structured data so search engines can identify the person behind the site.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  // Other structured data (the papers on /publications/) refers to this id.
+  '@id': new URL('/#person', Astro.site).toString(),
+  name: site.name,
+  url: Astro.site?.toString(),
+  image: portraitUrl.toString(),
+  email: `mailto:${site.email}`,
+  jobTitle: site.jobTitle,
+  affiliation: { '@type': 'CollegeOrUniversity', name: site.affiliation },
+  sameAs: links.filter((l) => l.href.startsWith('http')).map((l) => l.href),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+
+    <!-- Fetch a page in the background when its link is hovered, and render
+         it in full once the link is pressed, so it is ready by the time the
+         press ends and opens at once. Browsers without speculation rules
+         ignore this. -->
+    <script
+      is:inline
+      type="speculationrules"
+      set:html={JSON.stringify({
+        prefetch: [{ where: ownPages, eagerness: 'moderate' }],
+        prerender: [{ where: ownPages, eagerness: 'conservative' }],
+      })}
+    />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- Pick the theme before the first paint to avoid a flash:
+         the visitor's saved choice, otherwise the system setting.
+         A page rendered ahead of a press (see the speculation rules above)
+         waits to be opened: its entrance animations hold still until then
+         (see .prerendering in global.css), and the theme is picked again
+         then, in case the visitor switched it in the meantime. -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const pickTheme = () => {
+          let theme = null;
+          try {
+            theme = localStorage.getItem('theme');
+          } catch {}
+          if (theme !== 'light' && theme !== 'dark') {
+            theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          root.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#ffffff' : '#000000';
+        };
+        pickTheme();
+        if (document.prerendering) {
+          root.classList.add('prerendering');
+          document.addEventListener(
+            'prerenderingchange',
+            () => {
+              pickTheme();
+              root.classList.remove('prerendering');
+            },
+            { once: true },
+          );
+        }
+        // A page restored by Back or Forward keeps the theme it was left
+        // with; the visitor may have switched it on another page since
+        addEventListener('pageshow', (event) => {
+          if (event.persisted) pickTheme();
+        });
+      })();
+    </script>
+
+    <!-- Arriving from another page: the content gets its own view transition
+         layer, so it can fade in over a background that stays still (see
+         "Page changes" in global.css). The rest of the new page, header
+         included, takes no part in the transition: it is shown live under
+         the old page as that fades out, because the browser does not pass
+         clicks to anything in a transition, and the menu would otherwise
+         ignore clicks until the content had faded in. The names are only
+         set for the length of the change. The link holds the first paint
+         until <main> exists. -->
+    <link rel="expect" href="#main" blocking="render" />
+    <script is:inline>
+      addEventListener('pagereveal', (event) => {
+        const main = document.getElementById('main');
+        if (!event.viewTransition || !main) return;
+        const root = document.documentElement;
+        main.style.viewTransitionName = 'page';
+        root.style.viewTransitionName = 'none';
+        event.viewTransition.finished.finally(() => {
+          main.style.removeProperty('view-transition-name');
+          root.style.removeProperty('view-transition-name');
+        });
+      });
+    </script>
+    <meta name="generator" content={Astro.generator} />
+    {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph / social cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareCardUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}, ${site.role}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+    <Analytics />
+  </head>
+
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="ambient-field"><span></span><span></span><span></span></div>
+    </div>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Sticky year labels: mark a label as stuck while it rides below the
+      // header, which shows its capsule (see .sticky-year in global.css). The
+      // observed area starts 1px below the stuck position, so a stuck label is
+      // cut off at the top, while one entering from below is cut off at the
+      // bottom.
+      const yearLabels = document.querySelectorAll<HTMLElement>('.sticky-year');
+      if (yearLabels.length) {
+        // The stuck position is read in a ResizeObserver callback, right after
+        // layout, so reading it never makes the browser recompute styles.
+        const sizer = new ResizeObserver(() => {
+          sizer.disconnect();
+          const top = parseFloat(getComputedStyle(yearLabels[0]).top);
+          const observer = new IntersectionObserver(
+            (entries) => {
+              // While the theme switches, Android Chrome measures against a
+              // shifted viewport (see pinSticky in Header.astro), so a stuck
+              // label would lose its capsule for the length of the sweep.
+              // Labels keep their state until the switch ends.
+              if (document.documentElement.classList.contains('theme-switch')) return;
+              for (const entry of entries) {
+                const stuck = entry.intersectionRatio < 1 && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
+                entry.target.classList.toggle('stuck', stuck);
+              }
+            },
+            { rootMargin: `-${top + 1}px 0px 0px 0px`, threshold: 1 },
+          );
+          yearLabels.forEach((label) => observer.observe(label));
+        });
+        sizer.observe(yearLabels[0]);
+      }
+    </script>
+
+    <script>
+      // Pointer light: glass surfaces and cards catch a soft highlight where the
+      // pointer is, and the ambient light leans gently toward it. Elements
+      // marked data-magnetic lean a few pixels toward the pointer too, and
+      // stretch that way a little, like a drop. Mouse and trackpad only; touch
+      // screens keep the static look.
+      if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        const field = document.querySelector<HTMLElement>('.ambient-field');
+        const still = matchMedia('(prefers-reduced-motion: reduce)');
+        let x = 0;
+        let y = 0;
+        let target: HTMLElement | null = null;
+        let magnet: HTMLElement | null = null;
+        let pull = [0, 0];
+        let frame = 0;
+
+        const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
+
+        function release() {
+          if (magnet) {
+            magnet.style.translate = '';
+            magnet.style.scale = '';
+          }
+          magnet = null;
+          pull = [0, 0];
+        }
+
+        function update() {
+          frame = 0;
+          if (target) {
+            const box = target.getBoundingClientRect();
+            target.style.setProperty('--mx', `${x - box.left}px`);
+            target.style.setProperty('--my', `${y - box.top}px`);
+          }
+          if (field && !still.matches) {
+            field.style.setProperty('--px', `${(x / innerWidth - 0.5) * 48}px`);
+            field.style.setProperty('--py', `${(y / innerHeight - 0.5) * 32}px`);
+          }
+          if (magnet && !still.matches) {
+            // Measure from the resting position, not the pulled one.
+            const box = magnet.getBoundingClientRect();
+            const cx = box.left - pull[0] + box.width / 2;
+            const cy = box.top - pull[1] + box.height / 2;
+            pull = [clamp((x - cx) * 0.3, 6), clamp((y - cy) * 0.3, 4)];
+            magnet.style.translate = `${pull[0]}px ${pull[1]}px`;
+            // Longer along the pull, a little thinner across it
+            const along = [Math.abs(pull[0]) / 6, Math.abs(pull[1]) / 4];
+            const sx = 1 + along[0] * 0.05 - along[1] * 0.02;
+            const sy = 1 + along[1] * 0.05 - along[0] * 0.02;
+            magnet.style.scale = `${sx.toFixed(3)} ${sy.toFixed(3)}`;
+          }
+        }
+
+        document.addEventListener(
+          'pointermove',
+          (event) => {
+            x = event.clientX;
+            y = event.clientY;
+            target = (event.target as Element).closest<HTMLElement>('.glass, .sheen');
+            const next = (event.target as Element).closest<HTMLElement>('[data-magnetic]');
+            if (next !== magnet) {
+              release();
+              magnet = next;
+            }
+            frame ||= requestAnimationFrame(update);
+          },
+          { passive: true },
+        );
+
+        // Let go when the pointer leaves the window.
+        document.addEventListener('pointerout', (event) => {
+          if (!event.relatedTarget) release();
+        });
+      }
+    </script>
+
+    <script>
+      // iOS Safari shows pressed (:active) styles only on pages that listen
+      // for touches. Passive, so it never holds up scrolling.
+      document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+
+    <script>
+      // Content already on screen when the page opens is shown in full; the
+      // scroll-in fades are for what scrolls into view later. Otherwise a card
+      // or section title at the bottom edge would sit half faded until the
+      // reader scrolls. Positions are read in a ResizeObserver callback, after
+      // layout and before the first paint. This observer is created after the
+      // others, so its class changes come after all of their measurements.
+      const fading = document.querySelectorAll<HTMLElement>('.reveal, .section-head');
+      if (fading.length) {
+        const firstView = new ResizeObserver(() => {
+          firstView.disconnect();
+          // A card that has not finished fading in still sits up to 36px low
+          // (see reveal-up in global.css).
+          const onScreen = [...fading].filter(
+            (el) => el.getBoundingClientRect().top < innerHeight + (el.classList.contains('reveal') ? 40 : 0),
+          );
+          onScreen.forEach((el) => el.classList.add('first-view'));
+        });
+        firstView.observe(document.documentElement);
+      }
+    </script>
+  </body>
+</html>
+

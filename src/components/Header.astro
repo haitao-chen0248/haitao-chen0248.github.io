@@ -1,0 +1,756 @@
+---
+import { nav, site } from '@/config';
+import AiryMark from './AiryMark.astro';
+
+const path = Astro.url.pathname;
+// Home is current only on the home page; the others for their whole section.
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a href="/" class="brand" aria-label={`${site.name}, home`}>
+      <AiryMark size={18} class="brand-mark" />
+      <span class="brand-name">{site.name}</span>
+    </a>
+
+    <div class="right">
+      <span class="lens glass" aria-hidden="true"></span>
+      <nav aria-label="Main">
+        <ul>
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Light/dark switch. Icons from Feather (MIT); CSS shows the one that fits the current theme. -->
+      <button class="theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle light and dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <span class="progress" aria-hidden="true"></span>
+</header>
+
+<script>
+  // Theme switch. The current theme is already on <html data-theme> (set by the
+  // inline script in BaseLayout). A choice that matches the system setting is not
+  // stored, so the site goes back to following the system.
+  const KEY = 'theme';
+  const root = document.documentElement;
+  const systemQuery = matchMedia('(prefers-color-scheme: light)');
+  const systemTheme = () => (systemQuery.matches ? 'light' : 'dark');
+
+  function readSaved(): string | null {
+    try {
+      return localStorage.getItem(KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function save(theme: string) {
+    try {
+      if (theme === systemTheme()) localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, theme);
+    } catch {
+      /* Storage unavailable (private mode, blocked cookies): the switch still works for this page. */
+    }
+  }
+
+  function apply(theme: string) {
+    root.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
+  }
+
+  // Height of the viewport with the browser bars retracted (100lvh). On
+  // phones the page snapshot for a view transition covers this whole area,
+  // which is taller than innerHeight while the bars are showing.
+  function largeViewportHeight(): number {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;height:100lvh;visibility:hidden;pointer-events:none';
+    document.body.append(probe);
+    const height = probe.offsetHeight;
+    probe.remove();
+    return height;
+  }
+
+  // Android Chrome places sticky elements as if the address bar were hidden
+  // while a view transition runs, so a stuck header slid up out of sight for
+  // the length of the theme sweep. Each sticky element is held where it is,
+  // by relative positioning, until the transition ends. Returns the undo.
+  function pinSticky(): () => void {
+    const sticky = [...document.querySelectorAll<HTMLElement>('.site-header, .sticky-year')];
+    const shifts = sticky.map((el) => {
+      const now = el.getBoundingClientRect().top;
+      el.style.position = 'static';
+      const rest = el.getBoundingClientRect().top;
+      el.style.removeProperty('position');
+      return now - rest;
+    });
+    sticky.forEach((el, i) => {
+      el.style.position = 'relative';
+      el.style.top = `${shifts[i]}px`;
+    });
+    return () =>
+      sticky.forEach((el) => {
+        el.style.removeProperty('position');
+        el.style.removeProperty('top');
+      });
+  }
+
+  // Leaving for another page: the browser captures this page for the
+  // cross-fade. The sticky bars are held in place first, so Android Chrome
+  // captures them where they are and not out of sight. They are let go again
+  // if the page comes back from the back-forward cache.
+  addEventListener('pageswap', (event) => {
+    if (!(event as Event & { viewTransition?: unknown }).viewTransition) return;
+    const unpin = pinSticky();
+    addEventListener('pageshow', unpin, { once: true });
+  });
+
+  const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  toggle?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    save(next);
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      apply(next);
+      return;
+    }
+    // The new theme spreads out from the switch as a growing circle. It is
+    // sized to reach past the farthest corner of the snapshot, including the
+    // area under the browser bars (counted twice, since the bars may sit at
+    // the top or the bottom), so no strip is left to pop in at the end. The
+    // easing keeps it moving until it reaches that corner.
+    const box = toggle.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    const height = Math.max(innerHeight, largeViewportHeight());
+    const bars = height - innerHeight;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, height - y) + bars) + 24;
+    const unpin = pinSticky();
+    root.classList.add('theme-switch');
+    const transition = document.startViewTransition(() => apply(next));
+    transition.ready
+      .then(() =>
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 600, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
+        ),
+      )
+      .catch(() => {});
+    transition.finished.finally(() => {
+      root.classList.remove('theme-switch');
+      unpin();
+    });
+  });
+
+  // Follow live system changes unless the visitor picked a theme.
+  systemQuery.addEventListener('change', () => {
+    if (!readSaved()) apply(systemTheme());
+  });
+
+  // Menu lens: a glass capsule that rests behind the current page's menu item
+  // and glides to whichever menu item the pointer or keyboard focus is on.
+  // It stays with the menu: on the theme switch it rests on the current item,
+  // so switching the theme does not send it back and forth.
+  const bar = document.querySelector<HTMLElement>('.site-header .right');
+  const lens = bar?.querySelector<HTMLElement>('.lens');
+  if (bar && lens) {
+    let current = bar.querySelector<HTMLElement>('nav a[aria-current="page"]');
+    const initial = current;
+    let active: HTMLElement | null = null;
+    // Where the lens was last placed
+    let last: Spot | null = null;
+
+    // How the lens reaches an item: it glides on a spring, jumps there
+    // (fading in if it was hidden), or is simply there with no transition.
+    type Move = 'glide' | 'jump' | 'still';
+    type Spot = { x: number; y: number; w: number; h: number };
+
+    // Layout is always read before any style is changed, so a read never
+    // makes the browser lay out the page again partway through a script.
+    function measure(item: HTMLElement): Spot {
+      const box = item.getBoundingClientRect();
+      const base = bar!.getBoundingClientRect();
+      const pad = item.matches('nav a') ? parseFloat(getComputedStyle(bar!).getPropertyValue('--lens-pad')) : 0;
+      const height = Math.max(box.height, 30);
+      return { x: box.left - base.left - pad, y: box.top - base.top - (height - box.height) / 2, w: box.width + pad * 2, h: height };
+    }
+
+    // After a jump or a still placement, "then" runs once the lens has been
+    // drawn in place and its transitions are back.
+    let settling = 0;
+    function apply(spot: Spot, move: Move, then?: () => void) {
+      // Only the arriving glide waits (see arrive below); a glide already
+      // under way keeps its delay.
+      lens!.classList.remove('arriving');
+      // Start from the item itself when the lens is not on screen yet.
+      if (move === 'glide' && !lens!.classList.contains('shown')) move = 'jump';
+      const from = last;
+      last = spot;
+      // A glide stretches the lens; arrive() marks its own glide as
+      // arriving (delayed) right after this, so that is read once this task
+      // is done.
+      if (move === 'glide' && from) {
+        const distance = Math.abs(spot.x - from.x);
+        queueMicrotask(() => stretch(distance, lens!.classList.contains('arriving') ? 120 : 0));
+      }
+      if (move !== 'glide') {
+        lens!.classList.add(move === 'still' ? 'still' : 'instant');
+        // Transitions come back once a frame has been drawn in place.
+        cancelAnimationFrame(settling);
+        settling = requestAnimationFrame(() => {
+          settling = requestAnimationFrame(() => {
+            lens!.classList.remove('instant', 'still');
+            then?.();
+          });
+        });
+      }
+      lens!.style.setProperty('--lx', `${spot.x}px`);
+      lens!.style.setProperty('--ly', `${spot.y}px`);
+      lens!.style.setProperty('--lw', `${spot.w}px`);
+      lens!.style.setProperty('--lh', `${spot.h}px`);
+      lens!.classList.add('shown');
+    }
+
+    function place(item: HTMLElement | null, move: Move = 'glide') {
+      active = item;
+      lean(0);
+      if (item) apply(measure(item), move);
+      else lens!.classList.remove('shown');
+    }
+
+    // Liquid: gliding to another item, the lens stretches along its path
+    // and settles back with a little wobble, as a drop would, more for a
+    // longer glide. Resting under the pointer, it leans a few pixels toward
+    // it, stretching that way. Not with reduced motion.
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let stretching: Animation | null = null;
+    function stretch(distance: number, delay: number) {
+      if (still.matches || distance < 8) return;
+      // Longest while it moves fastest, squeezed as it overshoots and stops,
+      // in step with the glide's spring (0.6s)
+      const k = Math.min(distance / 300, 1) * 0.12;
+      // A glide that starts while another is stretching picks up from the
+      // lens's shape at that moment, so it never snaps back first.
+      const now = stretching?.playState === 'running' ? getComputedStyle(lens!).scale : 'none';
+      stretching?.cancel();
+      stretching = lens!.animate(
+        [
+          { scale: now === 'none' ? '1 1' : now },
+          { scale: `${1 + k} ${1 - k * 0.4}`, offset: 0.25 },
+          { scale: `${1 - k * 0.3} ${1 + k * 0.2}`, offset: 0.5 },
+          { scale: `${1 + k * 0.08} ${1 - k * 0.04}`, offset: 0.75 },
+          { scale: '1 1' },
+        ],
+        { duration: 650, delay, easing: 'ease-in-out' },
+      );
+    }
+
+    // pull: where the pointer is across the item, from -1 (left edge) to 1
+    function lean(pull: number) {
+      if (still.matches && pull) return;
+      lens!.style.setProperty('--lean', `${(pull * 4).toFixed(2)}px`);
+      lens!.style.setProperty('--sx', (1 + Math.abs(pull) * 0.06).toFixed(3));
+      lens!.style.setProperty('--sy', (1 - Math.abs(pull) * 0.03).toFixed(3));
+    }
+
+    bar.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse' || !last || !active?.matches('nav a')) return;
+      const x = event.clientX - bar.getBoundingClientRect().left;
+      lean(Math.max(-1, Math.min(1, (x - last.x - last.w / 2) / (last.w / 2))));
+    });
+
+    // A finger tapping a menu item is about to open another page. The lens
+    // stays where it is, with no squeeze, and the next page glides it over
+    // (see the arrival below): with pages opening at once, the old page is
+    // replaced as soon as the finger lifts, and a move started there was
+    // cut off mid-spring, or skipped.
+    const tapsPage = (event: PointerEvent) =>
+      event.pointerType !== 'mouse' && !!(event.target as Element).closest('nav a');
+    let tapping = false;
+
+    for (const item of bar.querySelectorAll<HTMLElement>('nav a')) {
+      item.addEventListener('pointerenter', (event) => {
+        if (!tapsPage(event)) place(item);
+      });
+      item.addEventListener('focus', () => {
+        if (!tapping) place(item);
+      });
+      item.addEventListener('blur', () => place(current));
+    }
+    const themeSwitch = bar.querySelector<HTMLElement>('.theme-toggle');
+    themeSwitch?.addEventListener('pointerenter', () => place(current));
+    themeSwitch?.addEventListener('focus', () => place(current));
+    bar.addEventListener('pointerleave', () => {
+      if (!tapping) place(current);
+    });
+    // A touch that turns into a scroll is not a tap.
+    bar.addEventListener('pointercancel', () => {
+      if (!tapping) return;
+      tapping = false;
+      place(current);
+    });
+
+    // Pressing an item squeezes it a little, and the lens with a menu item;
+    // letting go springs them back.
+    let pressed: Element | null = null;
+    bar.addEventListener('pointerdown', (event) => {
+      tapping = tapsPage(event);
+      if (tapping) return;
+      pressed = (event.target as Element).closest('nav li, .theme-toggle');
+      pressed?.classList.add('pressed');
+      if (pressed?.matches('nav li')) lens.classList.add('pressed');
+    });
+    const release = () => {
+      pressed?.classList.remove('pressed');
+      pressed = null;
+      lens.classList.remove('pressed');
+    };
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
+
+    // A chosen page becomes the current item right away, so the lens stays on
+    // it while the next page loads and that page's menu picks up from there.
+    for (const link of bar.querySelectorAll<HTMLAnchorElement>('nav a')) {
+      link.addEventListener('click', (event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (!tapping) place(link);
+        tapping = false;
+        current?.classList.remove('chosen');
+        current = link;
+        link.classList.add('chosen');
+      });
+    }
+
+    // Leaving for another page of the site: note which item the lens is on,
+    // so the next page's lens can start there.
+    const HANDOFF = 'lens-handoff';
+    addEventListener('pageswap', (event) => {
+      const to = event.activation?.entry.url;
+      if (!to) return;
+      const from = active?.matches('nav a') && lens.classList.contains('shown') ? active.getAttribute('href') : null;
+      try {
+        sessionStorage.setItem(HANDOFF, JSON.stringify({ to, from }));
+      } catch {}
+    });
+
+    // The item the lens was on in the page just left, if this page was
+    // opened from there and the lens was on another item.
+    function cameFrom(): HTMLElement | null {
+      let note: { to?: string; from?: string | null } | null = null;
+      try {
+        note = JSON.parse(sessionStorage.getItem(HANDOFF) ?? 'null');
+        sessionStorage.removeItem(HANDOFF);
+      } catch {}
+      const href = note?.to === location.href ? note.from : null;
+      const item = href ? [...bar!.querySelectorAll<HTMLElement>('nav a')].find((a) => a.getAttribute('href') === href) : null;
+      return item && item !== current ? item : null;
+    }
+
+    // On arrival the lens is simply there, without fading in, so during a
+    // page change it carries straight over from the previous page's menu.
+    // When it rested on another item there, it starts on that item and
+    // glides over to this page's as the content fades in. The glide waits
+    // for the old page to fade out first (see .lens.arriving), so it is
+    // seen whole and not under the old page's lens.
+    function arrive() {
+      const item = current;
+      if (!item) return;
+      const start = cameFrom();
+      const from = start && measure(start);
+      const to = measure(item);
+      requestAnimationFrame(() => {
+        active = item;
+        if (from) {
+          apply(from, 'still', () => {
+            apply(to, 'glide');
+            lens!.classList.add('arriving');
+          });
+        } else apply(to, 'still');
+      });
+    }
+
+    // Coming back with the Back button can restore this page as it was left;
+    // the lens arrives on this page's own item again.
+    addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      current?.classList.remove('chosen');
+      current = initial;
+      arrive();
+    });
+
+    // The first layout and later size changes are measured in a
+    // ResizeObserver callback, which comes right after layout, so measuring
+    // there costs nothing; the lens moves in the next frame. A page rendered
+    // ahead of a press arrives once it is opened.
+    let arrived = false;
+    new ResizeObserver(() => {
+      if (!arrived) {
+        arrived = true;
+        if ((document as Document & { prerendering?: boolean }).prerendering) {
+          document.addEventListener('prerenderingchange', arrive, { once: true });
+        } else arrive();
+        return;
+      }
+      if (!active) return;
+      const spot = measure(active);
+      requestAnimationFrame(() => apply(spot, 'jump'));
+    }).observe(bar);
+  }
+</script>
+
+<style>
+  /* Frosted-glass bar. At the top of the page it is clear and lets the
+     ambient light through; it frosts over as the page scrolls. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(8px) saturate(180%);
+  }
+
+  /* The shorthand and the timeline sit in separate rules on purpose; see the
+     note on .reveal in global.css. */
+  @supports (animation-timeline: scroll()) {
+    :where(.site-header) {
+      animation: header-clear linear both;
+    }
+
+    .site-header {
+      animation-timeline: scroll();
+      animation-range: 0 64px;
+    }
+  }
+
+  /* Clear means no frosting either: the frost's saturation boost deepened
+     the dark theme's blue light behind the bar, which showed a line along
+     its bottom edge at the top of the page */
+  @keyframes header-clear {
+    from {
+      background-color: transparent;
+      border-bottom-color: transparent;
+      box-shadow: inset 0 14px 10px -10px transparent;
+      backdrop-filter: none;
+    }
+  }
+
+  /* Reading progress: a hairline along the bottom of the bar that fills as
+     the page scrolls. Only shown where scroll-driven animations work. */
+  .progress {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    :where(.progress) {
+      animation: progress linear both;
+    }
+
+    .progress {
+      display: block;
+      animation-timeline: scroll(root);
+    }
+  }
+
+  @keyframes progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 9px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+
+  .brand :global(.brand-mark) {
+    color: var(--accent);
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .brand:hover :global(.brand-mark) {
+      transform: scale(1.12);
+    }
+  }
+
+  .right {
+    --lens-pad: 12px;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Glass capsule behind the current or hovered menu item. It moves on a
+     spring, so it overshoots a little and settles like a drop of liquid. */
+  .lens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: var(--lw, 0px);
+    height: var(--lh, 0px);
+    border-radius: 999px;
+    backdrop-filter: none;
+    opacity: 0;
+    /* --lean, --sx, and --sy lean it toward the pointer (script above) */
+    transform: translate(calc(var(--lx, 0px) + var(--lean, 0px)), var(--ly, 0px))
+      scale(calc(var(--ls, 1) * var(--sx, 1)), calc(var(--ls, 1) * var(--sy, 1)));
+    transition:
+      opacity 0.25s,
+      transform 0.6s var(--spring),
+      width 0.6s var(--spring),
+      height 0.6s var(--spring);
+    pointer-events: none;
+  }
+
+  .lens.shown {
+    opacity: 1;
+  }
+
+  .lens.pressed {
+    --ls: 0.92;
+    transition:
+      opacity 0.25s,
+      transform 0.15s var(--ease-out),
+      width 0.6s var(--spring),
+      height 0.6s var(--spring);
+  }
+
+  .lens.instant {
+    transition: opacity 0.25s;
+  }
+
+  /* Arriving from another page, the glide starts once the old page has
+     mostly faded out, together with the content (page-in in global.css). */
+  .lens.arriving {
+    transition-delay: 0s, 0.12s, 0.12s, 0.12s;
+  }
+
+  .lens.still {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lens,
+    .lens.pressed {
+      --ls: 1;
+      transition: opacity 0.25s;
+    }
+  }
+
+  nav ul {
+    --gap: 24px;
+    display: flex;
+    gap: var(--gap);
+  }
+
+  nav li {
+    transition: scale 0.5s var(--spring);
+  }
+
+  nav a {
+    position: relative;
+    font-size: 13.5px;
+    color: var(--text-2);
+    transition: color 0.2s;
+  }
+
+  /* Tap areas: the menu text is only about 17px tall, and a finger that
+     landed just above, below, or between items hit nothing, so a page
+     sometimes took two taps to open. Each item's area now fills the bar's
+     height and half the gap on either side; the logo and the theme switch
+     get at least 44px. Nothing moves visually. */
+  nav a::after,
+  .brand::after,
+  .theme-toggle::after {
+    content: '';
+    position: absolute;
+  }
+
+  nav a::after {
+    inset: -16px calc(var(--gap) / -2);
+  }
+
+  .brand::after {
+    inset: -13px -12px;
+  }
+
+  .theme-toggle::after {
+    inset: -7px;
+  }
+
+  nav a[aria-current='page'],
+  nav a.chosen,
+  nav li.pressed a {
+    color: var(--text);
+  }
+
+  @media (hover: hover) {
+    nav a:hover {
+      color: var(--text);
+    }
+  }
+
+  /* Once another page is chosen, only that item stays highlighted */
+  nav:has(.chosen) a[aria-current='page']:not(.chosen, :hover) {
+    color: var(--text-2);
+  }
+
+  /* Pressed: a quick squeeze; the release springs back */
+  nav li.pressed {
+    scale: 0.94;
+    transition: scale 0.12s var(--ease-out);
+  }
+
+  .theme-toggle.pressed {
+    scale: 0.94;
+    transition:
+      color 0.2s,
+      scale 0.12s var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    nav li.pressed,
+    .theme-toggle.pressed {
+      scale: none;
+    }
+  }
+
+  .theme-toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: var(--text-2);
+    transition:
+      color 0.2s,
+      scale 0.5s var(--spring);
+  }
+
+  @media (hover: hover) {
+    .theme-toggle:hover {
+      color: var(--text);
+    }
+  }
+
+  .theme-toggle svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-sun {
+    display: var(--show-sun);
+  }
+
+  .icon-moon {
+    display: var(--show-moon);
+  }
+
+  @media (max-width: 600px) {
+    /* On phones, text scrolling under the bar stayed readable along its top
+       edge, where Chrome's blur is weakest: a smaller radius frosts more
+       evenly, and a soft fade of the page color covers that edge. */
+    .site-header {
+      backdrop-filter: blur(5px) saturate(180%);
+      box-shadow: inset 0 14px 10px -10px color-mix(in srgb, var(--bg) 85%, transparent);
+    }
+
+    .right {
+      --lens-pad: 8px;
+      gap: 10px;
+    }
+
+    nav ul {
+      --gap: 14px;
+    }
+
+    nav a {
+      font-size: 13px;
+    }
+  }
+
+  /* On phones keep the logo mark and drop the name to make room for the menu */
+  @media (max-width: 520px) {
+    .brand-name {
+      display: none;
+    }
+  }
+
+  /* The narrowest phones have room for the menu only; Home is in it */
+  @media (max-width: 340px) {
+    .brand {
+      display: none;
+    }
+
+    .inner {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .inner {
+      gap: 12px;
+    }
+
+    .right {
+      --lens-pad: 7px;
+      gap: 6px;
+    }
+
+    nav ul {
+      --gap: 11px;
+    }
+
+    nav a {
+      font-size: 12.5px;
+    }
+  }
+</style>

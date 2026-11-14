@@ -1,0 +1,162 @@
+---
+// Lightweight YouTube embed. Shows a poster image first and loads the real
+// player only after a click, which keeps pages fast and avoids third-party
+// scripts until the visitor asks for them. Without JavaScript the poster
+// simply links to the video on YouTube.
+import Photo from './Photo.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  /** Poster stored with the site. It shows where YouTube's images are
+      blocked, and is much smaller. Without one, YouTube's is used. */
+  poster?: ImageMetadata;
+  /** Load the poster right away (the first one on a page) */
+  priority?: boolean;
+}
+
+const { id, title, poster, priority = false } = Astro.props;
+const watchUrl = `https://www.youtube.com/watch?v=${id}`;
+const remotePoster = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+// Older uploads may lack a max-resolution poster, so fall back to the HQ one.
+// If that fails too (e.g. blocked by a network filter), hide the image and
+// let the gradient background show instead of a broken-image icon.
+const fallback =
+  "if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.onerror=null;this.style.visibility='hidden'}";
+---
+
+<div class="yt" data-youtube-id={id} data-youtube-title={title}>
+  <a class="poster sheen" href={watchUrl} target="_blank" rel="noopener">
+    {
+      poster ? (
+        <Photo src={poster} alt="" widths={[340, 680, 1020, 1280]} sizes="(max-width: 760px) 100vw, 340px" priority={priority} />
+      ) : (
+        <img src={remotePoster} alt="" loading="lazy" decoding="async" width="1280" height="720" onerror={fallback} />
+      )
+    }
+    <span class="play" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 5.5v13l11-6.5z" fill="currentColor"></path></svg>
+    </span>
+    <span class="visually-hidden">Play video: {title}</span>
+  </a>
+</div>
+
+<script>
+  // Replace the poster with the YouTube player on click.
+  function activate(container: HTMLElement) {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${container.dataset.youtubeId}?autoplay=1&rel=0`;
+    iframe.title = container.dataset.youtubeTitle ?? 'YouTube video';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    container.replaceChildren(iframe);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-youtube-id]').forEach((container) => {
+    container.querySelector('a')?.addEventListener('click', (event) => {
+      // Let modified clicks open YouTube in a new tab as usual.
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+      event.preventDefault();
+      activate(container);
+    });
+  });
+</script>
+
+<style>
+  .yt {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius);
+    /* Visible while the poster loads or if it is blocked */
+    background: var(--tile);
+    transition:
+      translate 0.6s var(--spring),
+      scale 0.6s var(--spring),
+      box-shadow 0.4s;
+  }
+
+  /* The card rises while its poster is hovered, as other cards do; it
+     stays put once the player is loaded. */
+  @media (hover: hover) {
+    .yt:has(.poster:hover) {
+      box-shadow: var(--glass-drop);
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .yt:has(.poster:hover) {
+      translate: 0 -3px;
+    }
+  }
+
+  /* Gives a little while the poster is pressed, like other cards */
+  @media (prefers-reduced-motion: no-preference) {
+    .yt:has(.poster:active) {
+      scale: 0.97;
+      transition:
+        translate 0.6s var(--spring),
+        scale 0.15s var(--ease-out),
+        box-shadow 0.4s;
+    }
+  }
+
+  .poster,
+  .yt :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* Dimmed a little in dark mode, as the paper figures are: most posters
+     are bright slides */
+  .poster :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: var(--figure-dim);
+    transition: transform 0.8s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .poster:hover :global(img) {
+      transform: scale(1.03);
+    }
+  }
+
+  /* Glass play button */
+  .play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: #fff;
+    background: rgb(40 40 42 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.3),
+      inset 0 0 0 1px rgb(255 255 255 / 0.12),
+      0 4px 16px rgb(0 0 0 / 0.25);
+    backdrop-filter: blur(6px) saturate(180%);
+    transform: translate(-50%, -50%);
+    transition:
+      transform 0.6s var(--spring),
+      background-color 0.3s;
+  }
+
+  .play svg {
+    margin-left: 2px;
+  }
+
+  @media (hover: hover) {
+    .poster:hover .play {
+      background: rgb(40 40 42 / 0.7);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+  }
+</style>

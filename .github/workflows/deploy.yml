@@ -1,0 +1,84 @@
+# Build the Astro site and publish it to GitHub Pages on every push to master.
+# Pull requests into master are built and
+# checked the same way, but not published.
+# One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# The site is also rebuilt once a year, on January 1, so the year in the
+# footer's copyright line stays right even when nothing else has changed.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: '23 5 1 1 *' # 05:23 UTC on January 1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # Allow one deployment at a time; let an in-progress deploy finish.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+      # Confirm the share card is live and put one-click preview refresh links
+      # in the run summary (LinkedIn and Facebook cache link previews).
+      - name: Share preview
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          live=no
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS -o /dev/null -w '%{content_type}' "${PAGE_URL}og.jpg" | grep -q image/jpeg; then
+              live=yes
+              break
+            fi
+            sleep 10
+          done
+          [ "$live" = yes ] || echo "::warning::Share card not reachable yet at ${PAGE_URL}og.jpg"
+          enc=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$PAGE_URL")
+          {
+            echo "### Share preview"
+            echo
+            echo "![Share card](${PAGE_URL}og.jpg)"
+            echo
+            echo "If the card changed, refresh cached previews once:"
+            echo
+            echo "- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/inspect/${enc})"
+            echo "- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/?q=${enc})"
+          } >> "$GITHUB_STEP_SUMMARY"

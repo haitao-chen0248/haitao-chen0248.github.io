@@ -1,0 +1,344 @@
+---
+// "On this page" dock: a glass capsule centered at the bottom of the screen
+// that lists the page's sections. It appears once the intro (the first
+// section) scrolls away and hides again over the footer. A glass lens rests
+// behind the section in the middle of the screen and glides to whichever
+// one the pointer is on, like the menu lens in the header, stretching and
+// leaning like a drop as that one does.
+interface Props {
+  /** Section ids on the page and their short labels, in page order. */
+  sections: { id: string; label: string }[];
+}
+
+const { sections } = Astro.props;
+---
+
+<nav class="dock glass" aria-label="On this page">
+  <span class="track" aria-hidden="true"><span class="lens"></span></span>
+  {
+    sections.map((s) => (
+      <a href={`#${s.id}`} data-section={s.id}>
+        {s.label}
+      </a>
+    ))
+  }
+</nav>
+
+<script>
+  const dock = document.querySelector<HTMLElement>('.dock');
+  const lens = dock?.querySelector<HTMLElement>('.lens');
+  if (dock && lens) {
+    const links = [...dock.querySelectorAll<HTMLAnchorElement>('a[data-section]')];
+    const sections = links
+      .map((link) => document.getElementById(link.dataset.section!))
+      .filter((s): s is HTMLElement => s !== null);
+    let current: HTMLAnchorElement | null = null;
+
+    // Where each link sits in the dock. It is measured in a ResizeObserver
+    // callback, which comes right after layout, so moving the lens never
+    // makes the browser lay out the page again.
+    const spots = new Map<HTMLAnchorElement, { x: number; w: number }>();
+    let settling = 0;
+    let active: HTMLAnchorElement | null = null;
+    let last: { x: number; w: number } | null = null;
+
+    // Liquid, as the menu lens in the header: gliding to another section,
+    // the lens stretches along its path while it moves fastest, squeezes as
+    // it overshoots and stops, and settles, more for a longer glide. Resting
+    // under the pointer, it leans a few pixels toward it, stretching that
+    // way. Not with reduced motion.
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let stretching: Animation | null = null;
+    function stretch(distance: number) {
+      if (still.matches || distance < 8) return;
+      const k = Math.min(distance / 300, 1) * 0.12;
+      // A glide that starts while another is stretching picks up from the
+      // lens's shape at that moment, so it never snaps back first.
+      const now = stretching?.playState === 'running' ? getComputedStyle(lens!).scale : 'none';
+      stretching?.cancel();
+      stretching = lens!.animate(
+        [
+          { scale: now === 'none' ? '1 1' : now },
+          { scale: `${1 + k} ${1 - k * 0.4}`, offset: 0.25 },
+          { scale: `${1 - k * 0.3} ${1 + k * 0.2}`, offset: 0.5 },
+          { scale: `${1 + k * 0.08} ${1 - k * 0.04}`, offset: 0.75 },
+          { scale: '1 1' },
+        ],
+        { duration: 650, easing: 'ease-in-out' },
+      );
+    }
+
+    // pull: where the pointer is across the section's label, from -1 to 1
+    function lean(pull: number) {
+      if (still.matches && pull) return;
+      lens!.style.setProperty('--lean', `${(pull * 4).toFixed(2)}px`);
+      lens!.style.setProperty('--sx', (1 + Math.abs(pull) * 0.06).toFixed(3));
+      lens!.style.setProperty('--sy', (1 - Math.abs(pull) * 0.03).toFixed(3));
+    }
+
+    function place(link: HTMLAnchorElement | null, animate = true) {
+      const spot = link && spots.get(link);
+      if (!spot) return;
+      active = link;
+      lean(0);
+      // To a section at either end, the lens eases in without overshooting:
+      // it would run into the dock's rounded end
+      lens!.classList.toggle('edge', link === links[0] || link === links[links.length - 1]);
+      if (animate && last) stretch(Math.abs(spot.x - last.x));
+      last = spot;
+      if (!animate) {
+        lens!.classList.add('instant');
+        // Transitions come back once a frame has been drawn in place.
+        cancelAnimationFrame(settling);
+        settling = requestAnimationFrame(() => {
+          settling = requestAnimationFrame(() => lens!.classList.remove('instant'));
+        });
+      }
+      lens!.style.setProperty('--lx', `${spot.x}px`);
+      lens!.style.setProperty('--lw', `${spot.w}px`);
+    }
+
+    new ResizeObserver(() => {
+      for (const link of links) spots.set(link, { x: link.offsetLeft, w: link.offsetWidth });
+      requestAnimationFrame(() => place(current, false));
+    }).observe(dock);
+
+    function mark(id: string) {
+      current = links.find((link) => link.dataset.section === id) ?? null;
+      for (const link of links) {
+        if (link === current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      }
+      place(current, dock!.classList.contains('shown'));
+    }
+
+    // Shown once the first section is half gone, hidden over the footer.
+    let introGone = false;
+    let footerShown = false;
+    const update = () => dock.classList.toggle('shown', introGone && !footerShown);
+    new IntersectionObserver(([entry]) => ((introGone = entry.intersectionRatio < 0.5), update()), {
+      threshold: [0, 0.5, 1],
+    }).observe(sections[0]);
+    const footer = document.querySelector('footer');
+    if (footer) new IntersectionObserver(([entry]) => ((footerShown = entry.isIntersecting), update())).observe(footer);
+
+    // The section crossing the middle of the screen is the current one.
+    // After a tap on the dock, the page scrolls to that section: those it
+    // passes on the way are not marked, or the lens would swing back and
+    // forth across the dock. Marking resumes once the scroll stops.
+    let heading: string | null = null;
+    let settle = 0;
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && (!heading || entry.target.id === heading)) mark(entry.target.id);
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => watcher.observe(s));
+
+    // The scroll has stopped. The tapped section stays marked if it is on
+    // screen (the last one may never reach the middle, at the bottom of the
+    // page); otherwise mark the section crossing the middle, as the watcher
+    // would have.
+    function arrived() {
+      const tapped = heading && document.getElementById(heading);
+      heading = null;
+      if (tapped) {
+        const box = tapped.getBoundingClientRect();
+        if (box.top < innerHeight * 0.9 && box.bottom > 0) return;
+      }
+      const line = innerHeight * 0.475;
+      const here = sections.find((s) => {
+        const box = s.getBoundingClientRect();
+        return box.top <= line && box.bottom > line;
+      });
+      if (here) mark(here.id);
+    }
+    function waitForStop(ms: number) {
+      clearTimeout(settle);
+      settle = window.setTimeout(arrived, ms);
+    }
+    // Browsers that report the end of a scroll (scrollend) are followed to
+    // it; others count a pause of 250ms in scrolling as the end.
+    const ends = 'onscrollend' in window;
+    addEventListener(
+      'scroll',
+      () => {
+        if (!heading) return;
+        if (ends) clearTimeout(settle);
+        else waitForStop(250);
+      },
+      { passive: true },
+    );
+    addEventListener('scrollend', () => {
+      if (heading) waitForStop(0);
+    });
+
+    for (const link of links) {
+      link.addEventListener('pointerenter', () => place(link));
+      link.addEventListener('focus', () => place(link));
+      link.addEventListener('click', () => {
+        heading = link.dataset.section!;
+        mark(heading);
+        // In case the page does not need to scroll at all
+        waitForStop(600);
+      });
+    }
+    dock.addEventListener('pointerleave', () => place(current));
+    dock.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse' || !active || !last) return;
+      const x = event.clientX - dock.getBoundingClientRect().left;
+      lean(Math.max(-1, Math.min(1, (x - last.x - last.w / 2) / (last.w / 2))));
+    });
+    dock.addEventListener('focusout', () => place(current));
+  }
+</script>
+
+<style>
+  .dock {
+    position: fixed;
+    left: 50%;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 45;
+    display: flex;
+    gap: 2px;
+    padding: 5px;
+    border-radius: 999px;
+    /* More opaque than other glass: text scrolls right under it and must
+       never compete with the labels. A small blur radius, since Chrome
+       frosts a thin bar less, not more, as the radius grows. */
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    backdrop-filter: blur(4px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 var(--glass-hi),
+      0 12px 32px rgb(0 0 0 / 0.14);
+    opacity: 0;
+    visibility: hidden;
+    translate: -50% 16px;
+    transition:
+      opacity 0.4s var(--ease-out),
+      translate 0.7s var(--spring),
+      visibility 0.4s;
+  }
+
+  /* Without the blur, sharp text behind would show through: nearly opaque */
+  @supports not (backdrop-filter: blur(1px)) {
+    .dock {
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .dock {
+      background: var(--bg);
+      backdrop-filter: none;
+    }
+  }
+
+  .dock.shown {
+    opacity: 1;
+    visibility: visible;
+    translate: -50% 0;
+  }
+
+  /* Tap areas fill the dock's height */
+  .dock a::after {
+    content: '';
+    position: absolute;
+    inset: -5px -1px;
+  }
+
+  .dock a {
+    position: relative;
+    z-index: 1;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+    transition: color 0.25s;
+  }
+
+  .dock a[aria-current] {
+    color: var(--text);
+  }
+
+  @media (hover: hover) {
+    .dock a:hover {
+      color: var(--text);
+    }
+  }
+
+  /* The lens stays inside the dock: gliding to a section at either end,
+     its overshoot meets the dock's rounded end instead of poking out. The
+     dock itself cannot clip, as its glass rim sits just outside it. */
+  .track {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* Moves on a spring, so it overshoots a little and settles */
+  .lens {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    width: var(--lw, 0px);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    box-shadow: inset 0 1px 0 var(--glass-hi);
+    translate: calc(var(--lx, 0px) + var(--lean, 0px)) 0;
+    /* Leaning toward the pointer (--sx, --sy); the glide's stretch animates
+       scale */
+    transform: scale(var(--sx, 1), var(--sy, 1));
+    transition:
+      translate 0.6s var(--spring),
+      width 0.6s var(--spring),
+      transform 0.6s var(--spring);
+  }
+
+  .lens.edge {
+    transition:
+      translate 0.6s var(--ease-out),
+      width 0.6s var(--ease-out),
+      transform 0.6s var(--spring);
+  }
+
+  .lens.instant {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock,
+    .lens {
+      transition: opacity 0.3s;
+    }
+  }
+
+  @media (max-width: 440px) {
+    .dock a {
+      padding: 7px 11px;
+      font-size: 12.5px;
+    }
+  }
+
+  /* Narrow phones: tighter, so all five sections still fit across */
+  @media (max-width: 400px) {
+    .dock a {
+      padding-inline: 8px;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .dock a {
+      padding-inline: 5px;
+      font-size: 11.5px;
+    }
+  }
+</style>

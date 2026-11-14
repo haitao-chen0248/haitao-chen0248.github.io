@@ -1,0 +1,134 @@
+---
+import { analytics, site } from '@/config';
+import { profileLinks } from '@/utils/links';
+
+const year = new Date().getFullYear();
+
+// Optional public visit total from GoatCounter (see src/config.ts).
+const code = analytics.goatcounter.trim();
+const visitsUrl = analytics.showVisits && code ? `https://${code}.goatcounter.com/counter/TOTAL.json` : '';
+---
+
+<footer class="site-footer">
+  <div class="container inner">
+    <p>
+      Copyright © {year} {site.name}. All rights reserved.
+      {visitsUrl && <span class="visits" data-url={visitsUrl} hidden />}
+    </p>
+
+    <ul class="links">
+      {
+        profileLinks().map((link) => (
+          <li class:list={{ secondary: link.secondary }}>
+            <a href={link.href} target={link.newTab ? '_blank' : undefined} rel="noopener">
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+{
+  visitsUrl && (
+    <script is:inline>
+      // Fill in the total visit count; stay hidden if the request fails.
+      (() => {
+        const el = document.querySelector('.site-footer .visits');
+        if (!el) return;
+        fetch(el.dataset.url)
+          .then((r) => (r.ok ? r.json() : Promise.reject()))
+          .then((data) => {
+            el.textContent = ' · ' + data.count + ' visits';
+            el.hidden = false;
+          })
+          .catch(() => {});
+      })();
+    </script>
+  )
+}
+
+<style>
+  .site-footer {
+    margin-top: clamp(32px, 5vw, 56px);
+    background: var(--tile);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding-block: 14px;
+    font-size: 12px;
+    letter-spacing: -0.005em;
+    color: var(--text-3);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* Thin dividers between links */
+  .links li + li {
+    border-left: 1px solid var(--line-strong);
+    margin-left: 10px;
+    padding-left: 10px;
+  }
+
+  /* Phones: two short rows, the copyright line and the main links */
+  @media (max-width: 640px) {
+    .site-footer {
+      margin-top: 28px;
+    }
+
+    .inner {
+      gap: 6px;
+      padding-block: 12px;
+      font-size: 11px;
+    }
+
+    .links {
+      gap: 2px 18px;
+    }
+
+    .links .secondary {
+      display: none;
+    }
+
+    .links li + li {
+      border-left: 0;
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  .links a {
+    position: relative;
+    color: var(--text-2);
+    transition: color 0.2s;
+  }
+
+  /* The links are small text; their tap areas reach into the footer's
+     padding and halfway across the gaps */
+  .links a::after {
+    content: '';
+    position: absolute;
+    inset: -12px -9px;
+  }
+
+  .links a:active {
+    color: var(--text);
+    text-decoration: underline;
+  }
+
+  @media (hover: hover) {
+    .links a:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+  }
+</style>

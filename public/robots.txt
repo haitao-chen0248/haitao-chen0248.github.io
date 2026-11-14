@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://haitao-chen0248.github.io/sitemap-index.xml

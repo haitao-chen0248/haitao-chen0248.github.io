@@ -1,0 +1,1092 @@
+/* ==========================================================================
+   Global styles
+   Minimal theme with a dark and a light palette. An inline script in
+   BaseLayout sets <html data-theme="light|dark"> before the page paints:
+   the visitor's saved choice if there is one, otherwise the system setting.
+   All colors and sizes come from the tokens below.
+   ========================================================================== */
+
+/* Dark palette (default) */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #000;
+  --tile: #161617;
+  --tile-hover: #1c1c1e;
+  --header-bg: rgb(22 22 23 / 0.8);
+
+  /* Lines */
+  --line: rgb(255 255 255 / 0.1);
+  --line-strong: rgb(255 255 255 / 0.18);
+
+  /* Text */
+  --text: #f5f5f7;
+  --text-2: #a1a1a6;
+  /* At least 4.5:1 on the page and on tiles (WCAG AA) */
+  --text-3: #8e8e93;
+
+  /* Accent: used sparingly for underlines, hovers, and tags. The second
+     accent (teal) only appears in gradients with the first. */
+  --accent: #7fc4ff;
+  --accent-2: #5fd6c8;
+  --accent-soft: rgb(127 196 255 / 0.12);
+  --accent-line: rgb(127 196 255 / 0.35);
+
+  /* "Available" green for the status dot */
+  --ok: #30d158;
+  --ok-soft: rgb(48 209 88 / 0.2);
+
+  /* Champagne gold for honors (badges such as "Editors' Pick" or an award),
+     kept apart from the blue that marks links and hovers */
+  --honor: #dcc08a;
+  --honor-soft: rgb(220 192 138 / 0.12);
+  --honor-line: rgb(220 192 138 / 0.32);
+
+  /* Paper figures sit on a white plate in both themes, dimmed a little in
+     dark mode so it does not glare (talk posters too) */
+  --figure-bg: #fff;
+  --figure-edge: transparent;
+  --figure-dim: brightness(0.9);
+
+  /* Publisher logos on the service cards sit on a plate a step above the
+     card, white in light mode */
+  --logo-plate: #1d1d1f;
+  --logo-plate-edge: var(--line);
+
+  /* Hairline around cards; only needed in light mode, where white media meets a white page */
+  --card-edge: transparent;
+
+  /* Research interest tags */
+  --tag-bg: var(--accent-soft);
+  --tag-border: var(--accent-line);
+
+  /* Liquid glass: translucent fill, edge, top highlight, drop shadow, and
+     the light that follows the pointer */
+  --glass-fill: rgb(255 255 255 / 0.07);
+  --glass-fill-hover: rgb(255 255 255 / 0.12);
+  --glass-edge: rgb(255 255 255 / 0.12);
+  --glass-hi: rgb(255 255 255 / 0.2);
+  --glass-drop: 0 8px 24px rgb(0 0 0 / 0.35);
+  --glass-light: rgb(255 255 255 / 0.16);
+  /* Rim light: brightest at the top left, where the light falls, faint along
+     the sides, with a softer reflection at the bottom right; plus a faint
+     glow inside the edge */
+  --glass-rim: rgb(255 255 255 / 0.5);
+  --glass-rim-side: rgb(255 255 255 / 0.06);
+  --glass-rim-back: rgb(255 255 255 / 0.22);
+  --glass-glow: rgb(255 255 255 / 0.06);
+
+  /* Ambient light at the top of each page */
+  --glow-1: rgb(64 140 255 / 0.3);
+  --glow-2: rgb(0 190 200 / 0.16);
+  --glow-3: rgb(140 90 255 / 0.14);
+
+  /* Theme toggle shows the sun in dark mode (click to go light) */
+  --show-sun: block;
+  --show-moon: none;
+
+  /* Used by .only-dark / .only-light, e.g. white logos for dark mode */
+  --dark-only: block;
+  --light-only: none;
+}
+
+/* Light palette */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #fff;
+  --tile: #f5f5f7;
+  --tile-hover: #ededf0;
+  --header-bg: rgb(255 255 255 / 0.78);
+
+  --line: rgb(0 0 0 / 0.09);
+  --line-strong: rgb(0 0 0 / 0.16);
+
+  --text: #1d1d1f;
+  --text-2: #515154;
+  /* At least 4.5:1 on the page and on tiles (WCAG AA) */
+  --text-3: #6e6e73;
+
+  --accent: #1f6feb;
+  --accent-2: #0fa3a3;
+  --accent-soft: rgb(31 111 235 / 0.07);
+  --accent-line: rgb(31 111 235 / 0.3);
+
+  --ok: #1f9d4c;
+  --ok-soft: rgb(31 157 76 / 0.16);
+
+  --honor: #7d5e27;
+  --honor-soft: rgb(176 138 69 / 0.1);
+  --honor-line: rgb(176 138 69 / 0.35);
+
+  --figure-edge: rgb(0 0 0 / 0.08);
+  --figure-dim: none;
+  --card-edge: rgb(0 0 0 / 0.08);
+
+  --logo-plate: #fff;
+  --logo-plate-edge: rgb(0 0 0 / 0.08);
+
+  --tag-bg: rgb(255 255 255 / 0.6);
+  --tag-border: rgb(0 0 0 / 0.14);
+
+  --glass-fill: rgb(255 255 255 / 0.3);
+  --glass-fill-hover: rgb(255 255 255 / 0.6);
+  --glass-edge: rgb(0 0 0 / 0.07);
+  --glass-hi: rgb(255 255 255 / 0.9);
+  --glass-drop: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 18px rgb(0 0 0 / 0.06);
+  --glass-light: rgb(255 255 255 / 0.9);
+  --glass-rim: rgb(255 255 255 / 1);
+  --glass-rim-side: rgb(0 0 0 / 0.06);
+  --glass-rim-back: rgb(0 0 0 / 0.16);
+  --glass-glow: rgb(255 255 255 / 0.55);
+
+  --glow-1: rgb(31 111 235 / 0.13);
+  --glow-2: rgb(0 170 190 / 0.1);
+  --glow-3: rgb(130 80 255 / 0.09);
+
+  --show-sun: none;
+  --show-moon: block;
+
+  --dark-only: none;
+  --light-only: block;
+}
+
+/* Stand-ins for the moment before Geist arrives: local Arial (or its metric
+   twins on Linux) scaled to Geist's letter widths at each weight. Text drawn
+   in a stand-in takes the same space, so nothing moves when the real font
+   swaps in. The widths were measured on the site's own text. Each covers
+   only the characters in the Latin font file, so any other character (such
+   as →) falls back to the system fonts as before. */
+@font-face {
+  font-family: 'Geist Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
+  font-weight: 100 450;
+  size-adjust: 103.67%;
+  ascent-override: 96.94%;
+  descent-override: 28.46%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Arimo');
+  font-weight: 451 599;
+  size-adjust: 105.9%;
+  ascent-override: 94.9%;
+  descent-override: 27.86%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold'), local('Arimo Bold');
+  font-weight: 600 900;
+  size-adjust: 101.23%;
+  ascent-override: 99.28%;
+  descent-override: 29.14%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* Type: Geist for everything. Small labels (dates, venues, years) are the
+     same face, smaller and grayer. */
+  --font: 'Geist Variable', 'Geist Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+
+  /* Layout */
+  --container: 1024px;
+  --gutter: clamp(20px, 4vw, 32px);
+  --header-h: 52px;
+  --radius-lg: 18px;
+  --radius: 14px;
+  --radius-sm: 10px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Damped spring with a slight overshoot, for things that move or resize */
+  --spring: linear(0, 0.049, 0.166, 0.313, 0.466, 0.608, 0.73, 0.83, 0.906, 0.962, 0.999, 1.022, 1.034, 1.038, 1.037, 1.033, 1.028, 1.022, 1.017, 1.012, 1.008, 1.004, 1);
+}
+
+/* Narrow phones get a slightly tighter gutter */
+@media (max-width: 380px) {
+  :root {
+    --gutter: 16px;
+  }
+}
+
+/* Phones use a slightly smaller type scale; components adjust their own sizes */
+@media (max-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+/* Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 24px);
+  /* No translucent blue box over whatever is tapped on a phone; the menu
+     and other controls show their own pressed and current states. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Pages with sticky year labels: links to an entry leave room for the label */
+html:has(.sticky-year) {
+  scroll-padding-top: calc(var(--header-h) + 56px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: -0.008em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+main {
+  flex: 1;
+}
+
+img,
+svg,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+/* <picture> only offers the browser a smaller format (Photo.astro); the
+   <img> inside lays out as if it stood alone */
+picture {
+  display: contents;
+}
+
+img {
+  height: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+/* Short display headings look best with evenly balanced lines */
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--accent-line);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Links
+   ========================================================================== */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Inline links inside running text: same color as the text, thin accent underline */
+.prose a,
+a.text-link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+/* Pressed, or hovered where there is a mouse. Hover styles are kept to
+   devices that can hover throughout: on a touch screen the last link
+   tapped counts as hovered until something else is tapped, so it would
+   stay highlighted after the reader comes back to the page. */
+.prose a:active,
+a.text-link:active {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+@media (hover: hover) {
+  .prose a:hover,
+  a.text-link:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* A paper, talk, or course title that links to it */
+a.title-link {
+  transition: color 0.2s;
+}
+
+a.title-link:active {
+  color: var(--accent);
+}
+
+@media (hover: hover) {
+  a.title-link:hover {
+    color: var(--accent);
+  }
+}
+
+/* Quiet navigation link, e.g. "All publications →" */
+.more-link {
+  display: inline-flex;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.more-link:active {
+  color: var(--text);
+}
+
+@media (hover: hover) {
+  .more-link:hover {
+    color: var(--text);
+  }
+}
+
+.more-link .arrow {
+  transition: transform 0.25s var(--ease-out);
+}
+
+.more-link:active .arrow {
+  transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .more-link:hover .arrow {
+    transform: translateX(3px);
+  }
+}
+
+/* Outlined pill link (Journal, Code, ...) */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  white-space: nowrap;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background-color 0.2s,
+    transform 0.5s var(--spring);
+}
+
+@media (max-width: 600px) {
+  .chip {
+    height: 26px;
+    padding: 0 11px;
+    font-size: 12.5px;
+  }
+}
+
+/* A taller tap area than the chip itself (about 42px on phones), reaching
+   into half the gap on either side */
+.chip::after {
+  content: '';
+  position: absolute;
+  inset: -8px -4px;
+}
+
+.chip:active {
+  color: var(--text);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    color: var(--text);
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .chip:hover {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chip:active {
+    transform: scale(0.95);
+  }
+}
+
+.chip .arrow {
+  font-size: 11px;
+  opacity: 0.6;
+  transition: transform 0.2s var(--ease-out), opacity 0.2s;
+}
+
+.chip:active .arrow {
+  opacity: 1;
+  transform: translate(1px, -1px);
+}
+
+@media (hover: hover) {
+  .chip:hover .arrow {
+    opacity: 1;
+    transform: translate(1px, -1px);
+  }
+}
+
+/* Small honor badge, e.g. "Editors' Pick" or an award */
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--honor-line);
+  border-radius: 999px;
+  background: var(--honor-soft);
+  color: var(--honor);
+  font-family: var(--font);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -0.008em;
+}
+
+/* Layout helpers
+   ========================================================================== */
+
+/* Show an element in one theme only */
+.only-dark {
+  display: var(--dark-only) !important;
+}
+
+.only-light {
+  display: var(--light-only) !important;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: clamp(28px, 4vw, 48px);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 14px;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Line breaks (see wrapFriendly() in src/utils/format.ts): hyphenated words
+   stay whole at every width, and on phones a phrase moves to the next line
+   as a unit. */
+.nowrap {
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .phrase {
+    display: inline-block;
+  }
+}
+
+/* Year labels on the list pages (.sticky-year) stay in view below the header
+   while their year's entries scroll past. Once a label is stuck (BaseLayout
+   adds .stuck), a capsule like the section dock's appears behind it, nearly
+   opaque so entries sliding underneath never get in the way of reading it.
+   The capsule is drawn by ::before, so the label's own box and the layout
+   stay exactly as they were.
+   ========================================================================== */
+
+/* A year's entries, below a hairline */
+.year-group {
+  padding-block: 20px 40px;
+  border-top: 1px solid var(--line);
+}
+
+.sticky-year {
+  position: sticky;
+  top: calc(var(--header-h) + 14px);
+  z-index: 3;
+  width: fit-content;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+@media (max-width: 600px) {
+  .sticky-year {
+    font-size: 13px;
+  }
+}
+
+.sticky-year::before {
+  content: '';
+  position: absolute;
+  inset: -4px -12px;
+  z-index: -1;
+  border-radius: 999px;
+  /* Clear enough to show what passes under it as soft color; 70% keeps the
+     year at over 7:1 even on a white figure. A small blur radius, since
+     Chrome frosts a thin capsule less, not more, as the radius grows. */
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(4px) saturate(180%);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-edge),
+    inset 0 1px 0 var(--glass-hi),
+    var(--glass-drop);
+  opacity: 0;
+  scale: 0.9;
+  transition:
+    opacity 0.25s,
+    scale 0.5s var(--spring);
+  pointer-events: none;
+}
+
+.sticky-year.stuck::before {
+  opacity: 1;
+  scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-year::before {
+    scale: 1;
+    transition: opacity 0.25s;
+  }
+}
+
+/* Without the blur, sharp text behind would show through: nearly opaque */
+@supports not (backdrop-filter: blur(1px)) {
+  .sticky-year::before {
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sticky-year::before {
+    background: var(--bg);
+    backdrop-filter: none;
+  }
+}
+
+/* Small type
+   ========================================================================== */
+
+/* Eyebrow: short label above a title (venue, date, role) */
+.eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+@media (max-width: 600px) {
+  .eyebrow {
+    font-size: 12px;
+  }
+}
+
+/* Media
+   ========================================================================== */
+
+.frame {
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--tile);
+}
+
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-out);
+}
+
+/* Paper figures have white backgrounds: show them whole on a white plate,
+   with a hairline edge in light mode so the plate does not melt into the
+   page. In dark mode the plate and figure are dimmed together. */
+.frame--figure {
+  background: var(--figure-bg);
+  outline: 1px solid var(--figure-edge);
+  outline-offset: -1px;
+  filter: var(--figure-dim);
+}
+
+.frame--figure img {
+  object-fit: contain;
+  padding: 6%;
+}
+
+/* A white plate cannot get brighter, so the pointer light shows as a soft
+   falloff around it instead */
+.frame--figure.sheen::after {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), transparent, rgb(0 0 0 / 0.07));
+}
+
+/* Liquid glass
+   ========================================================================== */
+
+/* Translucent surface that blurs and brightens what lies behind it, with a
+   lit top edge. The light that follows the pointer (--mx, --my) is set by
+   the script in BaseLayout. */
+.glass {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-fill);
+  box-shadow:
+    inset 0 1px 0 var(--glass-hi),
+    inset 0 0 12px var(--glass-glow),
+    var(--glass-drop);
+  /* Chrome frosts less, not more, when the blur is large next to the
+     surface's height, so these thin surfaces use small radii */
+  backdrop-filter: blur(6px) saturate(180%);
+}
+
+/* Rim light, drawn over the border */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: linear-gradient(
+      135deg,
+      var(--glass-rim),
+      var(--glass-rim-side) 35%,
+      var(--glass-rim-side) 65%,
+      var(--glass-rim-back)
+    )
+    border-box;
+  mask:
+    linear-gradient(#000 0 0) padding-box exclude,
+    linear-gradient(#000 0 0) border-box;
+  pointer-events: none;
+}
+
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(var(--light-size, 80px) circle at var(--mx, 50%) var(--my, 0%), var(--glass-light), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+/* The same light, sweeping across a whole card */
+:where(.sheen) {
+  position: relative;
+}
+
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgb(255 255 255 / 0.14), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .glass:hover::after,
+  .sheen:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Cards that rise a little on hover, on a spring */
+:where(.lift) {
+  transition:
+    translate 0.6s var(--spring),
+    scale 0.6s var(--spring),
+    box-shadow 0.4s;
+}
+
+@media (hover: hover) {
+  .lift:hover {
+    box-shadow: var(--glass-drop);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift:hover {
+    translate: 0 -3px;
+  }
+}
+
+/* A card that is a link gives a little while pressed, then springs back */
+@media (prefers-reduced-motion: no-preference) {
+  a.lift:active {
+    scale: 0.97;
+    transition:
+      translate 0.6s var(--spring),
+      scale 0.15s var(--ease-out),
+      box-shadow 0.4s;
+  }
+}
+
+/* Ambient light: soft color fields behind the top of every page. They drift
+   slowly, lean toward the pointer, and give the glass something to refract. */
+.ambient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 900px;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(#000 30%, transparent);
+}
+
+.ambient-field {
+  position: absolute;
+  inset: 0;
+  transform: translate(var(--px, 0px), var(--py, 0px));
+  transition: transform 2s var(--ease-out);
+}
+
+.ambient span {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.ambient span:nth-child(1) {
+  top: 140px;
+  left: 78%;
+  width: clamp(420px, 62vw, 880px);
+  background: radial-gradient(closest-side, var(--glow-1), transparent);
+}
+
+.ambient span:nth-child(2) {
+  top: 400px;
+  left: 10%;
+  width: clamp(360px, 48vw, 700px);
+  background: radial-gradient(closest-side, var(--glow-2), transparent);
+}
+
+.ambient span:nth-child(3) {
+  top: 120px;
+  left: 36%;
+  width: clamp(320px, 40vw, 600px);
+  background: radial-gradient(closest-side, var(--glow-3), transparent);
+}
+
+@keyframes drift-1 {
+  to {
+    transform: translate(-9%, 12%) scale(1.15);
+  }
+}
+
+@keyframes drift-2 {
+  to {
+    transform: translate(16%, -10%) scale(0.9);
+  }
+}
+
+@keyframes drift-3 {
+  to {
+    transform: translate(12%, 18%) scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient span:nth-child(1) {
+    animation: drift-1 23s ease-in-out infinite alternate;
+  }
+
+  .ambient span:nth-child(2) {
+    animation: drift-2 31s ease-in-out infinite alternate;
+  }
+
+  .ambient span:nth-child(3) {
+    animation: drift-3 37s ease-in-out infinite alternate;
+  }
+}
+
+/* Visitors who ask for less transparency get plain surfaces */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--tile);
+    backdrop-filter: none;
+  }
+
+  .ambient {
+    display: none;
+  }
+}
+
+/* Motion
+   ========================================================================== */
+
+/* Page changes, in browsers that support view transitions: the old page,
+   header included, fades out quickly where the reader left it, over the new
+   page's live header and background, and the new page's content (main,
+   named "page" by BaseLayout for the length of the change) fades in and
+   rises a little. */
+@view-transition {
+  navigation: auto;
+}
+
+/* Clicks go through to the page while it fades in. Otherwise the layer the
+   browser draws the transition on would catch them, and a link pressed
+   before the fade ends would do nothing. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.18s;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+::view-transition-new(page) {
+  animation: page-in 0.6s var(--ease-out) 0.12s both;
+}
+
+/* Reduced motion: a plain fade, no rise */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(page) {
+    animation-name: page-fade-in;
+  }
+}
+
+/* Theme switch: the new theme is revealed by a circle the header script
+   animates, so the default cross-fade is turned off. */
+.theme-switch::view-transition-old(root),
+.theme-switch::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Entrances start faint rather than invisible: text with opacity 0 is
+   skipped when the browser picks the page's largest paint, so a fully
+   transparent intro made a lower figure count instead, at a later time. */
+@keyframes fade-up {
+  from {
+    opacity: 0.3;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page titles: letters rise into place one after another (Letters.astro) */
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.letter {
+  display: inline-block;
+}
+
+/* Only opacity and transform, so the browser can run the letters off the
+   main thread. A blur here kept them on it: on a phone busy opening the
+   page, the title stalled and then jumped into place. */
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .letter {
+    animation: letter-in 0.9s var(--spring) both;
+    animation-delay: calc(var(--n) * 32ms + 60ms);
+  }
+}
+
+/* Staggered entrance for above-the-fold content */
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: fade-up 0.8s var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+
+/* A page rendered ahead of a press holds its entrance until it is opened,
+   or it would have played out unseen (BaseLayout). */
+.prerendering :is(.letter, .enter) {
+  animation-play-state: paused;
+}
+
+/* Reveal content as it scrolls into view (progressive enhancement).
+   The shorthand and the timeline sit in separate rules on purpose: the CSS
+   minifier would otherwise merge them into one "animation" shorthand that
+   browsers reject. :where() keeps the shorthand at zero specificity so the
+   timeline in the second rule always wins. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(36px) scale(0.985);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.reveal) {
+      animation: reveal-up linear both;
+    }
+
+    .reveal {
+      animation-timeline: view();
+      animation-range: entry 0% entry 220px;
+    }
+
+    /* Already on screen when the page opened (BaseLayout) */
+    .reveal.first-view {
+      animation: none;
+    }
+  }
+}
+
+/* Photos, figures, and video posters settle into their frames as they
+   scroll in, so the page moves with the reader. "scale" is used rather than
+   "transform", which the hover zoom already uses. */
+@keyframes settle {
+  from {
+    scale: 1.08;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.frame img, .slide img, .poster img) {
+      animation: settle linear both;
+    }
+
+    .frame img,
+    .slide img,
+    .poster img {
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+  }
+}
+

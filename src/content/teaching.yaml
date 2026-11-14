@@ -1,0 +1,13 @@
+# Teaching. Listed in display order.
+
+- id: bme548-2026
+  course: BME 548
+  title: Machine Learning and Imaging
+  term: Spring 2026
+  role: Teaching Assistant
+  description: A graduate course on deep learning for diagnostic imaging (MRI, CT, microscopy), with a focus on hardware-software co-design.
+  instructor: { name: Prof. Roarke Horstmeyer, url: "https://bme.duke.edu/people/roarke-horstmeyer/" }
+  image: ../assets/images/teaching/bme548.jpg
+  imageAlt: BME 548 course logo
+  links:
+    - { label: Course website, url: "https://deepimaging.github.io/" }

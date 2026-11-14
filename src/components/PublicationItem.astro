@@ -1,0 +1,370 @@
+---
+// One publication: figure on the left, venue, title, authors, and links on the right.
+import type { CollectionEntry } from 'astro:content';
+import Photo from './Photo.astro';
+import { splitAuthors, wrapFriendly } from '@/utils/format';
+
+interface Props {
+  pub: CollectionEntry<'publications'>;
+  /** Show the year in the venue line (off when entries are grouped by year). */
+  showYear?: boolean;
+  /** On phones, a small figure beside the venue and title (home page). */
+  compact?: boolean;
+  /** Load the figure right away and ahead of other images: set it on the
+      first entry, whose figure is often the largest thing on screen. */
+  priority?: boolean;
+}
+
+const { pub, showYear = true, compact = false, priority = false } = Astro.props;
+const { title, authors, venue, year, note, image, imageAlt, links, press, bibtex } = pub.data;
+const primary = links[0]?.url;
+const citeId = `cite-${pub.id}`;
+---
+
+<article class:list={['pub', 'reveal', { compact }]}>
+  <div class="media">
+    <a class="frame frame--figure sheen lift" href={primary} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+      <Photo
+        src={image}
+        alt={imageAlt}
+        widths={[320, 480, 560, 640]}
+        sizes={`${compact ? '(max-width: 560px) 76vw, ' : ''}(max-width: 720px) 100vw, 240px`}
+        priority={priority}
+      />
+    </a>
+  </div>
+
+  <div class="body">
+    <p class="eyebrow">
+      <span>{venue}{showYear && ` · ${year}`}</span>
+      {note && <span class="badge">{note}</span>}
+    </p>
+
+    <h3 class="title">
+      {
+        primary ? (
+          <a class="title-link" href={primary} target="_blank" rel="noopener" set:html={wrapFriendly(title)} />
+        ) : (
+          <Fragment set:html={wrapFriendly(title)} />
+        )
+      }
+    </h3>
+
+    <p class="authors">
+      {splitAuthors(authors).map((part) => (part.self ? <strong>{part.text}</strong> : part.text))}
+    </p>
+
+    {
+      (links.length > 0 || bibtex) && (
+        <ul class="links" aria-label="Links">
+          {links.map((link) => (
+            <li>
+              <a class="chip" href={link.url} target="_blank" rel="noopener">
+                {link.label}
+                <span class="arrow" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            </li>
+          ))}
+          {bibtex && (
+            <li>
+              <button type="button" class="chip cite-toggle" aria-expanded="false" aria-controls={citeId}>
+                Cite
+              </button>
+            </li>
+          )}
+        </ul>
+      )
+    }
+
+    {
+      bibtex && (
+        <div class="cite glass" id={citeId} hidden>
+          <pre><code>{bibtex.trim()}</code></pre>
+          <button type="button" class="copy">Copy</button>
+        </div>
+      )
+    }
+
+    {
+      press.length > 0 && (
+        <p class="press">
+          In the press:{' '}
+          {press.map((item, i) => (
+            <>
+              <a class="text-link" href={item.url} target="_blank" rel="noopener">
+                {item.label}
+              </a>
+              {i < press.length - 1 && ', '}
+            </>
+          ))}
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<script>
+  // Cite: toggle the BibTeX panel and copy its text.
+  document.querySelectorAll<HTMLButtonElement>('.cite-toggle').forEach((button) => {
+    const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
+    if (!panel) return;
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.cite .copy').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const code = button.parentElement?.querySelector('code');
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent ?? '');
+        button.textContent = 'Copied';
+      } catch {
+        // Clipboard blocked: select the text so the visitor can copy it by hand.
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        button.textContent = 'Selected';
+      }
+      window.setTimeout(() => (button.textContent = 'Copy'), 1600);
+    });
+  });
+</script>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: clamp(20px, 3vw, 32px);
+    align-items: start;
+  }
+
+  /* The figure link gets its own grid cell, so anything a browser extension
+     inserts after links (citation badges, for example) stays in that cell
+     instead of pushing the text column onto a new row. */
+  .media a {
+    display: block;
+    aspect-ratio: 16 / 10;
+  }
+
+  @media (hover: hover) {
+    .media a:hover :global(img) {
+      transform: scale(1.03);
+    }
+  }
+
+  .eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .title {
+    font-size: 17.5px;
+    line-height: 1.38;
+    letter-spacing: -0.014em;
+  }
+
+  .authors {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-3);
+  }
+
+  .authors strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  /* A flex row keeps anything an extension adds after a link beside its chip. */
+  .links li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Expanded state of the Cite chip */
+  .cite-toggle[aria-expanded='true'] {
+    color: var(--text);
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+  }
+
+  /* BibTeX panel: a glass sheet that springs open */
+  .cite {
+    --light-size: 280px;
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    transform-origin: top left;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cite:not([hidden]) {
+      animation: cite-open 0.6s var(--spring);
+    }
+  }
+
+  @keyframes cite-open {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
+  }
+
+  /* Keep BibTeX lines intact; long lines scroll sideways */
+  .cite pre {
+    margin: 0;
+    padding-right: 64px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-2);
+    white-space: pre;
+  }
+
+  .cite .copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 26px;
+    padding: 0 10px;
+    border: 1px solid var(--glass-edge);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text-2);
+    background: var(--glass-fill);
+    box-shadow: inset 0 1px 0 var(--glass-hi);
+    transition:
+      color 0.2s,
+      background-color 0.2s,
+      transform 0.5s var(--spring);
+  }
+
+  .cite .copy:active {
+    color: var(--text);
+    background: var(--glass-fill-hover);
+  }
+
+  @media (hover: hover) {
+    .cite .copy:hover {
+      color: var(--text);
+      background: var(--glass-fill-hover);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cite .copy:active {
+      transform: scale(0.94);
+    }
+  }
+
+  .press {
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+
+  .press a {
+    font-size: 13.5px;
+  }
+
+  /* Small tablets: a slightly narrower figure and tighter buttons keep a
+     paper's links and Cite on one row */
+  @media (min-width: 721px) and (max-width: 800px) {
+    .pub {
+      grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .links {
+      gap: 6px;
+    }
+
+    .links .chip {
+      gap: 4px;
+      padding: 0 10px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .pub {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+  }
+
+  /* Compact entries on phones (home page): cards with the figure on top and
+     the venue, title, and authors below. Links and Cite stay on the
+     Publications page. */
+  @media (max-width: 560px) {
+    .compact {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid var(--card-edge);
+      border-radius: var(--radius-lg);
+      background: var(--tile);
+      scroll-snap-align: start;
+      /* Full-width figure from the first paint. The grid layout's
+         align-items: start would size it to the image, which is 0 wide until
+         the image starts loading, and the text below would jump down. */
+      align-items: stretch;
+      /* The cards scroll sideways, so skip the scroll-driven reveal */
+      animation: none;
+    }
+
+    .compact .media a {
+      border-radius: 0;
+    }
+
+    .compact .body {
+      padding: 14px 16px 18px;
+    }
+
+    .compact .links,
+    .compact .cite,
+    .compact .press {
+      display: none;
+    }
+  }
+
+  /* Phone type scale */
+  @media (max-width: 600px) {
+    .title {
+      font-size: 16px;
+    }
+
+    .authors {
+      font-size: 13px;
+    }
+
+    .press,
+    .press a {
+      font-size: 13px;
+    }
+
+    .compact .title {
+      font-size: 15px;
+    }
+
+    .compact .authors {
+      font-size: 12.5px;
+    }
+  }
+</style>

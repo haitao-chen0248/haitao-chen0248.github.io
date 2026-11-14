@@ -1,0 +1,128 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Slideshow from '@/components/Slideshow.astro';
+import { site } from '@/config';
+import { byNewest, formatMonth, groupByYear, isoMonth, keepCompoundsWhole, wrapFriendly } from '@/utils/format';
+
+const items = (await getCollection('news')).sort(byNewest);
+
+// Each Markdown body as HTML (the bodies hold text, links, and emphasis
+// only), with hyphenated words kept whole, then grouped by year (newest first).
+// Photos go under images: a Markdown image in the body would not be
+// processed here, so it stops the build rather than show up broken.
+const entries = items.map((item) => {
+  const html = item.rendered?.html ?? '';
+  if (html.includes('__ASTRO_IMAGE_')) {
+    throw new Error(`News "${item.id}": put photos under images:, not in the text`);
+  }
+  return { item, body: keepCompoundsWhole(html) };
+});
+const groups = groupByYear(entries, (e) => e.item.data.date.slice(0, 4));
+// The first photo on the page loads right away (see priority in Slideshow).
+const lead = items.find((item) => item.data.images.length > 0)?.id;
+---
+
+<BaseLayout title="News" description={`News and milestones from ${site.name}.`}>
+  <PageHeader title="News">
+    <p>Milestones, papers, and conferences.</p>
+  </PageHeader>
+
+  <div class="container">
+    {
+      groups.map((group) => (
+        <section class="year-group" aria-labelledby={`y${group.year}`}>
+          <h2 class="sticky-year" id={`y${group.year}`}>
+            {group.year}
+          </h2>
+
+          <ol class="entries">
+            {group.items.map(({ item, body }) => {
+              const images = item.data.images;
+              return (
+                <li id={item.id} class:list={['entry', 'reveal', { 'no-media': images.length === 0 }]}>
+                  {images.length > 0 && (
+                    <div class="media">
+                      <Slideshow
+                        images={images}
+                        sizes="(max-width: 760px) 100vw, 340px"
+                        label={item.data.title}
+                        priority={item.id === lead}
+                      />
+                    </div>
+                  )}
+
+                  <div class="text">
+                    <p class="eyebrow">
+                      <time datetime={isoMonth(item.data.date)}>{formatMonth(item.data.date)}</time>
+                    </p>
+                    <h3 class="headline" set:html={wrapFriendly(item.data.title)} />
+                    <div class="prose body" set:html={body} />
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .entries {
+    display: grid;
+    gap: clamp(32px, 4vw, 44px);
+  }
+
+  /* Photos on the left, text on the right */
+  .entry {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 40px);
+    align-items: start;
+  }
+
+  .entry.no-media {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .headline {
+    margin-top: 4px;
+    font-size: 19px;
+    line-height: 1.35;
+    letter-spacing: -0.016em;
+  }
+
+  .body {
+    max-width: 620px;
+    margin-top: 8px;
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--text-2);
+  }
+
+  /* Highlight the item linked from the home page */
+  .entry:target .headline {
+    color: var(--accent);
+  }
+
+  @media (max-width: 760px) {
+    .entry {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+  }
+
+  /* Phone type scale */
+  @media (max-width: 600px) {
+    .headline {
+      font-size: 16.5px;
+    }
+
+    .body {
+      font-size: 14.5px;
+    }
+  }
+</style>

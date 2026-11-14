@@ -1,0 +1,19 @@
+# Talks, newest first. "paper" is optional: the id of the related entry in publications.yaml.
+# "note" is an optional badge, e.g. an award.
+
+- id: pw26-gigapixel
+  title: Centimeter-scale gigapixel microscopy with curvature-adaptive focusing and submicron resolution
+  event: SPIE Photonics West 2026
+  location: San Francisco, CA
+  date: 2026-01
+  youtube: WSLuhnqptSg
+  paper: curvature-adaptive-gigapixel
+
+- id: pw26-zebrafish
+  title: High-throughput automated 3D behavioral profiling of freely swimming zebrafish larvae using a multi-camera array microscope
+  event: SPIE Photonics West 2026
+  location: San Francisco, CA
+  date: 2026-01
+  note: Best Presentation Award
+  youtube: IXfsqg_8Y6I
+  paper: zebrafish-3d-behavior

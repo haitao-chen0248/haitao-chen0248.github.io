@@ -1,0 +1,32 @@
+{
+  "name": "haitao-chen0248.github.io",
+  "description": "Personal website of Haitao Chen",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource/geist": "^5.3.0",
+    "astro": "^7.4.4",
+    "satori": "^0.63.2",
+    "sharp": "^0.35.5",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "fflate": "^0.7.5"
+  }
+}

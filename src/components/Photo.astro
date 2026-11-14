@@ -1,0 +1,14 @@
+---
+// A responsive image offered as AVIF, about half the size, with the WebP it
+// used to be as the fallback for browsers without AVIF. Takes the same props
+// as Astro's <Image>; the <picture> it adds takes no part in the layout
+// (see picture in global.css), so styles that reach the <img> still apply.
+import type { ComponentProps } from 'astro/types';
+import { Picture } from 'astro:assets';
+
+// Omit per member of the union, so a fixed-size image still needs its width
+type Without<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+type Props = Without<ComponentProps<typeof Picture>, 'formats' | 'fallbackFormat'>;
+---
+
+<Picture {...Astro.props} formats={['avif']} fallbackFormat="webp" />
