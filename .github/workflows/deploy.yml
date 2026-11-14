@@ -1,6 +1,9 @@
 # Build the Astro site and publish it to GitHub Pages on every push to master.
 # Pull requests into master are built and
 # checked the same way, but not published.
+# Only the public repository, haitao-chen0248.github.io, publishes. In the
+# private development repository the same file builds and checks, and stops
+# there.
 # One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
 # The site is also rebuilt once a year, on January 1, so the year in the
 # footer's copyright line stays right even when nothing else has changed.
@@ -33,14 +36,14 @@ jobs:
       - run: npm run check
       - run: npm run build
 
-      - if: github.event_name != 'pull_request'
+      - if: github.repository == 'haitao-chen0248/haitao-chen0248.github.io' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
   deploy:
     needs: build
-    if: github.event_name != 'pull_request'
+    if: github.repository == 'haitao-chen0248/haitao-chen0248.github.io' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pages: write
